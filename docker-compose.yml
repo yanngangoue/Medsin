@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: medsim
+      POSTGRES_PASSWORD: medsim
+      POSTGRES_DB: medsim
+    ports:
+      - "5432:5432"
+    volumes:
+      - medsim_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medsim -d medsim"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  medsim_pg:
