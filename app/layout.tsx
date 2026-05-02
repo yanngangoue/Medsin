@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr-CA">
+    <html lang="fr-CA" className="scroll-smooth">
       <body className={`${inter.variable} font-sans antialiased`}>
         <SessionProvider>{children}</SessionProvider>
       </body>

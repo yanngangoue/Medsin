@@ -1,15 +1,10 @@
-import { LandingSectionImage } from "@/components/LandingSectionImage";
-
-const CONSULTATION_IMAGE =
-  "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=90";
-
 function IconClipboard() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="8" y="2" width="8" height="4" rx="1" stroke="#0D9488" strokeWidth="2" />
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden className="text-[var(--teal-400)]">
+      <rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="2" />
       <path
         d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-        stroke="#0D9488"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
       />
@@ -19,29 +14,29 @@ function IconClipboard() {
 
 function IconStethoscope() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden className="text-[var(--teal-400)]">
       <path
         d="M6 4v6a6 6 0 0 0 12 0V4M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2M9 20h6"
-        stroke="#0D9488"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="18" cy="14" r="2" stroke="#0D9488" strokeWidth="2" />
+      <circle cx="18" cy="14" r="2" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
 
-function IconPackage() {
+function IconDelivery() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden className="text-[var(--teal-400)]">
       <path
         d="M21 8v8l-9 4-9-4V8l9-4 9 4Z"
-        stroke="#0D9488"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
       />
-      <path d="m3 8 9 4 9-4M12 12v9" stroke="#0D9488" strokeWidth="2" strokeLinecap="round" />
+      <path d="m3 8 9 4 9-4M12 12v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -49,55 +44,53 @@ function IconPackage() {
 const STEPS = [
   {
     n: 1,
-    title: "Remplissez le questionnaire",
-    desc: "Quelques questions sur votre santé.",
+    title: "Évaluation en ligne",
     Icon: IconClipboard,
+    desc: "Remplissez un questionnaire médical complet (5 min). Vos antécédents, médicaments actuels et objectifs.",
   },
   {
     n: 2,
-    title: "Un médecin examine votre dossier",
-    desc: "Un médecin valide votre dossier.",
+    title: "Révision par un médecin",
     Icon: IconStethoscope,
+    desc: "Un médecin licencié analyse votre dossier et détermine si le GLP-1 est approprié pour vous.",
   },
   {
     n: 3,
-    title: "Recevez votre ordonnance",
-    desc: "Vous recevez la suite des étapes à suivre.",
-    Icon: IconPackage,
+    title: "Livraison à domicile",
+    Icon: IconDelivery,
+    desc: "Votre ordonnance est envoyée à une pharmacie partenaire. Livraison discrète en 48h. Kit complet inclus.",
   },
 ] as const;
 
 export function HowItWorks() {
   return (
-    <div className="mt-16 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm shadow-slate-200/40 backdrop-blur-[2px]">
-      <h2 className="text-base font-semibold text-slate-900">Comment ça marche</h2>
-      <p className="mt-2 text-sm leading-snug text-slate-600">
-        Consultation en ligne en tout sécurité : vous échangez avec votre équipe médicale où que vous soyez.
-      </p>
-      <LandingSectionImage
-        src={CONSULTATION_IMAGE}
-        alt="Personne en téléconsultation sur ordinateur portable dans un cadre médical lumineux"
-        aspect="video"
-        className="mt-6"
-      />
-      <div className="mt-6 flex gap-6 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
-        {STEPS.map(({ n, title, desc, Icon }) => (
-          <div key={n} className="min-w-[240px] shrink-0 sm:min-w-0">
-            <div className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-600 text-sm font-semibold text-white">
-                {n}
-              </span>
-              <div className="min-w-0">
-                <div className="flex items-start gap-2">
-                  <Icon />
-                  <h3 className="text-sm font-semibold leading-snug text-slate-900">{title}</h3>
-                </div>
-                <p className="mt-2 text-sm leading-snug text-slate-600">{desc}</p>
+    <section id="comment-ca-marche" className="scroll-mt-24 bg-[var(--teal-50)] py-14 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-[28px] font-bold tracking-tight text-[var(--gray-900)] sm:text-[32px]">
+            3 étapes vers vos résultats
+          </h2>
+          <p className="mt-3 text-[16px] text-neutral-600 sm:text-[17px]">
+            Simple, rapide, 100% en ligne
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {STEPS.map(({ n, title, Icon, desc }) => (
+            <article
+              key={n}
+              className="rounded-[12px] border border-white/80 bg-white p-6 shadow-sm transition hover:[transform:scale(1.02)]"
+            >
+              <span className="text-[48px] font-black leading-none text-[var(--teal-400)]">{n}</span>
+              <div className="mt-4 flex items-center gap-2">
+                <Icon />
+                <h3 className="text-[17px] font-bold text-[var(--gray-900)]">{title}</h3>
               </div>
-            </div>
-          </div>
-        ))}
+              <p className="mt-3 text-[14px] leading-relaxed text-neutral-600">{desc}</p>
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
