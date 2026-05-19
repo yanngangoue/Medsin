@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { connexionSchema, type ConnexionFormValues } from "@/lib/schemas/connexion";
+import { defaultHomeForRole } from "@/lib/rbac";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
 
-export default function ConnexionPage() {
+function ConnexionForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,7 +34,7 @@ export default function ConnexionPage() {
     setIsSubmitting(true);
     try {
       const result = await signIn("credentials", {
-        email: data.email.trim(),
+        email: data.email.trim().toLowerCase(),
         password: data.password,
         redirect: false,
       });
@@ -40,7 +42,12 @@ export default function ConnexionPage() {
         setError("Email ou mot de passe incorrect.");
         return;
       }
-      router.push("/dashboard");
+      const session = await getSession();
+      const home = session?.user?.role ? defaultHomeForRole(session.user.role) : "/";
+      const raw = searchParams.get("callbackUrl");
+      const callbackUrl =
+        raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : null;
+      router.push(callbackUrl ?? home);
       router.refresh();
     } finally {
       setIsSubmitting(false);
@@ -56,6 +63,12 @@ export default function ConnexionPage() {
         <Card>
           <h1 className="text-xl font-semibold text-slate-900">Connexion</h1>
           <p className="mt-1 text-sm text-slate-600">Accédez à votre espace Medsim.</p>
+
+          {searchParams.get("reset") === "ok" ? (
+            <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+              Mot de passe mis à jour. Vous pouvez vous connecter.
+            </p>
+          ) : null}
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
             <div>
@@ -90,6 +103,12 @@ export default function ConnexionPage() {
             </Button>
           </form>
 
+          <p className="mt-4 text-center text-sm">
+            <Link href="/connexion/mot-de-passe-oublie" className="font-medium text-[#1D9E75] hover:underline">
+              Mot de passe oublié ?
+            </Link>
+          </p>
+
           <p className="mt-6 text-center text-sm text-slate-600">
             Pas encore de compte ?{" "}
             <Link href="/onboarding/inscription" className="font-medium text-[#1D9E75] hover:underline">
@@ -99,5 +118,19 @@ export default function ConnexionPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function ConnexionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-slate-500">
+          Chargement…
+        </div>
+      }
+    >
+      <ConnexionForm />
+    </Suspense>
   );
 }

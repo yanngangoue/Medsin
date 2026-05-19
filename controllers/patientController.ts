@@ -64,7 +64,7 @@ export async function getMe() {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
   }
 
-  const { password: _password, ...safeUser } = user;
-  void _password;
+  const { passwordHash: _ph, ...safeUser } = user;
+  void _ph;
   return NextResponse.json({ user: safeUser });
 }

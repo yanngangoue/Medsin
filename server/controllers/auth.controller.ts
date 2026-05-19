@@ -20,8 +20,10 @@ export async function register(req: Request, res: Response) {
   const user = await prisma.user.create({
     data: {
       email,
-      password: passwordHash,
+      passwordHash,
       prenom: email.split("@")[0] || "Patient",
+      name: email.split("@")[0] || "Patient",
+      emailVerified: new Date(),
     },
   });
   const token = await signToken(user);
@@ -39,7 +41,7 @@ export async function login(req: Request, res: Response) {
   }
   const { email, password } = parsed.data;
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !(await verifyPassword(password, user.password))) {
+  if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
     res.status(401).json({ error: "Identifiants incorrects" });
     return;
   }

@@ -23,8 +23,8 @@ export async function getMe(req: Request, res: Response) {
     return;
   }
 
-  const { password: _password, ...safeUser } = user;
-  void _password;
+  const { passwordHash: _ph, ...safeUser } = user;
+  void _ph;
   res.json({ user: safeUser });
 }
 

@@ -1,6 +1,5 @@
 /**
- * Point d’entrée Auth.js : `auth` sans Prisma (middleware Edge) ;
- * `handlers` / `signIn` / `signOut` avec adaptateur Prisma (routes Node).
+ * `auth` : Edge-safe (`auth.edge`).
+ * `handlers` : importer depuis `@/auth.node` dans les routes API uniquement (évite Prisma dans le bundle middleware).
  */
 export { auth } from "./auth.edge";
-export { handlers, signIn, signOut } from "./auth.node";

@@ -83,11 +83,11 @@ export function HeroSection() {
               Commencer mon évaluation →
             </Link>
             <Link
-              href="/connexion"
-              aria-label="J'ai déjà un compte"
+              href="/patient"
+              aria-label="Voir nos services"
               className="inline-flex h-[52px] items-center justify-center rounded-[10px] border border-[var(--border-soft)] bg-white px-8 text-[15px] font-bold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50 hover:[transform:scale(1.02)] active:scale-[0.99]"
             >
-              J&apos;ai déjà un compte
+              Voir nos services
             </Link>
           </div>
 

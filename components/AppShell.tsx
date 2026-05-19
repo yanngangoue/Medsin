@@ -21,7 +21,7 @@ export function AppShell({
               <MedsimLogo />
             </Link>
             <nav className="flex items-center gap-3 text-sm">
-              <Link href="/dashboard" className="text-slate-600 hover:text-teal-700">
+              <Link href="/" className="text-slate-600 hover:text-teal-700">
                 Tableau de bord
               </Link>
               <Link href="/appointments" className="text-slate-600 hover:text-teal-700">

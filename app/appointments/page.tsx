@@ -80,7 +80,7 @@ export default function AppointmentsPage() {
             <p className="text-xs font-medium uppercase tracking-wide text-teal-700">Horaire</p>
             <h1 className="mt-1 text-2xl font-semibold text-slate-900">Consultations</h1>
           </div>
-          <Link href="/dashboard">
+          <Link href="/">
             <Button variant="outline">Retour à l’accueil</Button>
           </Link>
         </div>

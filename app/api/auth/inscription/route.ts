@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { demoCreateUser, demoUserExists } from "@/lib/demo-store";
+import { writeAuditLog } from "@/lib/audit";
+import { resetLoginRateLimitForKey } from "@/lib/login-rate-limit";
+
+function clientIp(req: Request): string | null {
+  const xf = req.headers.get("x-forwarded-for");
+  if (xf) return xf.split(",")[0]?.trim() ?? null;
+  return req.headers.get("x-real-ip");
+}
 
 const schema = z.object({
   prenom: z.string().min(1),
@@ -18,27 +26,45 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Données invalides" }, { status: 400 });
   }
 
+  const email = parsed.data.email.trim().toLowerCase();
+
   if (isDemoMode()) {
-    if (demoUserExists(parsed.data.email)) {
+    if (demoUserExists(email)) {
       return NextResponse.json({ error: "Email déjà utilisé" }, { status: 409 });
     }
     const hash = await bcrypt.hash(parsed.data.password, 12);
     const user = demoCreateUser({
       prenom: parsed.data.prenom,
-      email: parsed.data.email,
+      email,
       passwordHash: hash,
     });
+    resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);
     return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
   }
 
-  const exists = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+  const exists = await prisma.user.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+  });
   if (exists) {
     return NextResponse.json({ error: "Email déjà utilisé" }, { status: 409 });
   }
 
   const hash = await bcrypt.hash(parsed.data.password, 12);
   const user = await prisma.user.create({
-    data: { prenom: parsed.data.prenom, email: parsed.data.email, password: hash },
+    data: {
+      prenom: parsed.data.prenom,
+      name: parsed.data.prenom,
+      email,
+      passwordHash: hash,
+      emailVerified: new Date(),
+    },
   });
+  await writeAuditLog({
+    userId: user.id,
+    action: "register",
+    entity: "credentials",
+    ipAddress: clientIp(req),
+  });
+  resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);
   return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { objectifLabel } from "@/lib/questionnaire-labels";
 import { parseQuestionnaireResponse } from "@/lib/questionnaire-api";
+import { isPublicSiteMode } from "@/lib/is-public-site";
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -15,8 +16,8 @@ export default function ConfirmationPage() {
   const [dateStr, setDateStr] = useState("");
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (status === "unauthenticated") {
+    if (status === "loading" && !isPublicSiteMode()) return;
+    if (!isPublicSiteMode() && status === "unauthenticated") {
       router.replace("/connexion");
     }
   }, [status, router]);
@@ -99,7 +100,7 @@ export default function ConfirmationPage() {
       </div>
 
       <Link
-        href="/dashboard"
+        href="/"
         className="mt-10 inline-flex h-12 w-full max-w-xs items-center justify-center rounded-xl bg-[#1D9E75] text-sm font-semibold text-white hover:bg-[#188763]"
       >
         Accéder à mon espace

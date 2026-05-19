@@ -90,3 +90,47 @@ body {
 .medsim-slide-in-left {
   animation: medsim-slide-in-left 250ms ease-out forwards;
 }
+
+/* Commentaires patients — défilement droite → gauche */
+@keyframes comments-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.comments-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
+
+.comments-marquee-track {
+  animation: comments-marquee-scroll 45s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comments-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+}

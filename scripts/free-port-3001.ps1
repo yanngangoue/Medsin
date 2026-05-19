@@ -1,8 +1,9 @@
-$pid = (Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue |
+# Ne pas utiliser $pid : variable automatique PowerShell (ID du processus courant), en lecture seule.
+$listenPid = (Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue |
   Select-Object -First 1 -ExpandProperty OwningProcess)
-if ($pid) {
-  Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-  Write-Host "Processus $pid libéré sur le port 3001."
+if ($listenPid) {
+  Stop-Process -Id $listenPid -Force -ErrorAction SilentlyContinue
+  Write-Host "Processus $listenPid libéré sur le port 3001."
 } else {
   Write-Host "Port 3001 déjà libre."
 }

@@ -28,8 +28,8 @@ export async function createCheckoutSession() {
   const checkout = await stripe.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${baseUrl}/dashboard?checkout=success`,
-    cancel_url: `${baseUrl}/dashboard?checkout=cancel`,
+    success_url: `${baseUrl}/?checkout=success`,
+    cancel_url: `${baseUrl}/?checkout=cancel`,
     client_reference_id: session.sub,
     customer_email: session.email,
     metadata: { userId: session.sub },

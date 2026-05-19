@@ -9,7 +9,9 @@ datasource db {
 
 enum Role {
   PATIENT
+  PHARMACIEN
   MEDECIN
+  NUTRITIONNISTE
   ADMIN
 }
 
@@ -26,26 +28,103 @@ enum AppointmentStatus {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  prenom          String
-  email           String           @unique
-  emailVerified   DateTime?
-  image           String?
-  password        String
-  role            Role             @default(PATIENT)
-  createdAt       DateTime         @default(now())
-  questionnaire   Questionnaire?
-  refreshTokens   RefreshToken[]
-  accounts        Account[]
-  sessions        Session[]
-  profile         PatientProfile?
-  appointments    Appointment[]
+  id            String    @id @default(uuid())
+  prenom        String
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? @map("password")
+  role          Role      @default(PATIENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  questionnaire Questionnaire?
+  refreshTokens RefreshToken[]
+  accounts      Account[]
+  sessions      Session[]
+  profile       PatientProfile?
+  appointments  Appointment[]
+  auditLogs            AuditLog[]
+  passwordResetTokens  PasswordResetToken[]
+  patientPrivacyConsent      PatientPrivacyConsent?
+  metabolicIntakes           MetabolicIntake[]
+  metabolicProfileSnapshots MetabolicProfileSnapshot[]
+
+  @@index([role])
+}
+
+/** Consentement explicite Loi 25 — données comportement alimentaire / métabolique. */
+model PatientPrivacyConsent {
+  id                     String    @id @default(uuid())
+  userId                 String    @unique
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dietaryBehaviorOptIn  Boolean   @default(false)
+  dietaryBehaviorVersion String    @default("1.0")
+  consentedAt            DateTime?
+  updatedAt              DateTime  @updatedAt
+}
+
+enum MetabolicIntakeCategory {
+  MEAL
+  SUPPLEMENT
+  SLEEP
+  ACTIVITY
+  MEDICATION_STATEMENT
+  ADVERSE_EFFECT
+}
+
+/** Une ressource FHIR normalisée (repas, sommeil, complément, etc.) + analyse IA optionnelle. */
+model MetabolicIntake {
+  id             String                  @id @default(uuid())
+  patientUserId  String
+  patient        User                    @relation(fields: [patientUserId], references: [id], onDelete: Cascade)
+  category       MetabolicIntakeCategory
+  fhirResource   Json
+  aiAnalysis     Json?
+  createdAt      DateTime                @default(now())
+
+  @@index([patientUserId, createdAt])
+  @@index([patientUserId, category, createdAt])
+}
+
+/** Profil métabolique agrégé (IA) — historique par `computedAt` (tâche 24h). */
+model MetabolicProfileSnapshot {
+  id                       String   @id @default(uuid())
+  patientUserId            String
+  patient                  User     @relation(fields: [patientUserId], references: [id], onDelete: Cascade)
+  nutritionalScore         Float
+  metabolicStabilityScore  Float
+  adherenceScore           Float
+  lifestyleScore           Float
+  riskFlags                String[]
+  fhirPanelObservation     Json?
+  computedAt               DateTime @default(now())
+
+  @@index([patientUserId, computedAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model PatientProfile {
-  id             String            @id @default(cuid())
+  id             String            @id @default(uuid())
   userId         String            @unique
   user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName       String            @default("")
+  dateOfBirth    DateTime?
+  gender         String?
+  healthInfo     Json?
+
   age            Int
   weightKg       Float
   heightCm       Float
@@ -57,8 +136,22 @@ model PatientProfile {
   updatedAt      DateTime          @updatedAt
 }
 
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  timestamp DateTime @default(now())
+  ipAddress String?
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([action])
+}
+
 model Appointment {
-  id          String            @id @default(cuid())
+  id          String            @id @default(uuid())
   userId      String
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   scheduledAt DateTime
@@ -72,7 +165,7 @@ model Appointment {
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   token     String   @unique
@@ -81,7 +174,7 @@ model RefreshToken {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -99,7 +192,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -115,7 +208,7 @@ model VerificationToken {
 }
 
 model Questionnaire {
-  id              String   @id @default(cuid())
+  id              String   @id @default(uuid())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id])
   objectif        String

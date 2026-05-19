@@ -1,11 +1,51 @@
-import { auth } from "@/auth";
+import { auth } from "./auth.edge";
+import { defaultHomeForRole, requiredRoleForPath } from "@/lib/rbac";
+import { isPublicSiteMode } from "@/lib/is-public-site";
 
 export default auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
-  if (isDashboard && !isLoggedIn) {
-    return Response.redirect(new URL("/connexion", req.url));
+  const { pathname } = req.nextUrl;
+  const session = req.auth;
+
+  if (isPublicSiteMode()) {
+    if (pathname.startsWith("/dashboard")) {
+      const dest = session?.user?.role ? defaultHomeForRole(session.user.role) : "/";
+      return Response.redirect(new URL(dest, req.url));
+    }
+    return;
+  }
+
+  if (pathname === "/" || pathname === "/patient" || pathname === "/patient/") return;
+
+  if (pathname.startsWith("/dashboard")) {
+    if (!session) {
+      const login = new URL("/connexion", req.url);
+      login.searchParams.set("callbackUrl", pathname);
+      return Response.redirect(login);
+    }
+    return Response.redirect(new URL(defaultHomeForRole(session.user.role), req.url));
+  }
+
+  const required = requiredRoleForPath(pathname);
+  if (!required) return;
+
+  if (!session) {
+    const login = new URL("/connexion", req.url);
+    login.searchParams.set("callbackUrl", pathname);
+    return Response.redirect(login);
+  }
+
+  if (session.user.role !== required) {
+    return Response.redirect(new URL("/acces-refuse", req.url));
   }
 });
 
-export const config = { matcher: ["/dashboard/:path*"] };
+export const config = {
+  matcher: [
+    "/dashboard/:path*",
+    "/patient/:path+",
+    "/pharmacien/:path*",
+    "/medecin/:path*",
+    "/nutritionniste/:path*",
+    "/admin/:path*",
+  ],
+};

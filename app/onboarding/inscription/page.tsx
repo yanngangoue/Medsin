@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getCsrfToken, signIn } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,8 +79,14 @@ function StrengthBars({ bars }: { bars: number }) {
 
 type Phase = "welcome" | "fields";
 
+function safeCallbackUrl(raw: string | null): string | null {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return null;
+  return raw;
+}
+
 export default function InscriptionPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [fieldStep, setFieldStep] = useState(1);
   const [animNonce, setAnimNonce] = useState(0);
@@ -138,7 +144,7 @@ export default function InscriptionPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prenom: data.prenom.trim(),
-          email: data.email.trim(),
+          email: data.email.trim().toLowerCase(),
           password: data.password,
         }),
       });
@@ -156,16 +162,24 @@ export default function InscriptionPage() {
         return;
       }
 
+      const emailNorm = data.email.trim().toLowerCase();
+      await getCsrfToken();
       const signInResult = await signIn("credentials", {
-        email: data.email.trim(),
+        email: emailNorm,
         password: data.password,
         redirect: false,
       });
       if (signInResult?.error) {
-        setGenericApiError("Compte créé, mais la connexion automatique a échoué. Connectez-vous manuellement.");
+        setGenericApiError(
+          signInResult.error === "CredentialsSignin"
+            ? "Compte créé, mais la connexion a échoué. Vérifiez le mot de passe ou connectez-vous depuis la page Connexion."
+            : `Compte créé, mais la connexion automatique a échoué (${signInResult.error}). Connectez-vous manuellement.`,
+        );
         return;
       }
-      router.push("/onboarding/questionnaire");
+      const afterSignup =
+        safeCallbackUrl(searchParams.get("callbackUrl")) ?? "/onboarding/questionnaire";
+      router.push(afterSignup);
       router.refresh();
     } finally {
       setIsSubmitting(false);

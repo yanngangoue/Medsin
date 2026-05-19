@@ -1,4 +1,8 @@
 import NextAuth from "next-auth";
-import authConfig from "./auth.config";
+import shared from "./auth.shared";
 
-export const { auth } = NextAuth(authConfig);
+/** Middleware Edge : pas de Prisma ni de providers Credentials ici. */
+export const { auth } = NextAuth({
+  ...shared,
+  providers: [],
+});

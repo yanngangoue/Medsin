@@ -11,6 +11,7 @@ import {
   type QuestionnaireFormValues,
 } from "@/lib/schemas/questionnaire";
 import { computeBmi } from "@/lib/eligibility";
+import { isPublicSiteMode } from "@/lib/is-public-site";
 
 const STEPS = 5;
 
@@ -57,6 +58,11 @@ export default function QuestionnairePage() {
   const values = watch();
 
   useEffect(() => {
+    if (isPublicSiteMode()) {
+      reset(emptyForm);
+      setMounted(true);
+      return;
+    }
     if (status === "unauthenticated") {
       router.replace("/connexion");
       return;

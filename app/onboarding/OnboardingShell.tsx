@@ -16,8 +16,16 @@ function stepIndex(pathname: string): number {
   return 0;
 }
 
+const LANDING_ONLY_PATHS = ["/onboarding/repas-sante", "/onboarding/gestion-poids"] as const;
+
 export function OnboardingShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isLandingOnly = LANDING_ONLY_PATHS.some((p) => pathname.startsWith(p));
+
+  if (isLandingOnly) {
+    return <>{children}</>;
+  }
+
   const active = stepIndex(pathname);
   const softMintBg = pathname.startsWith("/onboarding/inscription");
 

@@ -26,10 +26,10 @@ export function Navbar() {
         </Link>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
-            href="/connexion"
+            href="/patient"
             className="inline-flex h-10 items-center justify-center rounded-[10px] px-3 text-[14px] font-medium text-[var(--gray-900)] transition hover:bg-[var(--teal-light)] hover:opacity-95 sm:px-4"
           >
-            Connexion
+            Nos services
           </Link>
           <Link
             href="/onboarding/inscription"

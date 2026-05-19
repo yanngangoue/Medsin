@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/login", destination: "/connexion", permanent: false },
       { source: "/register", destination: "/onboarding/inscription", permanent: false },
+      { source: "/patient", destination: "/", permanent: false },
+      { source: "/patient/", destination: "/", permanent: false },
     ];
   },
 };

@@ -38,6 +38,23 @@ export function demoFindUserByEmail(email: string): DemoUser | undefined {
   return usersByEmail.get(normEmail(email));
 }
 
+export function demoFindUserById(id: string): DemoUser | undefined {
+  for (const u of usersByEmail.values()) {
+    if (u.id === id) return u;
+  }
+  return undefined;
+}
+
+export function demoUpdateUserPasswordHash(userId: string, passwordHash: string): boolean {
+  for (const [key, u] of usersByEmail) {
+    if (u.id === userId) {
+      usersByEmail.set(key, { ...u, passwordHash });
+      return true;
+    }
+  }
+  return false;
+}
+
 export function demoCreateUser(input: {
   prenom: string;
   email: string;
