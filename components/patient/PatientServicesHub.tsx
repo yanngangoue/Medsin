@@ -1,29 +1,38 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
+import { SignOutButton } from "@/components/role-portal/SignOutButton";
 import { MedsimLogo } from "@/components/MedsimLogo";
+import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { PatientHubNavMenu } from "@/components/patient/PatientHubNavMenu";
-import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
+import { PatientHubServicesGrid } from "@/components/patient/PatientHubServicesGrid";
+import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
+import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
+import {
+  PUBLIC_HERO_CTAS,
+  buildPatientHubActions,
+  type PatientHubContext,
+} from "@/lib/patient/patient-hub";
 
 type Props = {
   prenom?: string;
   showAuthLinks?: boolean;
+  variant?: "public" | "connected";
+  hubContext?: PatientHubContext;
+  /** Nav déjà affichée au-dessus (accueil connecté) */
+  hideTopNav?: boolean;
 };
 
-function ArrowIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M5 12h14M13 6l6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+export function PatientServicesHub({
+  prenom,
+  showAuthLinks = true,
+  variant = "public",
+  hubContext = { hasQuestionnaire: false, eligibility: "PENDING" },
+  hideTopNav = false,
+}: Props) {
+  const isConnected = variant === "connected";
+  const services = buildPatientHubActions(hubContext);
 
-export function PatientServicesHub({ showAuthLinks = false }: Props) {
   return (
     <section
       id="patient-services-hub"
@@ -40,63 +49,105 @@ export function PatientServicesHub({ showAuthLinks = false }: Props) {
       />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            <MedsimLogo variant="onDark" className="text-xl sm:text-2xl" />
-          </Link>
-          <PatientHubNavMenu showAuthLinks={showAuthLinks} />
-        </div>
+        {!hideTopNav ? (
+          <div className="flex items-center justify-between gap-4">
+            <Link
+              href={PUBLIC_CATALOG_HOME}
+              className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              aria-label="Accueil — catalogue des services"
+            >
+              <MedsimLogo variant="onDark" className="text-xl sm:text-2xl" />
+            </Link>
+            <div className="flex items-center gap-3 sm:gap-5">
+              {!isConnected ? <PartNavAccueilLink variant="onDark" /> : null}
+              {showAuthLinks && !isConnected ? (
+                <Link
+                  href={PUBLIC_HERO_CTAS.login.href}
+                  className="hidden text-sm font-medium text-white/90 hover:text-white sm:inline"
+                >
+                  Connexion
+                </Link>
+              ) : null}
+              {isConnected ? (
+                <>
+                  <Link
+                    href={GLP1_PATIENT_DASHBOARD_PATH}
+                    className="hidden rounded-lg bg-white px-4 py-2 text-sm font-bold text-[var(--teal-900)] shadow-sm transition hover:bg-white/95 sm:inline-flex"
+                  >
+                    Mon espace
+                  </Link>
+                  <SignOutButton
+                    callbackUrl={PUBLIC_CATALOG_HOME}
+                    className="text-sm font-medium text-white/90 hover:text-white"
+                  />
+                </>
+              ) : null}
+              <PatientHubNavMenu showAuthLinks={showAuthLinks && !isConnected} />
+            </div>
+          </div>
+        ) : null}
 
         <div className="mx-auto mt-5 max-w-2xl text-center sm:mt-6">
-          <p className="text-sm font-medium leading-snug text-white/90 sm:text-base">
-            Transformez vos objectifs en résultats avec MedSim
-          </p>
+          {isConnected && prenom ? (
+            <p className="text-sm font-medium text-white/90">Bonjour, {prenom}</p>
+          ) : (
+            <p className="text-sm font-medium leading-snug text-white/90 sm:text-base">
+              Transformez vos objectifs en résultats avec MedSim
+            </p>
+          )}
           <h1
             id="patient-services-heading"
             className="mt-2 text-[28px] font-bold leading-tight tracking-tight text-white sm:mt-3 sm:text-[36px]"
           >
-            Une nouvelle façon de vivre les soins de santé
+            {isConnected ? "Vos parcours de santé" : "Une nouvelle façon de vivre les soins de santé"}
           </h1>
+          {isConnected ? (
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/85">
+              Choisissez un service pour continuer votre suivi ou consulter votre dossier.
+            </p>
+          ) : (
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/85">
+              Découvrez nos services librement. Créez un compte pour démarrer votre parcours personnalisé.
+            </p>
+          )}
         </div>
 
-        <ul className="relative z-10 mt-8 grid gap-4 sm:mt-10 sm:grid-cols-3 sm:gap-5">
-          {PATIENT_SERVICE_CARDS.map((service) => {
-            const isLocalImage = service.image.startsWith("/");
+        {isConnected ? (
+          <div className="relative z-10 mx-auto mt-6 flex max-w-md flex-col gap-3 sm:mt-8 sm:max-w-lg sm:flex-row sm:justify-center">
+            <Link
+              href={GLP1_PATIENT_DASHBOARD_PATH}
+              className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-[var(--teal-900)] shadow-md transition hover:bg-white/95"
+            >
+              Mon espace patient
+            </Link>
+            <Link
+              href="#nutri-plus"
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+            >
+              Explorer les services
+            </Link>
+          </div>
+        ) : null}
 
-            return (
-              <li key={service.id}>
-                <Link
-                  href={service.href}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  <div
-                    className={`relative aspect-[4/3] w-full overflow-hidden ${service.panelClass}`}
-                  >
-                    <Image
-                      src={service.image}
-                      alt={service.imageAlt}
-                      fill
-                      unoptimized={isLocalImage}
-                      className="object-cover object-center transition duration-300 group-hover:scale-[1.03]"
-                      sizes="(max-width: 640px) 90vw, 320px"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
-                    <p className="text-[16px] font-bold text-slate-900">{service.title}</p>
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition group-hover:bg-[var(--teal)] group-hover:text-white">
-                      <ArrowIcon />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        {!isConnected ? (
+          <div className="relative z-10 mx-auto mt-6 flex max-w-md flex-col gap-3 sm:mt-8 sm:max-w-lg sm:flex-row sm:justify-center">
+            <Link
+              href={PUBLIC_HERO_CTAS.start.href}
+              className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-[var(--teal-900)] shadow-md transition hover:bg-white/95"
+            >
+              {PUBLIC_HERO_CTAS.start.label}
+            </Link>
+            <Link
+              href={PUBLIC_HERO_CTAS.login.href}
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+            >
+              {PUBLIC_HERO_CTAS.login.label}
+            </Link>
+          </div>
+        ) : null}
+
+        <PatientHubServicesGrid services={services} mode={isConnected ? "connected" : "public"} />
       </div>
     </section>
   );
 }
-

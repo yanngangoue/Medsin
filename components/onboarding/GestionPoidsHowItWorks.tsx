@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const ICON_COLOR = "#1D9E75";
 
 function IconQuestionnaire() {
@@ -99,12 +101,12 @@ export function GestionPoidsHowItWorks() {
         </div>
 
         <p className="mt-10 text-center sm:mt-12">
-          <a
-            href="#commencer"
+          <Link
+            href="/onboarding/gestion-poids/evaluation"
             className="inline-flex items-center justify-center rounded-full bg-[var(--teal-900)] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
           >
             Commencer mon évaluation
-          </a>
+          </Link>
         </p>
       </div>
     </section>

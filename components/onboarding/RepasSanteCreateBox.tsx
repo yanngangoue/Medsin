@@ -189,13 +189,13 @@ export function RepasSanteCreateBox({ meals }: Props) {
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Link
-                    href={`/connexion?callbackUrl=${encodeURIComponent(BOX_CALLBACK)}`}
+                    href={`/auth/connexion?callbackUrl=${encodeURIComponent(BOX_CALLBACK)}`}
                     className="inline-flex justify-center rounded-md bg-[var(--teal-900)] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
                   >
                     Se connecter
                   </Link>
                   <Link
-                    href={`/onboarding/inscription?service=repas-sante&callbackUrl=${encodeURIComponent(BOX_CALLBACK)}`}
+                    href={`/auth/inscription?service=repas-sante&callbackUrl=${encodeURIComponent(BOX_CALLBACK)}`}
                     className="inline-flex justify-center rounded-md bg-[#E8A87C] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#D4845F]"
                   >
                     S&apos;inscrire

@@ -76,7 +76,7 @@ export function HeroSection() {
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Link
-              href="/onboarding/inscription"
+              href="/auth/inscription"
               aria-label="Commencer mon évaluation médicale"
               className="inline-flex h-[52px] items-center justify-center rounded-[10px] bg-[var(--teal)] px-8 text-[15px] font-bold text-white shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
             >

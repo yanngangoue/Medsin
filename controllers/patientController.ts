@@ -27,6 +27,7 @@ export async function saveOnboarding(body: unknown) {
     where: { userId: session.sub },
     create: {
       userId: session.sub,
+      fullName: "",
       age,
       weightKg,
       heightCm,

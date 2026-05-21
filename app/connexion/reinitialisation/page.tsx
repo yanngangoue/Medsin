@@ -57,7 +57,7 @@ function ResetPasswordForm() {
         setError(msg);
         return;
       }
-      router.push("/connexion?reset=ok");
+      router.push("/auth/connexion?reset=ok");
       router.refresh();
     } finally {
       setSubmitting(false);
@@ -125,7 +125,7 @@ function ResetPasswordForm() {
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-600">
-            <Link href="/connexion" className="font-medium text-[#1D9E75] hover:underline">
+            <Link href="/auth/connexion" className="font-medium text-[#1D9E75] hover:underline">
               Retour à la connexion
             </Link>
           </p>

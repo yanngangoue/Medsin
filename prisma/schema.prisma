@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -16,6 +17,7 @@ enum Role {
 }
 
 enum EligibilityStatus {
+  PENDING
   ELIGIBLE
   NOT_ELIGIBLE
   MEDICAL_REVIEW_REQUIRED
@@ -25,6 +27,22 @@ enum AppointmentStatus {
   SCHEDULED
   CANCELLED
   COMPLETED
+}
+
+enum ClinicalDecisionKind {
+  ELIGIBILITY_ELIGIBLE
+  ELIGIBILITY_NOT_ELIGIBLE
+  ELIGIBILITY_REVIEW_REQUIRED
+  PRESCRIPTION_ISSUED
+  PRESCRIPTION_DEFERRED
+}
+
+enum PrescriptionMedication {
+  SEMAGLUTIDE
+  TIRZEPATIDE
+  LIRAGLUTIDE
+  OTHER
+  NONE
 }
 
 model User {
@@ -50,8 +68,28 @@ model User {
   patientPrivacyConsent      PatientPrivacyConsent?
   metabolicIntakes           MetabolicIntake[]
   metabolicProfileSnapshots MetabolicProfileSnapshot[]
+  messagesSent              Message[] @relation("MessagesSent")
+  messagesReceived          Message[] @relation("MessagesReceived")
+  clinicalDecisionsAsPatient ClinicalDecision[] @relation("PatientClinicalDecisions")
+  clinicalDecisionsAsStaff   ClinicalDecision[] @relation("StaffClinicalDecisions")
+  emailLogs                  EmailLog[]
 
   @@index([role])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String   @db.Text
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("MessagesReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId, createdAt])
+  @@index([receiverId, read])
 }
 
 /** Consentement explicite Loi 25 — données comportement alimentaire / métabolique. */
@@ -125,12 +163,12 @@ model PatientProfile {
   gender         String?
   healthInfo     Json?
 
-  age            Int
-  weightKg       Float
-  heightCm       Float
-  bmi            Float
-  medicalHistory String            @db.Text
-  eligibility    EligibilityStatus
+  age            Int?
+  weightKg       Float?
+  heightCm       Float?
+  bmi            Float?
+  medicalHistory String?           @db.Text
+  eligibility    EligibilityStatus @default(PENDING)
   onboardingDone Boolean           @default(false)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -162,6 +200,42 @@ model Appointment {
 
   @@index([userId])
   @@index([scheduledAt])
+}
+
+/** Décision clinique / prescription traçable (qui, quand, quoi). */
+model ClinicalDecision {
+  id              String                 @id @default(uuid())
+  patientUserId   String
+  patient         User                   @relation("PatientClinicalDecisions", fields: [patientUserId], references: [id], onDelete: Cascade)
+  decidedByUserId String
+  decidedBy       User                   @relation("StaffClinicalDecisions", fields: [decidedByUserId], references: [id], onDelete: Cascade)
+  kind            ClinicalDecisionKind
+  eligibility     EligibilityStatus
+  medication      PrescriptionMedication?
+  clinicalNote    String?                @db.Text
+  patientMessage  String?                @db.Text
+  createdAt       DateTime               @default(now())
+
+  @@index([patientUserId, createdAt])
+  @@index([decidedByUserId])
+}
+
+/** Journal d’envoi e-mails (évite les doublons de rappels). */
+model EmailLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  toEmail   String
+  template  String
+  entityKey String?
+  subject   String
+  status    String
+  error     String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@unique([template, entityKey])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model RefreshToken {

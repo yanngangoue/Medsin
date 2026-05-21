@@ -102,7 +102,7 @@ export function MetabolicHealthSection() {
 
         <div className="mt-10 flex justify-center">
           <Link
-            href="/onboarding/inscription"
+            href="/auth/inscription"
             aria-label="Explorer notre approche santé complète — commencer l’évaluation"
             className="inline-flex items-center justify-center rounded-[10px] border border-[var(--teal)] bg-white px-6 py-3 text-[14px] font-semibold text-[var(--teal)] shadow-sm transition hover:bg-[var(--teal-light)] hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
           >

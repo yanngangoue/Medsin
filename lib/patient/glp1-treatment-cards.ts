@@ -6,7 +6,6 @@ export type Glp1TreatmentCard = {
   localImage?: boolean;
   /** Style image : produit (contain) ou portrait (cover doux). */
   variant: "product" | "lifestyle";
-  priceLine: string;
   title: string;
   description: string;
 };
@@ -20,7 +19,6 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
     imageAlt: "Boîte et stylo Ozempic sémaglutide",
     localImage: true,
     variant: "product",
-    priceLine: "À partir de 179 $/mois*",
     title: "Injection Ozempic®",
     description: "Sémaglutide · une injection par semaine.",
   },
@@ -31,7 +29,6 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
     imageAlt: "Boîte Wegovy sémaglutide pour la gestion du poids",
     localImage: true,
     variant: "product",
-    priceLine: "Sur évaluation médicale",
     title: "Wegovy®",
     description: "Perte de poids chez l'adulte en surpoids ou obèse.",
   },
@@ -42,7 +39,6 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=640&q=80&fit=crop",
     imageAlt: "Patiente souriante, accompagnée dans son parcours santé",
     variant: "lifestyle",
-    priceLine: "Inclus dans votre parcours",
     title: "Suivi MedSim",
     description: "Nutrition, objectifs et assistance 24/7.",
   },
@@ -53,7 +49,6 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
     imageAlt: "Stylo Mounjaro KwikPen tirzépatide",
     localImage: true,
     variant: "product",
-    priceLine: "Sur prescription",
     title: "Injection Mounjaro®",
     description: "Tirzépatide · double action GLP-1 et GIP.",
   },

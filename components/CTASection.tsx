@@ -11,7 +11,7 @@ export function CTASection() {
           Évaluation gratuite · Résultat en 24h · Annulation possible
         </p>
         <Link
-          href="/onboarding/inscription"
+          href="/auth/inscription"
           aria-label="Commencer mon évaluation médicale"
           className="mt-8 inline-flex h-[52px] items-center justify-center rounded-[8px] bg-white px-8 text-[15px] font-semibold text-[var(--teal-600)] shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
         >

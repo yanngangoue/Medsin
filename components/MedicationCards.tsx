@@ -25,7 +25,6 @@ export function MedicationCards() {
             <h3 className="mt-4 text-[18px] font-bold text-[var(--gray-900)]">
               Sémaglutide Injection
             </h3>
-            <p className="mt-2 text-[22px] font-bold text-[var(--teal-400)]">À partir de 179$/mois</p>
             <ul className="mt-5 flex flex-col gap-2 text-[14px] text-neutral-700">
               <li className="flex gap-2">
                 <span className="text-[var(--teal-400)]">✓</span> Injection hebdomadaire
@@ -41,7 +40,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/auth/inscription"
               aria-label="Commencer avec Sémaglutide injection"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] border border-neutral-300 bg-white text-[14px] font-semibold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50"
             >
@@ -59,7 +58,6 @@ export function MedicationCards() {
             <h3 className="mt-4 text-[18px] font-bold text-[var(--gray-900)]">
               Sémaglutide Comprimé
             </h3>
-            <p className="mt-2 text-[22px] font-bold text-[var(--teal-400)]">À partir de 249$/mois</p>
             <ul className="mt-5 flex flex-col gap-2 text-[14px] text-neutral-700">
               <li className="flex gap-2">
                 <span className="text-[var(--teal-400)]">✓</span> Comprimé quotidien (sans aiguille)
@@ -75,7 +73,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/auth/inscription"
               aria-label="Commencer avec Sémaglutide comprimé"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] bg-[var(--teal-400)] text-[14px] font-semibold text-white shadow-sm transition hover:opacity-95"
             >
@@ -88,7 +86,6 @@ export function MedicationCards() {
             <h3 className="mt-2 text-[18px] font-bold text-[var(--gray-900)]">
               Tirzépatide (Mounjaro)
             </h3>
-            <p className="mt-2 text-[22px] font-bold text-[var(--teal-400)]">Sur devis médical</p>
             <ul className="mt-5 flex flex-col gap-2 text-[14px] text-neutral-700">
               <li className="flex gap-2">
                 <span className="text-[var(--teal-400)]">✓</span> Double action GLP-1 + GIP
@@ -101,7 +98,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/auth/inscription"
               aria-label="Vérifier mon éligibilité au Tirzépatide"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] border border-neutral-300 bg-white text-[14px] font-semibold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50"
             >
@@ -111,7 +108,7 @@ export function MedicationCards() {
         </div>
 
         <p className="mx-auto mt-8 max-w-3xl text-center text-[12px] leading-relaxed text-neutral-500">
-          * Prix en dollars canadiens. Aucune assurance requise. Annulation possible en tout temps.
+          Prescription uniquement après évaluation médicale. Aucune assurance requise.
         </p>
       </div>
     </section>

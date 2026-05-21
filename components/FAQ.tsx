@@ -5,7 +5,7 @@ import { useState } from "react";
 const FAQ_ITEMS = [
   {
     q: "Est-ce que j'ai besoin d'une assurance ?",
-    a: "Non. Medsim est un service cash-pay avec tarifs transparents. Le prix mensuel inclut le médicament, la livraison et le suivi médical.",
+    a: "Non. Medsim est accessible sans assurance privée obligatoire. Votre parcours inclut le suivi médical, la livraison discrète et l'accompagnement essentiel.",
   },
   {
     q: "Combien de temps avant de voir des résultats ?",

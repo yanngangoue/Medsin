@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { GLP1_BENEFITS } from "@/lib/patient/glp1-content";
 
-const INSCRIPTION_HREF = "/onboarding/inscription?service=gestion-poids";
-const CALLBACK = "/onboarding/gestion-poids#commencer";
+const EVALUATION_HREF = "/onboarding/gestion-poids/evaluation";
+const INSCRIPTION_HREF = "/auth/inscription?service=gestion-poids";
+const CONNEXION_HREF = `/auth/connexion?callbackUrl=${encodeURIComponent(EVALUATION_HREF)}`;
 
 export function GestionPoidsStartSection() {
   const { status } = useSession();
@@ -25,8 +26,9 @@ export function GestionPoidsStartSection() {
           Commencer mon parcours GLP-1
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-center text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-          Créez votre dossier en quelques minutes. Un professionnel de santé examinera vos réponses avant
-          toute prescription.
+          {isAuthenticated
+            ? "Complétez l’évaluation GLP-1. Un professionnel examinera vos réponses avant toute prescription."
+            : "Créez un compte à l’accueil ou ici, puis complétez l’évaluation. Un professionnel examinera vos réponses."}
         </p>
 
         <ul className="mt-8 space-y-4">
@@ -46,25 +48,25 @@ export function GestionPoidsStartSection() {
             <p className="text-sm text-slate-500">Chargement…</p>
           ) : isAuthenticated ? (
             <Link
-              href="/onboarding/questionnaire"
+              href={EVALUATION_HREF}
               className="w-full max-w-md rounded-xl bg-[#1D9E75] px-8 py-4 text-center text-base font-semibold text-white shadow-lg transition hover:bg-[#178f6a] sm:text-lg"
             >
-              Continuer mon questionnaire
+              Commencer mon évaluation GLP-1
             </Link>
           ) : (
             <>
               <Link
-                href={INSCRIPTION_HREF}
+                href={EVALUATION_HREF}
                 className="w-full max-w-md rounded-xl bg-[#1D9E75] px-8 py-4 text-center text-base font-semibold text-white shadow-lg transition hover:bg-[#178f6a] sm:text-lg"
               >
-                Commencer — créer mon dossier
+                Commencer l&apos;évaluation
               </Link>
               <p className="text-center text-sm text-slate-500">
-                Déjà inscrit ?{" "}
-                <Link
-                  href={`/connexion?callbackUrl=${encodeURIComponent(CALLBACK)}`}
-                  className="font-medium text-[#1D9E75] underline-offset-2 hover:underline"
-                >
+                <Link href={INSCRIPTION_HREF} className="font-medium text-[#1D9E75] hover:underline">
+                  Créer un compte
+                </Link>
+                <span className="mx-2 text-slate-300">·</span>
+                <Link href={CONNEXION_HREF} className="font-medium text-[#1D9E75] hover:underline">
                   Se connecter
                 </Link>
               </p>

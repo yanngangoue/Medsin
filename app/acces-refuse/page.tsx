@@ -15,7 +15,7 @@ export default function AccesRefusePage() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
-            href="/connexion"
+            href="/auth/connexion"
             className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-medium text-slate-800 hover:bg-slate-50"
           >
             Connexion

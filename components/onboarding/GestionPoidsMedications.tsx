@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { GLP1_MEDICATIONS } from "@/lib/patient/glp1-content";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 
 export function GestionPoidsMedications() {
   return (
@@ -31,17 +31,19 @@ export function GestionPoidsMedications() {
               key={med.id}
               className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-black/5"
             >
-              <div className="relative aspect-[4/3] w-full bg-slate-50">
-                <Image
+              <div className="relative">
+                <HoverZoomImage
                   src={med.image}
                   alt={med.imageAlt}
                   fill
                   unoptimized={med.localImage}
-                  className={med.localImage ? "object-contain p-4" : "object-cover"}
+                  zoom="subtle"
+                  containerClassName="aspect-[4/3] w-full bg-slate-50"
+                  imageClassName={med.localImage ? "object-contain p-4" : "object-cover"}
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 {med.badge ? (
-                  <span className="absolute left-3 top-3 rounded-full bg-[#1D9E75] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-[#1D9E75] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                     {med.badge}
                   </span>
                 ) : null}

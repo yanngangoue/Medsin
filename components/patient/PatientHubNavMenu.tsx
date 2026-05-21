@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
+import { useSession } from "next-auth/react";
+import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
+import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
+import { PUBLIC_HERO_CTAS } from "@/lib/patient/patient-hub";
 
 type Props = {
   showAuthLinks?: boolean;
@@ -25,6 +29,8 @@ function MenuIcon() {
 
 export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }: Props) {
   const isLight = variant === "onLight";
+  const { data: session, status } = useSession();
+  const isPatient = session?.user?.role === "PATIENT";
   const [open, setOpen] = useState(false);
   const panelId = useId();
 
@@ -75,6 +81,12 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
               isLight ? "border-slate-200" : "border-white/10"
             }`}
           >
+            <div className="border-b border-slate-100 px-4 py-2.5">
+              <PartNavAccueilLink
+                onNavigate={() => setOpen(false)}
+                className="text-sm font-semibold text-[#1D9E75] hover:text-[var(--teal-900)]"
+              />
+            </div>
             <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
               Nos services
             </p>
@@ -100,21 +112,31 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
                 Contact
               </Link>
             </div>
-            {showAuthLinks ? (
+            {status === "authenticated" && isPatient ? (
               <div className="mt-1 border-t border-slate-100 pt-1">
                 <Link
-                  href="/connexion?callbackUrl=/"
+                  href={GLP1_PATIENT_DASHBOARD_PATH}
+                  onClick={() => setOpen(false)}
+                  className="block px-4 py-2.5 text-sm font-semibold text-[#1D9E75] hover:bg-slate-50"
+                >
+                  Mon espace patient
+                </Link>
+              </div>
+            ) : showAuthLinks ? (
+              <div className="mt-1 border-t border-slate-100 pt-1">
+                <Link
+                  href={PUBLIC_HERO_CTAS.login.href}
                   onClick={() => setOpen(false)}
                   className="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
                 >
-                  Connexion
+                  {PUBLIC_HERO_CTAS.login.label}
                 </Link>
                 <Link
-                  href="/onboarding/inscription"
+                  href={PUBLIC_HERO_CTAS.start.href}
                   onClick={() => setOpen(false)}
                   className="mx-3 mb-2 mt-1 block rounded-lg bg-[var(--teal-900)] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[var(--teal)]"
                 >
-                  Commencer
+                  {PUBLIC_HERO_CTAS.start.label}
                 </Link>
               </div>
             ) : null}

@@ -57,13 +57,14 @@ export function demoUpdateUserPasswordHash(userId: string, passwordHash: string)
 
 export function demoCreateUser(input: {
   prenom: string;
+  nom?: string;
   email: string;
   passwordHash: string;
 }): DemoUser {
   const email = normEmail(input.email);
   const user: DemoUser = {
     id: `demo_${crypto.randomUUID().replace(/-/g, "")}`,
-    prenom: input.prenom,
+    prenom: input.nom ? `${input.prenom} ${input.nom}`.trim() : input.prenom,
     email,
     passwordHash: input.passwordHash,
     role: "PATIENT",

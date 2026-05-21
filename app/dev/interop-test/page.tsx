@@ -11,7 +11,7 @@ export default async function DevInteropTestPage() {
   }
   const session = await auth();
   if (!session?.user?.id && !isPublicSiteMode()) {
-    redirect("/connexion?callbackUrl=/dev/interop-test");
+    redirect("/auth/connexion?callbackUrl=/dev/interop-test");
   }
   const userId = session?.user?.id ?? "demo_public_patient";
   const role = (session?.user?.role ?? "PATIENT") as Role;

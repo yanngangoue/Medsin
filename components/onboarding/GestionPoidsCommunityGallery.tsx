@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { GLP1_GALLERY_BULLETS, GLP1_GALLERY_COLUMNS } from "@/lib/patient/glp1-gallery";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 
 function GoldCheck() {
   return (
@@ -20,18 +20,16 @@ function PortraitTile({
   priority?: boolean;
 }) {
   return (
-    <div
-      className={`relative w-full overflow-hidden rounded-2xl bg-[#E8E4DF] shadow-sm ring-1 ring-black/[0.04] ${portrait.heightClass}`}
-    >
-      <Image
-        src={portrait.src}
-        alt={portrait.alt}
-        fill
-        className="object-cover object-center"
-        sizes="(max-width: 640px) 30vw, 180px"
-        priority={priority}
-      />
-    </div>
+    <HoverZoomImage
+      src={portrait.src}
+      alt={portrait.alt}
+      fill
+      zoom="strong"
+      sizes="(max-width: 640px) 30vw, 180px"
+      priority={priority}
+      containerClassName={`w-full rounded-2xl bg-[#E8E4DF] shadow-sm ring-1 ring-black/[0.04] ${portrait.heightClass}`}
+      imageClassName="object-cover object-center"
+    />
   );
 }
 
@@ -73,8 +71,7 @@ export function GestionPoidsCommunityGallery({ className = "" }: Props) {
       </div>
 
       <p className="mx-auto mt-4 max-w-md text-center text-[10px] leading-relaxed text-slate-400">
-        * Tarifs et admissibilité selon évaluation médicale. Simulation d&apos;éligibilité sans avis
-        médical sur MedSim.
+        Admissibilité selon évaluation médicale. Cette page ne remplace pas un avis médical.
       </p>
     </div>
   );

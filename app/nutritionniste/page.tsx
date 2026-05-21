@@ -7,7 +7,7 @@ import { isPublicSiteMode } from "@/lib/is-public-site";
 export default async function NutritionnisteDashboardPage() {
   const session = await auth();
   if (!isPublicSiteMode()) {
-    if (!session?.user) redirect("/connexion?callbackUrl=/nutritionniste");
+    if (!session?.user) redirect("/auth/connexion?callbackUrl=/nutritionniste");
     if (session.user.role !== "NUTRITIONNISTE") redirect("/acces-refuse");
   }
 

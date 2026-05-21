@@ -27,7 +27,7 @@ export function getServiceCtaHref(sectionId: string): string {
     case "repas-sante":
       return "/onboarding/repas-sante";
     default:
-      return "/onboarding/inscription";
+      return "/auth/inscription";
   }
 }
 

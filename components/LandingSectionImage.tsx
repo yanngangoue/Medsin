@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 
 type Aspect = "video" | "four-three";
 
@@ -21,18 +21,18 @@ export function LandingSectionImage({
 }: LandingSectionImageProps) {
   const aspectClass = aspect === "video" ? "aspect-video" : "aspect-[4/3]";
   return (
-    <div
-      className={`relative w-full overflow-hidden rounded-2xl shadow-sm shadow-slate-200/60 ring-0 ${aspectClass} ${className}`}
-    >
-      <Image
+    <div className={`relative w-full ${aspectClass} ${className}`}>
+      <HoverZoomImage
         src={src}
         alt={alt}
         fill
-        className="object-cover"
+        zoom="default"
+        containerClassName="h-full w-full rounded-2xl shadow-sm shadow-slate-200/60 ring-0"
+        imageClassName="object-cover"
         sizes="(max-width: 1024px) 100vw, 896px"
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-teal-600/12 via-transparent to-white/30"
+        className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-gradient-to-tr from-teal-600/12 via-transparent to-white/30"
         aria-hidden
       />
     </div>

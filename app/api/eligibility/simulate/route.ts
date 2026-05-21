@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { computeBmi, simulateGlp1Eligibility } from "@/lib/eligibility";
-import { getSessionPayload } from "@/lib/auth";
+import { getSessionUser } from "@/lib/session";
+import { unauthorized, badRequest } from "@/lib/api-errors";
 
 const schema = z.object({
   age: z.number().int(),
@@ -12,16 +13,12 @@ const schema = z.object({
 
 /** Simulation uniquement — pas d’avis médical. */
 export async function POST(req: Request) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
 
   const raw = await req.json().catch(() => null);
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
+  if (!parsed.success) return badRequest();
 
   const { age, weightKg, heightCm, medicalHistory } = parsed.data;
   const bmi = computeBmi(weightKg, heightCm);

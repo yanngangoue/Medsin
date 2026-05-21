@@ -7,7 +7,7 @@ import { isPublicSiteMode } from "@/lib/is-public-site";
 export default async function PharmacienDashboardPage() {
   const session = await auth();
   if (!isPublicSiteMode()) {
-    if (!session?.user) redirect("/connexion?callbackUrl=/pharmacien");
+    if (!session?.user) redirect("/auth/connexion?callbackUrl=/pharmacien");
     if (session.user.role !== "PHARMACIEN") redirect("/acces-refuse");
   }
 

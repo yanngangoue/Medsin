@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { MedsimLogo } from "@/components/MedsimLogo";
+import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { GestionPoidsCommunityGallery } from "@/components/onboarding/GestionPoidsCommunityGallery";
 import { GestionPoidsHowItWorks } from "@/components/onboarding/GestionPoidsHowItWorks";
 import { GestionPoidsScience } from "@/components/onboarding/GestionPoidsScience";
 import { GestionPoidsCommencerSection } from "@/components/onboarding/GestionPoidsCommencerSection";
+import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 
 export function GestionPoidsLanding() {
   return (
@@ -14,11 +16,16 @@ export function GestionPoidsLanding() {
       </div>
 
       <header className="border-b border-[#E8E0D8]/80 bg-[#F5F0EB]/95 px-4 py-3 backdrop-blur-sm sm:px-8">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <Link href="/" className="shrink-0">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 sm:gap-8">
+          <Link href={PUBLIC_CATALOG_HOME} className="shrink-0" aria-label="MedSim — accueil">
             <MedsimLogo className="text-xl" />
           </Link>
-          <nav className="hidden items-center gap-5 text-[10px] font-semibold uppercase tracking-wide text-slate-800 sm:flex sm:text-[11px]">
+          <PartNavAccueilLink className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-[#1D9E75] hover:text-[var(--teal-900)] sm:hidden" />
+          <nav
+            className="hidden flex-1 items-center justify-center gap-6 text-[10px] font-semibold uppercase tracking-wide text-slate-800 sm:flex sm:gap-10 sm:text-[11px]"
+            aria-label="Sections de la page"
+          >
+            <PartNavAccueilLink className="text-slate-800 hover:text-[#1D9E75]" />
             <a href="#galerie" className="hover:text-[#1D9E75]">
               Notre communauté
             </a>
@@ -28,24 +35,7 @@ export function GestionPoidsLanding() {
             <a href="#comment-ca-marche" className="hover:text-[#1D9E75]">
               Comment ça marche
             </a>
-            <a href="#commencer" className="hover:text-[#1D9E75]">
-              Commencer
-            </a>
           </nav>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href="/connexion?callbackUrl=/onboarding/gestion-poids"
-              className="text-sm font-medium text-slate-700 hover:text-[#1D9E75]"
-            >
-              Se connecter
-            </Link>
-            <a
-              href="#commencer"
-              className="rounded-md bg-[var(--teal-900)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
-            >
-              Commencer
-            </a>
-          </div>
         </div>
       </header>
 

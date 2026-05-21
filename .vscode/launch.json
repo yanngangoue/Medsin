@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node.js : script courant",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node.js : smoke Medsim",
+      "program": "${workspaceFolder}/scripts/smoke-medsim.mjs",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "env": {
+        "MEDSIM_SMOKE_BASE": "http://localhost:3001"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node.js : nettoyer .next",
+      "program": "${workspaceFolder}/scripts/clean-next.mjs",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node"
+    }
+  ]
+}

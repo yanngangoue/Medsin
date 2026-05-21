@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MedsimLogo } from "@/components/MedsimLogo";
+import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { RepasSanteCreateBox } from "@/components/onboarding/RepasSanteCreateBox";
 import { RepasSanteHowItWorks } from "@/components/onboarding/RepasSanteHowItWorks";
 import { REPAS_MEALS } from "@/lib/patient/repas-meals";
+import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 
 /** Assiettes du hero — collage type MEDVi (vue plongeante) */
 const HERO_PLATES = [
@@ -94,10 +96,12 @@ export function RepasSanteLanding() {
 
       <header className="border-b border-stone-200/80 bg-[#FAF7F4]/95 px-4 py-3 backdrop-blur-sm sm:px-8">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <Link href="/" className="shrink-0">
+          <Link href={PUBLIC_CATALOG_HOME} className="shrink-0">
             <MedsimLogo className="text-xl" />
           </Link>
+          <PartNavAccueilLink className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-[#D4845F] hover:text-[var(--teal-900)] sm:hidden" />
           <nav className="hidden items-center gap-5 text-[10px] font-semibold uppercase tracking-wide text-[#3D2E24] sm:flex sm:text-[11px]">
+            <PartNavAccueilLink className="text-[#3D2E24] hover:text-[#D4845F]" />
             <a href="#menu-semaine" className="hover:text-[#D4845F]">
               Menu de la semaine
             </a>
@@ -108,13 +112,13 @@ export function RepasSanteLanding() {
           </nav>
           <div className="flex items-center gap-3 sm:gap-4">
             <Link
-              href="/connexion?callbackUrl=/onboarding/repas-sante"
+              href="/auth/connexion?callbackUrl=/onboarding/repas-sante"
               className="text-sm font-medium text-[#3D2E24] hover:text-[#D4845F]"
             >
               Se connecter
             </Link>
             <Link
-              href="/onboarding/inscription?service=repas-sante"
+              href="/auth/inscription?service=repas-sante"
               className="rounded-md bg-[var(--teal-900)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
             >
               Inscrivez-vous

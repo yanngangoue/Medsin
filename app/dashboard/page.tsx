@@ -7,7 +7,7 @@ import { isPublicSiteMode } from "@/lib/is-public-site";
 export default async function DashboardLegacyRedirectPage() {
   const session = await auth();
   if (!session?.user) {
-    redirect(isPublicSiteMode() ? "/" : "/connexion?callbackUrl=/dashboard");
+    redirect(isPublicSiteMode() ? "/" : "/auth/connexion?callbackUrl=/dashboard");
   }
   redirect(defaultHomeForRole(session.user.role));
 }

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 import { getServiceCtaHref, type PatientServiceSection } from "@/lib/patient/service-sections";
 
 type Props = {
@@ -56,29 +56,27 @@ function SectionPhoto({
   const isProduct = variant === "product";
   const isLocalImage = src.startsWith("/");
 
+  const frameClass = isProduct
+    ? productFrameClass ?? "aspect-[4/3] bg-white"
+    : "aspect-[3/4] rounded-2xl bg-slate-100 shadow-sm";
+
+  const imgClass = isProduct
+    ? productCover
+      ? "object-cover object-center"
+      : "object-contain object-center"
+    : "object-cover object-center";
+
   return (
-    <div
-      className={`relative w-full overflow-hidden ${
-        isProduct
-          ? productFrameClass ?? "aspect-[4/3] bg-white"
-          : "aspect-[3/4] rounded-2xl bg-slate-100 shadow-sm"
-      }`}
-    >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        unoptimized={isLocalImage}
-        className={
-          isProduct
-            ? productCover
-              ? "object-cover object-center"
-              : "object-contain object-center"
-            : "object-cover object-center"
-        }
-        sizes={isProduct ? "(max-width: 640px) 100vw, 560px" : "(max-width: 640px) 50vw, 320px"}
-      />
-    </div>
+    <HoverZoomImage
+      src={src}
+      alt={alt}
+      fill
+      unoptimized={isLocalImage}
+      zoom={isProduct ? "subtle" : "default"}
+      containerClassName={`w-full ${frameClass}`}
+      imageClassName={imgClass}
+      sizes={isProduct ? "(max-width: 640px) 100vw, 560px" : "(max-width: 640px) 50vw, 320px"}
+    />
   );
 }
 

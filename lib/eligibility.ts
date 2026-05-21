@@ -73,3 +73,30 @@ export function simulateGlp1Eligibility(input: EligibilityInput): {
 
   return { status: EligibilityStatus.NOT_ELIGIBLE, labelFr: "Non éligible" };
 }
+
+/** Texte patient — simulation uniquement, pas un avis médical. */
+export function explainGlp1SimulationStatus(
+  status: EligibilityStatus,
+  bmi: number,
+  medicalHistory: string,
+): string | null {
+  if (status !== EligibilityStatus.NOT_ELIGIBLE) return null;
+
+  if (bmi > 27 && bmi <= 30 && !hasSimulatedWeightRelatedCondition(medicalHistory)) {
+    return (
+      "En simulation MedSim, l’admissibilité GLP-1 requiert un IMC supérieur à 30, ou un IMC supérieur à 27 " +
+      "avec une condition de santé associée au surpoids déclarée (ex. diabète, hypertension, apnée du sommeil). " +
+      "Votre IMC est dans la zone 27–30 sans condition de ce type dans vos réponses."
+    );
+  }
+
+  if (bmi > 0 && bmi <= 27) {
+    return (
+      "En simulation MedSim, les critères de démonstration ciblent un IMC supérieur à 30, " +
+      "ou supérieur à 27 avec une comorbidité déclarée. Votre IMC déclaré est de " +
+      `${bmi}.`
+    );
+  }
+
+  return "Selon les critères de simulation MedSim, ce profil n’est pas admissible automatiquement au parcours GLP-1.";
+}

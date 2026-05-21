@@ -1,6 +1,9 @@
 /**
  * Smoke test Medsim — pages publiques + parcours patient (mode démo).
  * Prérequis : `npm run dev` sur le port 3001.
+ *
+ * Exécution : node scripts/smoke-medsim.mjs
+ * Ou : npm run test:smoke
  */
 const BASE = process.env.MEDSIM_SMOKE_BASE ?? "http://localhost:3001";
 
@@ -47,16 +50,10 @@ async function main() {
   assert(home.status === 200, `Accueil: attendu 200, reçu ${home.status}`);
   const homeHtml = await home.text();
   assert(/Medsim|GLP-1/i.test(homeHtml), "Accueil: contenu Medsim absent");
-  console.log("✓ Page d'accueil (200, branding)");
-  passed++;
-
-  const home = await fetchJar(jar, `${BASE}/`);
-  assert(home.status === 200, `Accueil catalogue: attendu 200, reçu ${home.status}`);
-  const homeHtml = await home.text();
   assert(homeHtml.includes("Medsim"), "Accueil: shell Medsim absent");
   const homeLoc = home.headers.get("location") ?? "";
   assert(!homeLoc.includes("connexion"), `Accueil: ne doit pas rediriger vers connexion (${homeLoc})`);
-  console.log("✓ / affiche le catalogue services (page principale)");
+  console.log("✓ Page d'accueil (200, catalogue services)");
   passed++;
 
   const email = `smoke_${Date.now()}@medsim.test`;

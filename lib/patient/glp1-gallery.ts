@@ -59,7 +59,7 @@ export const GLP1_GALLERY_COLUMNS: readonly (readonly Glp1GalleryPortrait[])[] =
 
 export const GLP1_GALLERY_BULLETS = [
   "Pas d'abonnement surprise : votre parcours inclut le suivi médical et l'accompagnement essentiel.",
-  "À partir de 179 $/mois*, sans assurance obligatoire — livraison discrète incluse",
-  "Consultations diététiques et soutien en soins inclus dans votre dossier*",
-  "Certaines dépenses admissibles au compte HSA/FSA",
+  "Sans assurance obligatoire — livraison discrète incluse",
+  "Consultations diététiques et soutien en soins inclus dans votre dossier",
+  "Accompagnement encadré par des professionnels de santé licenciés",
 ] as const;

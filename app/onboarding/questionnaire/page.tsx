@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,6 +42,7 @@ const emptyForm: QuestionnaireFormValues = {
 
 export default function QuestionnairePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { status } = useSession();
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -58,20 +59,24 @@ export default function QuestionnairePage() {
   const values = watch();
 
   useEffect(() => {
+    if (searchParams.get("service") === "gestion-poids") {
+      router.replace("/onboarding/confirmation?service=gestion-poids");
+      return;
+    }
     if (isPublicSiteMode()) {
       reset(emptyForm);
       setMounted(true);
       return;
     }
     if (status === "unauthenticated") {
-      router.replace("/connexion");
+      router.replace("/auth/connexion");
       return;
     }
     if (status === "authenticated") {
       reset(emptyForm);
       setMounted(true);
     }
-  }, [status, reset, router]);
+  }, [status, reset, router, searchParams]);
 
   const poidsNum = Number(values.poidsKg.replace(",", "."));
   const tailleNum = Number(values.tailleCm.replace(",", "."));

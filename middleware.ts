@@ -1,38 +1,89 @@
 import { auth } from "./auth.edge";
-import { defaultHomeForRole, requiredRoleForPath } from "@/lib/rbac";
+import {
+  canAccessAdminPath,
+  defaultHomeForRole,
+  requiredRoleForPath,
+} from "@/lib/rbac";
 import { isPublicSiteMode } from "@/lib/is-public-site";
+import { isPublicAuthPath } from "@/lib/public-auth-paths";
+
+function loginRedirect(req: Request, pathname: string) {
+  if (pathname.startsWith("/api/")) {
+    return Response.json({ error: "Non authentifié" }, { status: 401 });
+  }
+  const login = new URL("/auth/connexion", req.url);
+  login.searchParams.set("callbackUrl", pathname);
+  return Response.redirect(login);
+}
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
 
-  if (isPublicSiteMode()) {
-    if (pathname.startsWith("/dashboard")) {
-      const dest = session?.user?.role ? defaultHomeForRole(session.user.role) : "/";
-      return Response.redirect(new URL(dest, req.url));
+  if (isPublicAuthPath(pathname)) return;
+
+  if (pathname.startsWith("/admin")) {
+    if (!session) return loginRedirect(req, pathname);
+    if (!canAccessAdminPath(session.user.role)) {
+      return Response.redirect(new URL("/acces-refuse", req.url));
+    }
+    if (pathname === "/admin" || pathname === "/admin/") {
+      return Response.redirect(new URL("/admin/dashboard", req.url));
     }
     return;
   }
 
-  if (pathname === "/" || pathname === "/patient" || pathname === "/patient/") return;
+  if (pathname.startsWith("/dashboard/patient")) {
+    if (!session) return loginRedirect(req, pathname);
+    if (session.user.role !== "PATIENT") {
+      return Response.redirect(new URL("/acces-refuse", req.url));
+    }
+    return;
+  }
+
+  if (!isPublicSiteMode()) {
+    if (!session) return loginRedirect(req, pathname);
+
+    if (pathname.startsWith("/dashboard")) {
+      if (pathname === "/dashboard" || pathname === "/dashboard/") {
+        return Response.redirect(new URL(defaultHomeForRole(session.user.role), req.url));
+      }
+      return;
+    }
+
+    const required = requiredRoleForPath(pathname);
+    if (required && session.user.role !== required) {
+      return Response.redirect(new URL("/acces-refuse", req.url));
+    }
+    return;
+  }
+
+  if (
+    pathname === "/" ||
+    pathname === "/patient" ||
+    pathname === "/patient/" ||
+    pathname.startsWith("/onboarding") ||
+    pathname === "/contact" ||
+    pathname.startsWith("/politique-") ||
+    pathname.startsWith("/conditions-") ||
+    pathname === "/conformite" ||
+    pathname === "/garantie"
+  ) {
+    return;
+  }
 
   if (pathname.startsWith("/dashboard")) {
-    if (!session) {
-      const login = new URL("/connexion", req.url);
-      login.searchParams.set("callbackUrl", pathname);
-      return Response.redirect(login);
+    if (!session) return loginRedirect(req, pathname);
+    if (pathname === "/dashboard" || pathname === "/dashboard/") {
+      return Response.redirect(new URL(defaultHomeForRole(session.user.role), req.url));
     }
-    return Response.redirect(new URL(defaultHomeForRole(session.user.role), req.url));
+    return;
   }
 
   const required = requiredRoleForPath(pathname);
   if (!required) return;
 
-  if (!session) {
-    const login = new URL("/connexion", req.url);
-    login.searchParams.set("callbackUrl", pathname);
-    return Response.redirect(login);
-  }
+  if (!session) return loginRedirect(req, pathname);
 
   if (session.user.role !== required) {
     return Response.redirect(new URL("/acces-refuse", req.url));
@@ -41,11 +92,6 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/patient/:path+",
-    "/pharmacien/:path*",
-    "/medecin/:path*",
-    "/nutritionniste/:path*",
-    "/admin/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

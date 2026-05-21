@@ -10,8 +10,8 @@ export default {
   /** Remplacé dans `auth.node` (Node) ; tableau vide pour Edge / typage NextAuthConfig. */
   providers: [],
   pages: {
-    signIn: "/connexion",
-    error: "/connexion",
+    signIn: "/auth/connexion",
+    error: "/auth/connexion",
   },
   cookies: {
     sessionToken: {

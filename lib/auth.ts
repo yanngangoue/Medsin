@@ -2,6 +2,7 @@ import { SignJWT } from "jose/jwt/sign";
 import { jwtVerify } from "jose/jwt/verify";
 import { cookies } from "next/headers";
 import type { User } from "@prisma/client";
+import { auth } from "@/auth";
 
 const COOKIE_NAME = "medsim_token";
 
@@ -62,8 +63,19 @@ export async function getTokenFromCookies(): Promise<string | null> {
   return jar.get(COOKIE_NAME)?.value ?? null;
 }
 
+/** Session API : JWT legacy puis NextAuth (parcours unifié). */
 export async function getSessionPayload(): Promise<JwtPayload | null> {
   const token = await getTokenFromCookies();
-  if (!token) return null;
-  return verifyToken(token);
+  if (token) {
+    const payload = await verifyToken(token);
+    if (payload) return payload;
+  }
+  const session = await auth();
+  if (session?.user?.id) {
+    return {
+      sub: session.user.id,
+      email: session.user.email ?? "",
+    };
+  }
+  return null;
 }
