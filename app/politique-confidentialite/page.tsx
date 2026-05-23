@@ -17,8 +17,8 @@ export default function PolitiqueConfidentialitePage() {
       <h2 className="pt-4 text-base font-semibold text-slate-900">Renseignements collectés</h2>
       <p>
         Nous pouvons collecter : identité et coordonnées, renseignements médicaux nécessaires à votre
-        parcours, données de navigation sur la plateforme, et informations liées aux commandes (ex. Repas
-        santé).
+        parcours, données de navigation sur la plateforme, et informations liées aux commandes Nutri+
+        (catalogue compléments).
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Utilisation</h2>
       <p>

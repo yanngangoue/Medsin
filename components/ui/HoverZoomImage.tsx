@@ -37,6 +37,8 @@ export function HoverZoomImage({
   className,
   ...imageProps
 }: Props) {
+  const isLocal = typeof imageProps.src === "string" && imageProps.src.startsWith("/");
+
   const mergedImageClass = [
     "transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none motion-reduce:hover:scale-100",
     imageClassName,
@@ -50,7 +52,7 @@ export function HoverZoomImage({
       className={`relative cursor-default overflow-hidden ${CONTAINER_HOVER_ZOOM[zoom]} ${groupHover ? GROUP_HOVER_ZOOM[zoom] : ""} ${containerClassName}`}
       data-hover-zoom=""
     >
-      <Image alt={alt} className={mergedImageClass} {...imageProps} />
+      <Image alt={alt} className={mergedImageClass} unoptimized={isLocal} {...imageProps} />
     </div>
   );
 }

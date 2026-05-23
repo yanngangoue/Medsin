@@ -2,16 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
-import { isPublicSiteMode } from "@/lib/is-public-site";
 
 export default async function PharmacienDashboardPage() {
   const session = await auth();
-  if (!isPublicSiteMode()) {
-    if (!session?.user) redirect("/auth/connexion?callbackUrl=/pharmacien");
-    if (session.user.role !== "PHARMACIEN") redirect("/acces-refuse");
-  }
+  if (!session?.user) redirect("/connexion?callbackUrl=/pharmacien");
+  if (session.user.role !== "PHARMACIEN") redirect("/acces-refuse");
 
-  const prenom = session?.user?.prenom ?? session?.user?.name ?? "Sophie";
+  const prenom = session.user.prenom ?? session.user.name ?? "—";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">

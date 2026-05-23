@@ -26,17 +26,17 @@ export function Navbar() {
         </Link>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
-            href="/patient"
+            href="/connexion"
             className="inline-flex h-10 items-center justify-center rounded-[10px] px-3 text-[14px] font-medium text-[var(--gray-900)] transition hover:bg-[var(--teal-light)] hover:opacity-95 sm:px-4"
           >
-            Nos services
+            Connexion
           </Link>
           <Link
-            href="/auth/inscription"
-            aria-label="Commencer votre parcours"
+            href="/onboarding/inscription"
+            aria-label="Commencer — 179 dollars par mois"
             className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-[10px] bg-[var(--teal)] px-3 text-[12px] font-bold text-white shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99] sm:px-4 sm:text-[14px]"
           >
-            Commencer
+            Commencer — 179$/mois
           </Link>
         </div>
       </div>

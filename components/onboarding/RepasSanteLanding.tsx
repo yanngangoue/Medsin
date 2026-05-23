@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MedsimLogo } from "@/components/MedsimLogo";
+import { OnboardingLandingHeaderMenu } from "@/components/onboarding/OnboardingLandingHeaderMenu";
 import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { RepasSanteCreateBox } from "@/components/onboarding/RepasSanteCreateBox";
 import { RepasSanteHowItWorks } from "@/components/onboarding/RepasSanteHowItWorks";
@@ -110,20 +111,17 @@ export function RepasSanteLanding() {
             </a>
             <span className="text-stone-400">FAQ</span>
           </nav>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href="/auth/connexion?callbackUrl=/onboarding/repas-sante"
-              className="text-sm font-medium text-[#3D2E24] hover:text-[#D4845F]"
-            >
-              Se connecter
-            </Link>
-            <Link
-              href="/auth/inscription?service=repas-sante"
-              className="rounded-md bg-[var(--teal-900)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
-            >
-              Inscrivez-vous
-            </Link>
-          </div>
+          <OnboardingLandingHeaderMenu
+            loginHref="/auth/connexion?callbackUrl=/onboarding/repas-sante"
+            signupHref="/auth/inscription?service=repas-sante"
+            textClass="text-[#3D2E24] hover:text-[#D4845F]"
+            accentHoverClass="hover:text-[#D4845F]"
+            navLinks={[
+              { href: "#menu-semaine", label: "Menu de la semaine" },
+              { href: "#comment-ca-marche", label: "Comment ça marche" },
+              { href: "#creer-votre-boite", label: "Créer votre boîte" },
+            ]}
+          />
         </div>
       </header>
 

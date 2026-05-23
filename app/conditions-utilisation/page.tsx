@@ -15,8 +15,8 @@ export default function ConditionsUtilisationPage() {
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Services</h2>
       <p>
-        MedSim propose des parcours de santé métabolique (gestion du poids, nutrition, repas santé)
-        encadrés par des professionnels et, le cas échéant, des partenaires tiers (restaurants).
+        MedSim propose des parcours de santé métabolique (gestion du poids, Nutri+, catalogue compléments)
+        encadrés par des professionnels et, le cas échéant, des partenaires tiers (fournisseurs nutrition).
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Compte utilisateur</h2>
       <p>

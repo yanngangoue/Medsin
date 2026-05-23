@@ -1,21 +1,33 @@
-import { auth } from "@/auth";
-import { PublicPatientCatalog } from "@/components/patient/PublicPatientCatalog";
-import { loadPatientHubContext } from "@/lib/patient/load-patient-hub-context";
+import { Navbar } from "@/components/Navbar";
+import { HeroSection } from "@/components/HeroSection";
+import { StatsBar } from "@/components/StatsBar";
+import { StepsOverview } from "@/components/StepsOverview";
+import { StepsDetail } from "@/components/StepsDetail";
+import { WhyMedsimSection } from "@/components/WhyMedsimSection";
+import { MetabolicHealthSection } from "@/components/MetabolicHealthSection";
+import { AIAssistantSection } from "@/components/AIAssistantSection";
+import { NutritionSection } from "@/components/NutritionSection";
+import { MetricsSection } from "@/components/MetricsSection";
+import { PolicySection } from "@/components/PolicySection";
+import { Footer } from "@/components/Footer";
 
-export default async function HomePage() {
-  const session = await auth();
-
-  if (session?.user?.role === "PATIENT" && session.user.id) {
-    const hubContext = await loadPatientHubContext(session.user.id);
-    return (
-      <PublicPatientCatalog
-        connectedPatient={{
-          prenom: session.user.prenom ?? session.user.name ?? "",
-          hubContext,
-        }}
-      />
-    );
-  }
-
-  return <PublicPatientCatalog />;
+export default function HomePage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-white">
+      <Navbar />
+      <main className="flex-1">
+        <HeroSection />
+        <StatsBar />
+        <StepsOverview />
+        <StepsDetail />
+        <WhyMedsimSection />
+        <MetabolicHealthSection />
+        <AIAssistantSection />
+        <NutritionSection />
+        <MetricsSection />
+        <PolicySection />
+      </main>
+      <Footer />
+    </div>
+  );
 }

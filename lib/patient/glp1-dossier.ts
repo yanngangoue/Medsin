@@ -12,7 +12,6 @@ import {
   GLP1_HEART_RATE_OPTIONS,
   MONTHS_FR,
   type Glp1EligibilityAnswers,
-  type Glp1YesNo,
 } from "@/lib/patient/glp1-eligibility-questions";
 import { GLP1_WEIGHT_GOAL_OPTIONS } from "@/lib/patient/glp1-weight-goal";
 import { formatGlp1EligibilitySummary } from "@/lib/patient/glp1-eligibility-summary";
@@ -53,9 +52,12 @@ export const glp1AnswersSchema = z.object({
 const ALL_HEALTH = [...GLP1_HEALTH_1, ...GLP1_HEALTH_2, ...GLP1_HEALTH_3];
 
 function healthIdsToLabels(ids: string[]): string[] {
-  return ids
-    .map((id) => ALL_HEALTH.find((h) => h.id === id)?.label)
-    .filter((x): x is string => Boolean(x));
+  const labels: string[] = [];
+  for (const id of ids) {
+    const label = ALL_HEALTH.find((h) => h.id === id)?.label;
+    if (label) labels.push(label);
+  }
+  return labels;
 }
 
 export function glp1AnswersToMedicalHistory(answers: Glp1EligibilityAnswers): string {
@@ -91,12 +93,13 @@ export function glp1RequiresMedicalReview(answers: Glp1EligibilityAnswers): bool
   const h1 = answers.health1 ?? [];
   if (h1.some((id) => id !== GLP1_HEALTH_NONE_IDS.health1)) return true;
 
-  const flags: Glp1YesNo[] = [
-    answers.opioids3Months,
-    answers.bariatricSurgery,
-    answers.prescriptionMeds,
-  ];
-  if (flags.includes("oui")) return true;
+  if (
+    answers.opioids3Months === "oui" ||
+    answers.bariatricSurgery === "oui" ||
+    answers.prescriptionMeds === "oui"
+  ) {
+    return true;
+  }
   if (answers.bloodPressure === "stage2") return true;
   if (answers.restingHeartRate === "fast") return true;
 
@@ -233,7 +236,7 @@ export async function persistGlp1Dossier(
       heightCm,
       bmi,
       medicalHistory,
-      eligibility: status,
+      eligibility: "MEDICAL_REVIEW_REQUIRED",
       onboardingDone: true,
       healthInfo: extendedHealthInfo as unknown as Prisma.InputJsonValue,
     },
@@ -245,10 +248,31 @@ export async function persistGlp1Dossier(
       heightCm,
       bmi,
       medicalHistory,
-      eligibility: status,
+      eligibility: "MEDICAL_REVIEW_REQUIRED",
       onboardingDone: true,
       healthInfo: extendedHealthInfo as unknown as Prisma.InputJsonValue,
       ...(displayName ? { fullName: displayName } : {}),
+    },
+  });
+
+  const questionnaire = await prisma.questionnaire.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+
+  const suggestionText =
+    `Suggestion système (non médicale) : ${labelFr}. ` +
+    `Basée sur IMC ${bmi.toFixed(1)} et critères déclaratifs uniquement. ` +
+    `Simulation : ${status}. Décision finale : médecin.`;
+
+  await prisma.dossierGlp1.create({
+    data: {
+      patientId: userId,
+      questionnaireId: questionnaire?.id ?? null,
+      status: "EN_ATTENTE_MEDECIN",
+      suggestionImc: bmi,
+      suggestionEligibilite: suggestionText,
+      healthInfoSnapshot: extendedHealthInfo as unknown as Prisma.InputJsonValue,
     },
   });
 

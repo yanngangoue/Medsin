@@ -76,18 +76,18 @@ export function HeroSection() {
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Link
-              href="/auth/inscription"
+              href="/onboarding/inscription"
               aria-label="Commencer mon évaluation médicale"
               className="inline-flex h-[52px] items-center justify-center rounded-[10px] bg-[var(--teal)] px-8 text-[15px] font-bold text-white shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
             >
               Commencer mon évaluation →
             </Link>
             <Link
-              href="/patient"
-              aria-label="Voir nos services"
+              href="/connexion"
+              aria-label="J'ai déjà un compte"
               className="inline-flex h-[52px] items-center justify-center rounded-[10px] border border-[var(--border-soft)] bg-white px-8 text-[15px] font-bold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50 hover:[transform:scale(1.02)] active:scale-[0.99]"
             >
-              Voir nos services
+              J&apos;ai déjà un compte
             </Link>
           </div>
 

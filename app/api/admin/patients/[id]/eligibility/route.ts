@@ -26,15 +26,33 @@ export async function PATCH(req: Request, { params }: Params) {
   });
   if (!patient) return badRequest("Patient introuvable");
 
+  const existingProfile = await prisma.patientProfile.findUnique({
+    where: { userId: id },
+    select: { eligibility: true },
+  });
+  const oldStatus = existingProfile?.eligibility ?? "PENDING";
+
   const profile = await prisma.patientProfile.upsert({
     where: { userId: id },
     create: {
       userId: id,
-      fullName: "",
+      fullName: patient.prenom || patient.name || "",
       eligibility: parsed.data.status,
     },
     update: { eligibility: parsed.data.status },
   });
+
+  if (oldStatus !== parsed.data.status || parsed.data.note) {
+    await prisma.eligibilityHistory.create({
+      data: {
+        patientId: id,
+        changedById: user.id,
+        oldStatus,
+        newStatus: parsed.data.status,
+        note: parsed.data.note ?? null,
+      },
+    });
+  }
 
   let kind: ClinicalDecisionKind = kindFromEligibility(parsed.data.status);
   if (parsed.data.issuePrescription && parsed.data.status === "ELIGIBLE") {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { glp1PatientServiceHref } from "@/lib/patient/glp1-flow-routes";
 import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
-import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
+import { getServiceLandingPath } from "@/lib/patient/service-landing-paths";
 
 const ICONS: Record<string, string> = {
   "gestion-poids": "⚖️",
@@ -28,9 +28,7 @@ export function PatientSpaceServices({ highlightGlp1 = true, hasGlp1Dossier = fa
           const isGlp1 = card.id === "gestion-poids";
           const href = isGlp1
             ? glp1PatientServiceHref(hasGlp1Dossier)
-            : card.href.startsWith("#")
-              ? `${PUBLIC_CATALOG_HOME}${card.href}`
-              : card.href;
+            : getServiceLandingPath(card.id);
           return (
             <li key={card.id}>
               <Link

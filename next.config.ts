@@ -11,11 +11,8 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/login", destination: "/auth/connexion", permanent: false },
-      { source: "/register", destination: "/auth/inscription", permanent: false },
-      { source: "/connexion", destination: "/auth/connexion", permanent: false },
-      { source: "/patient", destination: "/", permanent: false },
-      { source: "/patient/", destination: "/", permanent: false },
+      { source: "/login", destination: "/connexion", permanent: false },
+      { source: "/register", destination: "/onboarding/inscription", permanent: false },
     ];
   },
 };

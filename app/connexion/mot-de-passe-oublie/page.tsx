@@ -84,7 +84,7 @@ function ForgotPasswordForm() {
               </p>
             )}
             <Link
-              href="/auth/connexion"
+              href="/connexion"
               className="mt-8 inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#1D9E75] text-sm font-semibold text-white hover:opacity-95"
             >
               Retour à la connexion
@@ -122,7 +122,7 @@ function ForgotPasswordForm() {
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-600">
-            <Link href="/auth/connexion" className="font-medium text-[#1D9E75] hover:underline">
+            <Link href="/connexion" className="font-medium text-[#1D9E75] hover:underline">
               Retour à la connexion
             </Link>
           </p>

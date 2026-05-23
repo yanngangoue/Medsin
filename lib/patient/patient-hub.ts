@@ -3,6 +3,7 @@ import {
   GLP1_EVALUATION_PATH,
   GLP1_PATIENT_DOSSIER_PATH,
 } from "@/lib/patient/glp1-flow-routes";
+import { getServiceSectionAnchor } from "@/lib/patient/service-landing-paths";
 import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
 
 export type PatientHubServiceId = (typeof PATIENT_SERVICE_CARDS)[number]["id"];
@@ -11,6 +12,7 @@ export type PatientHubContext = {
   hasQuestionnaire: boolean;
   eligibility: EligibilityStatus;
   hasGlp1Dossier?: boolean;
+  hasNutriPlusDossier?: boolean;
 };
 
 export type PatientHubServiceAction = {
@@ -45,22 +47,15 @@ export function getPatientHubServiceAction(
         href: GLP1_EVALUATION_PATH,
       };
     case "nutri-plus":
-      if (!ctx.hasQuestionnaire) {
-        return {
-          statusLabel: "Profil incomplet",
-          ctaLabel: "Compléter le questionnaire",
-          href: "/onboarding/questionnaire",
-        };
-      }
       return {
-        statusLabel: "Actif",
-        ctaLabel: "Explorer Nutri +",
-        href: "/onboarding/questionnaire",
+        statusLabel: ctx.hasNutriPlusDossier ? "Actif" : "Découverte",
+        ctaLabel: "Découvrir Nutri+",
+        href: "/onboarding/nutri-plus",
       };
     case "repas-sante":
       return {
-        statusLabel: ctx.hasQuestionnaire ? "Disponible" : "Découverte",
-        ctaLabel: "Continuer Repas santé",
+        statusLabel: "Commande",
+        ctaLabel: "Composer ma boîte repas",
         href: "/onboarding/repas-sante",
       };
     default:
@@ -75,7 +70,7 @@ export function getPatientHubServiceAction(
 export function buildPatientHubActions(ctx: PatientHubContext) {
   return PATIENT_SERVICE_CARDS.map((card) => ({
     ...card,
-    discoverHref: card.href.startsWith("#") ? `/${card.href}` : card.href,
+    discoverHref: getServiceSectionAnchor(card.id),
     action: getPatientHubServiceAction(card.id, ctx),
   }));
 }

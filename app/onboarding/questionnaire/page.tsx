@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,6 @@ import {
   type QuestionnaireFormValues,
 } from "@/lib/schemas/questionnaire";
 import { computeBmi } from "@/lib/eligibility";
-import { isPublicSiteMode } from "@/lib/is-public-site";
 
 const STEPS = 5;
 
@@ -42,7 +41,6 @@ const emptyForm: QuestionnaireFormValues = {
 
 export default function QuestionnairePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { status } = useSession();
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -59,24 +57,15 @@ export default function QuestionnairePage() {
   const values = watch();
 
   useEffect(() => {
-    if (searchParams.get("service") === "gestion-poids") {
-      router.replace("/onboarding/confirmation?service=gestion-poids");
-      return;
-    }
-    if (isPublicSiteMode()) {
-      reset(emptyForm);
-      setMounted(true);
-      return;
-    }
     if (status === "unauthenticated") {
-      router.replace("/auth/connexion");
+      router.replace("/connexion");
       return;
     }
     if (status === "authenticated") {
       reset(emptyForm);
       setMounted(true);
     }
-  }, [status, reset, router, searchParams]);
+  }, [status, reset, router]);
 
   const poidsNum = Number(values.poidsKg.replace(",", "."));
   const tailleNum = Number(values.tailleCm.replace(",", "."));

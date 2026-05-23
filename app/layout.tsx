@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MedSim — Nos services",
+  title: "Medsim — Perte de poids GLP-1",
   description:
-    "Gestion de poids, Nutri + et repas santé. Plateforme canadienne de santé métabolique encadrée.",
+    "Consultations en ligne et parcours personnalisé. Aucune ordonnance réelle sur cette version.",
 };
 
 export default function RootLayout({

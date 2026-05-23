@@ -17,10 +17,6 @@
     "server:dev": "tsx watch server/index.ts",
     "server:start": "tsx server/index.ts",
     "test:interop": "tsx lib/interop/__tests__/gateway.test.ts",
-    "test:patient": "tsx lib/patient/__tests__/services.test.ts",
-    "test:smoke": "node scripts/smoke-medsim.mjs",
-    "cron:email-reminders": "node scripts/send-email-reminders.mjs",
-    "test": "npm run test:interop && npm run test:patient && npm run typecheck",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function OnboardingIndexPage() {
-  redirect("/auth/inscription");
+  redirect("/onboarding/inscription");
 }

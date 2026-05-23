@@ -1,127 +1,116 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { isStaffRole } from "@/lib/session";
+import { getAdminStats, getRecentPatients, getRecentUnreadMessages } from "@/lib/admin/stats";
 import { buildAdminPatientsWhere } from "@/lib/admin/patient-filters";
+import { prisma } from "@/lib/prisma";
+import { StatCard } from "@/components/admin/StatCard";
+import { EligibilityBadge } from "@/components/admin/EligibilityBadge";
 
 export default async function AdminDashboardPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/admin/dashboard");
-  if (!isStaffRole(session.user.role)) redirect("/acces-refuse");
-
-  const glp1QueueWhere = buildAdminPatientsWhere(null, "a_revoir", false);
-  const upcomingVisioWhere = {
-    status: "SCHEDULED" as const,
-    scheduledAt: { gte: new Date(Date.now() - 2 * 60 * 60 * 1000) },
-  };
-
-  const [totalPatients, eligible, review, pending, glp1Queue, upcomingVisio] =
-    await Promise.all([
-      prisma.user.count({ where: { role: "PATIENT" } }),
-      prisma.patientProfile.count({ where: { eligibility: "ELIGIBLE" } }),
-      prisma.patientProfile.count({ where: { eligibility: "MEDICAL_REVIEW_REQUIRED" } }),
-      prisma.patientProfile.count({ where: { eligibility: "PENDING" } }),
-      prisma.user.count({ where: glp1QueueWhere }),
-      prisma.appointment.count({ where: upcomingVisioWhere }),
-    ]);
-
-  const isDoctor = session.user.role === "MEDECIN";
+  const [stats, recentPatients, recentMessages, reviewCount] = await Promise.all([
+    getAdminStats(),
+    getRecentPatients(5),
+    getRecentUnreadMessages(5),
+    prisma.user.count({ where: buildAdminPatientsWhere(null, "a_revoir", false) }),
+  ]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="border-b border-slate-200 bg-white px-4 py-4 sm:px-8">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#16a34a]">
-              {isDoctor ? "Espace médecin" : "Back-office"}
-            </p>
-            <h1 className="text-xl font-semibold text-slate-900">
-              Tableau de bord — {session.user.prenom ?? session.user.name}
-            </h1>
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <h1 className="text-2xl font-bold text-slate-900">Tableau de bord</h1>
+      <p className="mt-1 text-sm text-slate-600">Vue d&apos;ensemble — parcours GLP-1</p>
+
+      {reviewCount > 0 ? (
+        <Link
+          href="/admin/patients?queue=a_revoir"
+          className="mt-6 block rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm hover:border-amber-300"
+        >
+          <p className="text-xs font-semibold uppercase text-amber-800">Alertes</p>
+          <p className="mt-1 text-lg font-bold text-amber-950">
+            {reviewCount} patient(s) en attente de révision médicale
+          </p>
+        </Link>
+      ) : null}
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Patients inscrits" value={stats.totalPatients} icon="👥" />
+        <StatCard label="Éligibles GLP-1" value={stats.eligible} icon="✅" />
+        <StatCard
+          label="Revue médicale"
+          value={stats.pendingReview}
+          icon="🔍"
+          accent="amber"
+        />
+        <StatCard
+          label="Messages non lus"
+          value={stats.unreadMessages}
+          icon="💬"
+          accent="slate"
+        />
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-slate-900">Derniers patients</h2>
+            <Link href="/admin/patients" className="text-sm text-[#16a34a] hover:underline">
+              Voir tout
+            </Link>
           </div>
-          <Link
-            href="/admin/patients"
-            className="rounded-lg bg-[#16a34a] px-4 py-2 text-sm font-semibold text-white"
-          >
-            Liste patients
-          </Link>
-        </div>
-      </header>
+          <table className="mt-4 w-full text-left text-sm">
+            <thead className="text-xs uppercase text-slate-500">
+              <tr>
+                <th className="pb-2">Nom</th>
+                <th className="pb-2">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentPatients.map((p) => (
+                <tr key={p.id} className="border-t border-slate-100">
+                  <td className="py-2">
+                    <Link
+                      href={`/admin/patients/${p.id}`}
+                      className="font-medium text-[#16a34a] hover:underline"
+                    >
+                      {p.name}
+                    </Link>
+                  </td>
+                  <td className="py-2">
+                    <EligibilityBadge status={p.eligibility} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
-        {glp1Queue > 0 ? (
-          <Link
-            href="/admin/patients?queue=a_revoir"
-            className="mb-6 block rounded-2xl border border-amber-200 bg-amber-50/80 p-5 transition hover:border-amber-300 hover:bg-amber-50"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">
-              File à revoir — GLP-1
-            </p>
-            <p className="mt-1 text-2xl font-bold text-amber-950">{glp1Queue}</p>
-            <p className="mt-1 text-sm text-amber-900/80">
-              Dossiers avec évaluation soumise en attente de décision clinique
-            </p>
-          </Link>
-        ) : null}
-
-        {upcomingVisio > 0 ? (
-          <Link
-            href="/admin/teleconsultations"
-            className="mb-6 block rounded-2xl border border-[#C8E6D9] bg-[#F0FBF7] p-5 transition hover:border-[#1D9E75]/40"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#1D9E75]">
-              Consultations vidéo
-            </p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{upcomingVisio}</p>
-            <p className="mt-1 text-sm text-slate-600">
-              Rendez-vous à venir — rejoindre la salle avec le patient
-            </p>
-          </Link>
-        ) : null}
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard label="Patients" value={totalPatients} />
-          <StatCard label="Éligibles" value={eligible} />
-          <StatCard label="Revue médicale" value={review} />
-          <StatCard label="En attente" value={pending} />
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/admin/patients?queue=a_revoir"
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50"
-          >
-            À revoir (GLP-1)
-          </Link>
-          <Link
-            href="/admin/patients?glp1=1"
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50"
-          >
-            Tous avec éval. GLP-1
-          </Link>
-          <Link
-            href="/admin/teleconsultations"
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50"
-          >
-            Téléconsultations
-          </Link>
-        </div>
-
-        <p className="mt-8 text-sm text-slate-500">
-          Rôle connecté : {session.user.role}. Ouvrez un dossier pour lire les réponses patient et
-          valider l&apos;éligibilité.
-        </p>
-      </main>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-slate-900">Messages non lus</h2>
+            <Link href="/admin/messages" className="text-sm text-[#16a34a] hover:underline">
+              Centre messages
+            </Link>
+          </div>
+          <ul className="mt-4 space-y-3">
+            {recentMessages.length === 0 ? (
+              <li className="text-sm text-slate-500">Aucun message non lu.</li>
+            ) : (
+              recentMessages.map((m) => (
+                <li key={m.id} className="border-t border-slate-100 pt-3 first:border-0 first:pt-0">
+                  <Link
+                    href={`/admin/patients/${m.patient.id}`}
+                    className="font-medium text-slate-900 hover:text-[#16a34a]"
+                  >
+                    {m.patient.name}
+                  </Link>
+                  <p className="mt-0.5 line-clamp-2 text-sm text-slate-600">{m.content}</p>
+                  <p className="text-xs text-slate-400">
+                    {new Date(m.createdAt).toLocaleString("fr-CA")}
+                  </p>
+                </li>
+              ))
+            )}
+          </ul>
+        </section>
+      </div>
     </div>
   );
 }

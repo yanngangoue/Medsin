@@ -81,13 +81,10 @@ export const { handlers, signIn, signOut } = NextAuth({
           ipAddress: ip,
         });
 
-        const displayName = user.name
-          ? `${user.prenom} ${user.name}`.trim()
-          : user.prenom;
         return {
           id: user.id,
           email: user.email,
-          name: displayName,
+          name: user.prenom,
           prenom: user.prenom,
           role: user.role,
         };

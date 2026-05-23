@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Glp1EvaluationEntryCta } from "@/components/onboarding/Glp1EvaluationEntryCta";
 
 const ICON_COLOR = "#1D9E75";
 
@@ -100,14 +100,14 @@ export function GestionPoidsHowItWorks() {
           ))}
         </div>
 
-        <p className="mt-10 text-center sm:mt-12">
-          <Link
-            href="/onboarding/gestion-poids/evaluation"
+        <div className="mt-10 flex justify-center sm:mt-12">
+          <Glp1EvaluationEntryCta
             className="inline-flex items-center justify-center rounded-full bg-[var(--teal-900)] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[var(--teal)]"
+            showGuestLinks={false}
           >
             Commencer mon évaluation
-          </Link>
-        </p>
+          </Glp1EvaluationEntryCta>
+        </div>
       </div>
     </section>
   );

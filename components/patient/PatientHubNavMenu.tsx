@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { useSession } from "next-auth/react";
+import { SignOutButton } from "@/components/role-portal/SignOutButton";
 import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
 import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
+import { getServiceSectionHref } from "@/lib/patient/service-landing-paths";
+import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 import { PUBLIC_HERO_CTAS } from "@/lib/patient/patient-hub";
 
@@ -94,7 +97,7 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
               {PATIENT_SERVICE_CARDS.map((service) => (
                 <li key={service.id}>
                   <Link
-                    href={service.href}
+                    href={getServiceSectionHref(service.id, PUBLIC_CATALOG_HOME)}
                     onClick={() => setOpen(false)}
                     className="block px-4 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-50"
                   >
@@ -121,6 +124,14 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
                 >
                   Mon espace patient
                 </Link>
+              </div>
+            ) : null}
+            {status === "authenticated" ? (
+              <div className="border-t border-slate-100 px-4 py-3">
+                <SignOutButton
+                  callbackUrl={PUBLIC_CATALOG_HOME}
+                  className="w-full rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                />
               </div>
             ) : showAuthLinks ? (
               <div className="mt-1 border-t border-slate-100 pt-1">

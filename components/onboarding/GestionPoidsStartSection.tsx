@@ -1,17 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { GLP1_BENEFITS } from "@/lib/patient/glp1-content";
-
-const EVALUATION_HREF = "/onboarding/gestion-poids/evaluation";
-const INSCRIPTION_HREF = "/auth/inscription?service=gestion-poids";
-const CONNEXION_HREF = `/auth/connexion?callbackUrl=${encodeURIComponent(EVALUATION_HREF)}`;
+import { Glp1EvaluationEntryCta } from "@/components/onboarding/Glp1EvaluationEntryCta";
 
 export function GestionPoidsStartSection() {
-  const { status } = useSession();
-  const isAuthenticated = status === "authenticated";
-
   return (
     <section
       id="commencer"
@@ -26,9 +18,8 @@ export function GestionPoidsStartSection() {
           Commencer mon parcours GLP-1
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-center text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-          {isAuthenticated
-            ? "Complétez l’évaluation GLP-1. Un professionnel examinera vos réponses avant toute prescription."
-            : "Créez un compte à l’accueil ou ici, puis complétez l’évaluation. Un professionnel examinera vos réponses."}
+          Parcourez librement cette page. Pour démarrer l&apos;évaluation, connectez-vous à votre
+          compte patient — vous accéderez ensuite au questionnaire et à votre espace de suivi.
         </p>
 
         <ul className="mt-8 space-y-4">
@@ -43,35 +34,10 @@ export function GestionPoidsStartSection() {
           ))}
         </ul>
 
-        <div className="mt-10 flex flex-col items-center gap-4">
-          {status === "loading" ? (
-            <p className="text-sm text-slate-500">Chargement…</p>
-          ) : isAuthenticated ? (
-            <Link
-              href={EVALUATION_HREF}
-              className="w-full max-w-md rounded-xl bg-[#1D9E75] px-8 py-4 text-center text-base font-semibold text-white shadow-lg transition hover:bg-[#178f6a] sm:text-lg"
-            >
-              Commencer mon évaluation GLP-1
-            </Link>
-          ) : (
-            <>
-              <Link
-                href={EVALUATION_HREF}
-                className="w-full max-w-md rounded-xl bg-[#1D9E75] px-8 py-4 text-center text-base font-semibold text-white shadow-lg transition hover:bg-[#178f6a] sm:text-lg"
-              >
-                Commencer l&apos;évaluation
-              </Link>
-              <p className="text-center text-sm text-slate-500">
-                <Link href={INSCRIPTION_HREF} className="font-medium text-[#1D9E75] hover:underline">
-                  Créer un compte
-                </Link>
-                <span className="mx-2 text-slate-300">·</span>
-                <Link href={CONNEXION_HREF} className="font-medium text-[#1D9E75] hover:underline">
-                  Se connecter
-                </Link>
-              </p>
-            </>
-          )}
+        <div className="mt-10">
+          <Glp1EvaluationEntryCta
+            className="mx-auto block w-full max-w-md rounded-xl bg-[#1D9E75] px-8 py-4 text-center text-base font-semibold text-white shadow-lg transition hover:bg-[#178f6a] sm:text-lg"
+          />
         </div>
 
         <p className="mx-auto mt-6 max-w-md text-center text-[11px] leading-relaxed text-slate-400">

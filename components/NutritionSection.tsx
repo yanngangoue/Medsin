@@ -87,7 +87,7 @@ export function NutritionSection() {
 
         <div className="mt-10 flex justify-center">
           <Link
-            href="/auth/inscription"
+            href="/onboarding/inscription"
             aria-label="Recevoir mon plan nutritionnel personnalisé — démarrer l’évaluation"
             className="inline-flex items-center justify-center rounded-[10px] bg-[var(--teal)] px-6 py-3 text-[14px] font-semibold text-white shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
           >

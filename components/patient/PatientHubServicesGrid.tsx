@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 import type { buildPatientHubActions } from "@/lib/patient/patient-hub";
+import { getServiceSectionAnchor } from "@/lib/patient/service-landing-paths";
 
 type HubItem = ReturnType<typeof buildPatientHubActions>[number];
 
@@ -8,6 +9,8 @@ type Props = {
   services: HubItem[];
   /** Cartes publiques : lien « Découvrir » ; hub connecté : statut + action */
   mode: "public" | "connected";
+  /** Accueil : cartes → sections détaillées (#gestion-poids, etc.) */
+  useSectionAnchors?: boolean;
 };
 
 function ArrowIcon() {
@@ -24,12 +27,16 @@ function ArrowIcon() {
   );
 }
 
-export function PatientHubServicesGrid({ services, mode }: Props) {
+export function PatientHubServicesGrid({ services, mode, useSectionAnchors = false }: Props) {
   return (
     <ul className="relative z-10 mt-8 grid gap-4 sm:mt-10 sm:grid-cols-3 sm:gap-5">
       {services.map((service) => {
         const isLocalImage = service.image.startsWith("/");
-        const href = mode === "public" ? service.discoverHref : service.action.href;
+        const href = useSectionAnchors
+          ? getServiceSectionAnchor(service.id)
+          : mode === "public"
+            ? service.discoverHref
+            : service.action.href;
         const footerLabel =
           mode === "public" ? "Découvrir" : service.action.ctaLabel;
 

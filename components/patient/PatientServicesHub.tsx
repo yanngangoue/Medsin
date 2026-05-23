@@ -21,6 +21,8 @@ type Props = {
   hubContext?: PatientHubContext;
   /** Nav déjà affichée au-dessus (accueil connecté) */
   hideTopNav?: boolean;
+  /** Cartes → scroll vers les sections détaillées sur l’accueil */
+  useSectionAnchors?: boolean;
 };
 
 export function PatientServicesHub({
@@ -29,6 +31,7 @@ export function PatientServicesHub({
   variant = "public",
   hubContext = { hasQuestionnaire: false, eligibility: "PENDING" },
   hideTopNav = false,
+  useSectionAnchors = false,
 }: Props) {
   const isConnected = variant === "connected";
   const services = buildPatientHubActions(hubContext);
@@ -78,7 +81,7 @@ export function PatientServicesHub({
                   </Link>
                   <SignOutButton
                     callbackUrl={PUBLIC_CATALOG_HOME}
-                    className="text-sm font-medium text-white/90 hover:text-white"
+                    className="hidden text-sm font-medium text-white/90 hover:text-white sm:inline"
                   />
                 </>
               ) : null}
@@ -121,7 +124,7 @@ export function PatientServicesHub({
               Mon espace patient
             </Link>
             <Link
-              href="#nutri-plus"
+              href="#patient-services-hub"
               className="inline-flex h-12 items-center justify-center rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
             >
               Explorer les services
@@ -130,23 +133,21 @@ export function PatientServicesHub({
         ) : null}
 
         {!isConnected ? (
-          <div className="relative z-10 mx-auto mt-6 flex max-w-md flex-col gap-3 sm:mt-8 sm:max-w-lg sm:flex-row sm:justify-center">
+          <div className="relative z-10 mx-auto mt-6 flex max-w-md justify-center sm:mt-8 sm:max-w-lg">
             <Link
               href={PUBLIC_HERO_CTAS.start.href}
               className="inline-flex h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-[var(--teal-900)] shadow-md transition hover:bg-white/95"
             >
               {PUBLIC_HERO_CTAS.start.label}
             </Link>
-            <Link
-              href={PUBLIC_HERO_CTAS.login.href}
-              className="inline-flex h-12 items-center justify-center rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
-            >
-              {PUBLIC_HERO_CTAS.login.label}
-            </Link>
           </div>
         ) : null}
 
-        <PatientHubServicesGrid services={services} mode={isConnected ? "connected" : "public"} />
+        <PatientHubServicesGrid
+          services={services}
+          mode={isConnected ? "connected" : "public"}
+          useSectionAnchors={useSectionAnchors}
+        />
       </div>
     </section>
   );

@@ -61,7 +61,7 @@ export function patientStatusHeadline(status: EligibilityStatus): {
       return {
         title: "Parcours GLP-1 non retenu en simulation",
         subtitle:
-          "Vous pouvez explorer Nutri+ ou Repas santé. Un professionnel peut réévaluer votre situation.",
+          "Vous pouvez explorer Nutri+ et le catalogue compléments. Un professionnel peut réévaluer votre situation.",
       };
     case "MEDICAL_REVIEW_REQUIRED":
       return {

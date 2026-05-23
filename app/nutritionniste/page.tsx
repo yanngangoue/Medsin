@@ -2,16 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
-import { isPublicSiteMode } from "@/lib/is-public-site";
 
 export default async function NutritionnisteDashboardPage() {
   const session = await auth();
-  if (!isPublicSiteMode()) {
-    if (!session?.user) redirect("/auth/connexion?callbackUrl=/nutritionniste");
-    if (session.user.role !== "NUTRITIONNISTE") redirect("/acces-refuse");
-  }
+  if (!session?.user) redirect("/connexion?callbackUrl=/nutritionniste");
+  if (session.user.role !== "NUTRITIONNISTE") redirect("/acces-refuse");
 
-  const prenom = session?.user?.prenom ?? session?.user?.name ?? "Julie";
+  const prenom = session.user.prenom ?? session.user.name ?? "—";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">

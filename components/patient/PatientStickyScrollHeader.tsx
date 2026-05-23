@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { MedsimLogo } from "@/components/MedsimLogo";
-import { PatientNav } from "@/components/patient/PatientNav";
 import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 import { PatientHubNavMenu } from "@/components/patient/PatientHubNavMenu";
+import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 import { useSession } from "next-auth/react";
 
 const HUB_ID = "patient-services-hub";
@@ -13,15 +13,17 @@ const SCROLL_DELTA = 6;
 
 type Props = {
   showAuthLinks?: boolean;
-  connectedHasGlp1?: boolean;
+  /** Compte patient : lien discret vers l’espace (pas la nav complète sur l’accueil) */
+  showPatientSpaceLink?: boolean;
 };
 
 export function PatientStickyScrollHeader({
   showAuthLinks = false,
-  connectedHasGlp1 = false,
+  showPatientSpaceLink = false,
 }: Props) {
   const { data: session } = useSession();
   const isPatient = session?.user?.role === "PATIENT";
+  const showSpace = showPatientSpaceLink && isPatient;
   const [visible, setVisible] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -72,20 +74,18 @@ export function PatientStickyScrollHeader({
           <MedsimLogo className="text-xl sm:text-2xl" />
         </Link>
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-          {isPatient ? (
-            <div className="min-w-0 flex-1">
-              <PatientNav
-                hasGlp1Dossier={connectedHasGlp1}
-                variant="light"
-                showLogo={false}
-                showSignOut={false}
-              />
-            </div>
-          ) : (
-            <>
-              <PatientHubNavMenu showAuthLinks={showAuthLinks} variant="onLight" />
-            </>
-          )}
+          {showSpace ? (
+            <Link
+              href={GLP1_PATIENT_DASHBOARD_PATH}
+              className="hidden text-sm font-semibold text-[#1D9E75] hover:text-[var(--teal-900)] sm:inline"
+            >
+              Mon espace patient
+            </Link>
+          ) : null}
+          <PatientHubNavMenu
+            showAuthLinks={showAuthLinks && !showSpace}
+            variant="onLight"
+          />
         </div>
       </div>
     </header>

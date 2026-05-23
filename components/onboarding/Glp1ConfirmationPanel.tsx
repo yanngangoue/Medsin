@@ -143,17 +143,17 @@ export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: P
         <div className="mt-6 rounded-xl border border-amber-200/80 bg-amber-50/80 p-4 text-sm text-amber-950">
           <p className="font-medium">Poursuivre avec MedSim</p>
           <p className="mt-1 text-xs leading-relaxed">
-            Explorez Nutri+ ou Repas santé pour un accompagnement nutritionnel adapté.
+            Explorez Nutri+ pour un accompagnement nutritionnel adapté à votre profil.
           </p>
           <div className="mt-3 flex flex-wrap gap-3">
-            <Link href="/#nutri-plus" className="font-semibold text-[#1D9E75] hover:underline">
+            <Link href="/onboarding/nutri-plus" className="font-semibold text-[#1D9E75] hover:underline">
               Nutri +
             </Link>
             <Link
-              href="/onboarding/repas-sante"
+              href="/onboarding/nutri-plus/produits"
               className="font-semibold text-[#1D9E75] hover:underline"
             >
-              Repas santé
+              Catalogue compléments
             </Link>
           </div>
         </div>

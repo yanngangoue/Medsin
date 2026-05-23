@@ -1,3 +1,10 @@
+import { getServiceLandingPath } from "@/lib/patient/service-landing-paths";
+import {
+  MEDSIM_IMG_SUIVI_CHOIX,
+  MEDSIM_IMG_SUIVI_CHOIX_ALT,
+  MEDSIM_IMG_SUIVI_QUESTIONNAIRE,
+  MEDSIM_IMG_SUIVI_QUESTIONNAIRE_ALT,
+} from "@/lib/patient/nutri-plus-images";
 export type PatientServiceSection = {
   id: string;
   title: string;
@@ -21,14 +28,16 @@ export type PatientServiceSection = {
 
 /** Destination du bouton « En savoir plus » par service. */
 export function getServiceCtaHref(sectionId: string): string {
-  switch (sectionId) {
-    case "gestion-poids":
-      return "/onboarding/gestion-poids";
-    case "repas-sante":
-      return "/onboarding/repas-sante";
-    default:
-      return "/auth/inscription";
+  if (
+    sectionId in {
+      "gestion-poids": 1,
+      "nutri-plus": 1,
+      "repas-sante": 1,
+    }
+  ) {
+    return getServiceLandingPath(sectionId);
   }
+  return "/auth/inscription";
 }
 
 export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
@@ -51,11 +60,11 @@ export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
       "Boîte Ozempic et stylo injectable GLP-1 (semaglutide) pour la gestion du poids",
     productFrameClass: "aspect-[4/3] rounded-2xl bg-white shadow-sm",
     imagePrimary:
-      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=800&q=85",
-    imagePrimaryAlt: "Patiente souriante, heureuse de son parcours avec MedSim",
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop",
+    imagePrimaryAlt: "Patiente souriante sur fond clair — parcours MedSim",
     imageSecondary:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85",
-    imageSecondaryAlt: "Patient souriant, confiant dans son accompagnement MedSim",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&auto=format&fit=crop",
+    imageSecondaryAlt: "Patient souriant sur fond clair — accompagnement MedSim",
     ctaHref: "/onboarding/gestion-poids",
   },
   {
@@ -64,29 +73,27 @@ export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
     sectionClassName: "bg-[#EDE4DC] -mx-4 px-4 sm:-mx-6 sm:px-6",
     accentClass: "bg-[#6B4423]",
     accentTextClass: "text-[#6B4423]",
-    eyebrow: "Des compléments conçus pour soutenir votre santé, chaque jour.",
+    eyebrow: "Nutri+ — accompagnement nutritionnel",
     body:
-      "Des plans nutritionnels sur mesure et des compléments validés par notre équipe, pour soutenir votre métabolisme et atteindre vos objectifs sans vous sentir seul.",
-    includesTitle: "Une approche complète pour soutenir votre santé métabolique :",
+      "Consultation en ligne, suivi de votre alimentation au quotidien et menus adaptés — pour conserver et améliorer vos résultats obtenus avec MedSim.",
+    includesTitle: "Nutri+ en un coup d'œil :",
     bullets: [
-      "Plans nutritionnels personnalisés selon votre profil",
-      "Compléments alimentaires validés par l'équipe",
-      "Suivi avec un nutritionniste",
-      "Ajustements selon vos objectifs métaboliques",
+      "Mise en relation rapide avec un professionnel de santé",
+      "Suivi de ce que vous mangez chaque jour",
+      "Menus personnalisés selon votre profil",
+      "Accompagnement pour garder vos résultats",
     ],
-    productImage:
-      "https://images.unsplash.com/photo-1693996046506-b6571eaa8259?w=800&q=85",
-    productImageAlt: "Sacs de compléments alimentaires en poudre avec doseur",
+    ctaHref: "/onboarding/nutri-plus",
+    productImage: MEDSIM_IMG_SUIVI_CHOIX,
+    productImageAlt: MEDSIM_IMG_SUIVI_CHOIX_ALT,
     productFrameClass: "aspect-[4/3] rounded-2xl bg-[#F0F0F0] shadow-sm",
     productCover: true,
-    imagePrimary:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=85",
-    imagePrimaryAlt:
-      "Personne active à l'entraînement, pour illustrer l'accompagnement compléments Nutri + MedSim",
+    imagePrimary: MEDSIM_IMG_SUIVI_CHOIX,
+    imagePrimaryAlt: MEDSIM_IMG_SUIVI_CHOIX_ALT,
     imageSecondary:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=85",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80&auto=format&fit=crop",
     imageSecondaryAlt:
-      "Personne en pleine santé et souriante, pour illustrer les compléments Nutri + MedSim",
+      "Compléments alimentaires sur surface naturelle — Nutri+",
   },
   {
     id: "repas-sante",
@@ -114,8 +121,7 @@ export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
     imagePrimaryAlt: "Patients souriants autour d'un repas sain avec MedSim",
     imageSecondary:
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=85",
-    imageSecondaryAlt:
-      "Patiente préparant un repas équilibré avec MedSim",
+    imageSecondaryAlt: "Patiente préparant un repas équilibré avec MedSim",
     ctaHref: "/onboarding/repas-sante",
   },
 ];

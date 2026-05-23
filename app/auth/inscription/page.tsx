@@ -22,17 +22,27 @@ function AuthInscriptionForm() {
   const searchParams = useSearchParams();
   const { status } = useSession();
   const isGlp1 = searchParams.get("service") === "gestion-poids";
+  const rawCallback = searchParams.get("callbackUrl");
+  const safeCallback =
+    rawCallback &&
+    rawCallback.startsWith("/") &&
+    !rawCallback.startsWith("//") &&
+    !rawCallback.includes("\\")
+      ? rawCallback
+      : null;
   const [apiError, setApiError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  function resolvePostAuthPath() {
+    if (safeCallback) return safeCallback;
+    if (isGlp1) return GLP1_CONFIRMATION_PATH;
+    return "/dashboard/patient";
+  }
+
   useEffect(() => {
     if (status !== "authenticated") return;
-    if (isGlp1) {
-      router.replace("/onboarding/confirmation?service=gestion-poids");
-      return;
-    }
-    router.replace("/dashboard/patient");
-  }, [status, isGlp1, router]);
+    router.replace(resolvePostAuthPath());
+  }, [status, isGlp1, safeCallback, router]);
 
   const {
     register,
@@ -92,11 +102,7 @@ function AuthInscriptionForm() {
         }
       }
 
-      router.push(
-        isGlp1
-          ? "/onboarding/confirmation?service=gestion-poids"
-          : "/dashboard/patient",
-      );
+      router.push(resolvePostAuthPath());
       router.refresh();
     } finally {
       setIsSubmitting(false);
@@ -124,13 +130,9 @@ function AuthInscriptionForm() {
               forward={{
                 href: GLP1_CONFIRMATION_PATH,
                 label: "Suivant",
-                disabled: status !== "authenticated",
+                disabled: true,
               }}
-              hint={
-                status === "authenticated"
-                  ? "Questionnaire modifiable via Retour · Suivant vers la confirmation."
-                  : "Créez votre compte pour accéder à la confirmation (Suivant)."
-              }
+              hint="Créez votre compte pour accéder à la confirmation (Suivant)."
             />
           ) : (
             <BackSection

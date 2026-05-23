@@ -23,58 +23,97 @@ export function profileHasGlp1DossierWhere(): Prisma.PatientProfileWhereInput {
   };
 }
 
+export type DateFilterKey = "today" | "week" | "month";
+
+export function parseDateFilter(raw: string | null): DateFilterKey | null {
+  if (raw === "today" || raw === "week" || raw === "month") return raw;
+  return null;
+}
+
+function createdAtFromDateFilter(filter: DateFilterKey): Date {
+  const now = new Date();
+  if (filter === "today") {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+  if (filter === "week") {
+    const d = new Date(now);
+    d.setDate(d.getDate() - 7);
+    return d;
+  }
+  const d = new Date(now);
+  d.setMonth(d.getMonth() - 1);
+  return d;
+}
+
 export function buildAdminPatientsWhere(
   status: EligibilityStatus | null,
   queue: string | null,
   glp1Only: boolean,
+  search?: string | null,
+  dateFilter?: DateFilterKey | null,
 ): Prisma.UserWhereInput {
   const base: Prisma.UserWhereInput = { role: "PATIENT" };
 
+  const and: Prisma.UserWhereInput[] = [base];
+
+  if (search?.trim()) {
+    const q = search.trim();
+    and.push({
+      OR: [
+        { prenom: { contains: q, mode: "insensitive" } },
+        { name: { contains: q, mode: "insensitive" } },
+        { email: { contains: q, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  if (dateFilter) {
+    and.push({ createdAt: { gte: createdAtFromDateFilter(dateFilter) } });
+  }
+
   if (queue === "a_revoir") {
-    return {
-      ...base,
+    and.push({
       profile: {
         is: {
           eligibility: "MEDICAL_REVIEW_REQUIRED",
           ...profileHasGlp1DossierWhere(),
         },
       },
-    };
+    });
+    return and.length === 1 ? base : { AND: and };
   }
 
   const profileParts: Prisma.PatientProfileWhereInput[] = [];
   if (glp1Only) profileParts.push(profileHasGlp1DossierWhere());
 
-  if (!status && profileParts.length === 0) return base;
-
-  if (!status) {
-    return { ...base, profile: { is: profileParts[0] } };
-  }
-
-  if (status === "PENDING") {
-    return {
-      ...base,
-      OR: [
-        { profile: null },
-        {
-          profile: {
-            is: {
-              eligibility: "PENDING",
-              ...(profileParts[0] ?? {}),
+  if (status) {
+    if (status === "PENDING") {
+      and.push({
+        OR: [
+          { profile: null },
+          {
+            profile: {
+              is: {
+                eligibility: "PENDING",
+                ...(profileParts[0] ?? {}),
+              },
             },
           },
+        ],
+      });
+    } else {
+      and.push({
+        profile: {
+          is: {
+            eligibility: status,
+            ...(profileParts[0] ?? {}),
+          },
         },
-      ],
-    };
+      });
+    }
+  } else if (profileParts.length > 0) {
+    and.push({ profile: { is: profileParts[0] } });
   }
 
-  return {
-    ...base,
-    profile: {
-      is: {
-        eligibility: status,
-        ...(profileParts[0] ?? {}),
-      },
-    },
-  };
+  return and.length === 1 ? base : { AND: and };
 }

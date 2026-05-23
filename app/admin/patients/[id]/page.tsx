@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { isStaffRole } from "@/lib/session";
-import { AdminPatientDetail } from "@/components/admin/AdminPatientDetail";
+import { PatientDossier } from "@/components/admin/PatientDossier";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -12,11 +12,5 @@ export default async function AdminPatientDetailPage({ params }: Props) {
 
   const { id } = await params;
 
-  return (
-    <AdminPatientDetail
-      patientId={id}
-      staffUserId={session.user.id}
-      staffPrenom={session.user.prenom ?? session.user.name ?? "Équipe"}
-    />
-  );
+  return <PatientDossier patientId={id} staffUserId={session.user.id} />;
 }
