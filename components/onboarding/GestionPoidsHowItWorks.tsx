@@ -13,6 +13,17 @@ function IconQuestionnaire() {
   );
 }
 
+function IconTriage() {
+  return (
+    <svg width="80" height="72" viewBox="0 0 80 72" fill="none" aria-hidden>
+      <rect x="14" y="10" width="52" height="52" rx="8" stroke={ICON_COLOR} strokeWidth="1.75" />
+      <path d="M26 28h28M26 38h20M26 48h14" stroke={ICON_COLOR} strokeWidth="1.75" strokeLinecap="round" />
+      <circle cx="58" cy="22" r="10" fill="#E8F8F2" stroke={ICON_COLOR} strokeWidth="1.75" />
+      <path d="M54 22l3 3 6-7" stroke={ICON_COLOR} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function IconDoctor() {
   return (
     <svg width="80" height="72" viewBox="0 0 80 72" fill="none" aria-hidden>
@@ -28,18 +39,12 @@ function IconDoctor() {
   );
 }
 
-function IconTreatment() {
+function IconConsultation() {
   return (
     <svg width="80" height="72" viewBox="0 0 80 72" fill="none" aria-hidden>
-      <rect x="20" y="16" width="24" height="44" rx="12" stroke={ICON_COLOR} strokeWidth="1.75" />
-      <path d="M32 16V10M28 10h8" stroke={ICON_COLOR} strokeWidth="1.75" strokeLinecap="round" />
-      <path
-        d="M48 36h20l-6 12H54l-6-12Z"
-        stroke={ICON_COLOR}
-        strokeWidth="1.75"
-        strokeLinejoin="round"
-      />
-      <circle cx="58" cy="52" r="6" stroke={ICON_COLOR} strokeWidth="1.75" />
+      <rect x="10" y="16" width="44" height="32" rx="6" stroke={ICON_COLOR} strokeWidth="1.75" />
+      <circle cx="32" cy="32" r="8" stroke={ICON_COLOR} strokeWidth="1.75" />
+      <path d="M54 24h16v28H54" stroke={ICON_COLOR} strokeWidth="1.75" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -47,21 +52,27 @@ function IconTreatment() {
 const STEPS = [
   {
     Icon: IconQuestionnaire,
-    title: "Questionnaire en ligne",
+    title: "Formulaire de santé détaillé",
     description:
-      "Répondez à quelques questions sur votre santé, vos objectifs et votre historique GLP-1 (environ 5 minutes).",
+      "Questionnaire complet sur votre santé, vos objectifs et vos antécédents (environ 10 minutes).",
+  },
+  {
+    Icon: IconTriage,
+    title: "Tri pré-diagnostique",
+    description:
+      "Un algorithme applique des critères d'exclusion stricts. En cas de risque, le parcours s'arrête ici.",
   },
   {
     Icon: IconDoctor,
-    title: "Révision médicale",
+    title: "Évaluation professionnelle",
     description:
-      "Un professionnel de santé analyse votre dossier et détermine si un traitement GLP-1 vous convient.",
+      "Vos données sont transmises à un professionnel de santé qui analyse votre dossier en profondeur.",
   },
   {
-    Icon: IconTreatment,
-    title: "Traitement et suivi",
+    Icon: IconConsultation,
+    title: "Consultation et prescription",
     description:
-      "Prescription encadrée, livraison discrète et accompagnement nutritionnel pour des résultats durables.",
+      "Consultation virtuelle (vidéo synchrone). Seul le professionnel de santé prend la décision finale et prescrit le traitement.",
   },
 ] as const;
 
@@ -78,17 +89,20 @@ export function GestionPoidsHowItWorks() {
             id="glp-how-title"
             className="text-lg font-bold uppercase leading-snug tracking-wide text-slate-900 sm:text-xl"
           >
-            Votre parcours GLP-1 en 3 étapes
+            Votre parcours GLP-1 en 4 étapes
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-            MedSim vous accompagne de l&apos;évaluation initiale au suivi, en toute confidentialité.
-            Aucune prescription sans avis médical.
+            MedSim vous accompagne de l&apos;évaluation pré-diagnostique à la prescription encadrée.
+            Aucune décision thérapeutique automatisée — le professionnel de santé a le dernier mot.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-10 sm:mt-12 sm:grid-cols-3 sm:gap-6 lg:gap-8">
-          {STEPS.map((step) => (
+        <div className="mt-10 grid gap-10 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          {STEPS.map((step, index) => (
             <article key={step.title} className="flex flex-col items-center text-center">
+              <span className="mb-2 text-xs font-bold uppercase tracking-wide text-[#1D9E75]">
+                Étape {index + 1}
+              </span>
               <div className="flex h-20 items-center justify-center">
                 <step.Icon />
               </div>

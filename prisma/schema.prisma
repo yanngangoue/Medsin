@@ -16,9 +16,43 @@ enum Role {
 }
 
 enum EligibilityStatus {
+  PENDING
   ELIGIBLE
   NOT_ELIGIBLE
   MEDICAL_REVIEW_REQUIRED
+}
+
+enum DossierStatus {
+  EXCLU_PRE_DIAGNOSTIC
+  EN_ATTENTE_MEDECIN
+  EN_COURS_REVISION
+  INFO_REQUISE
+  EN_ATTENTE_CONSULTATION
+  APPROUVE
+  REFUSE
+  ANNULE
+}
+
+enum PrescriptionStatus {
+  BROUILLON
+  ENVOYEE_PATIENT
+  ANNULE
+}
+
+enum PrescriptionMedication {
+  SEMAGLUTIDE
+  TIRZEPATIDE
+  LIRAGLUTIDE
+  OTHER
+  NONE
+}
+
+enum ClinicalDecisionKind {
+  ELIGIBILITY_ELIGIBLE
+  ELIGIBILITY_NOT_ELIGIBLE
+  ELIGIBILITY_REVIEW_REQUIRED
+  PRESCRIPTION_ISSUED
+  PRESCRIPTION_DEFERRED
 }
 
 enum AppointmentStatus {
@@ -39,17 +73,29 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  questionnaire Questionnaire?
-  refreshTokens RefreshToken[]
-  accounts      Account[]
-  sessions      Session[]
-  profile       PatientProfile?
-  appointments  Appointment[]
+  medecinLicenseNumber String?
+
+  questionnaire        Questionnaire?
+  refreshTokens        RefreshToken[]
+  accounts             Account[]
+  sessions             Session[]
+  profile              PatientProfile?
+  appointments         Appointment[]
   auditLogs            AuditLog[]
   passwordResetTokens  PasswordResetToken[]
   patientPrivacyConsent      PatientPrivacyConsent?
   metabolicIntakes           MetabolicIntake[]
-  metabolicProfileSnapshots MetabolicProfileSnapshot[]
+  metabolicProfileSnapshots  MetabolicProfileSnapshot[]
+  dossiersGlp1AsPatient      DossierGlp1[]            @relation("PatientDossiers")
+  dossiersGlp1AsMedecin      DossierGlp1[]            @relation("MedecinDossiers")
+  prescriptionsAsPatient     Prescription[]           @relation("PatientPrescriptions")
+  prescriptionsAsMedecin     Prescription[]           @relation("MedecinPrescriptions")
+  messagesSent               Message[]                @relation("MessagesSent")
+  messagesReceived           Message[]                @relation("MessagesReceived")
+  eligibilityHistoryAsPatient  EligibilityHistory[]     @relation("PatientEligibilityHistory")
+  eligibilityHistoryChanged    EligibilityHistory[]     @relation("StaffEligibilityHistory")
+  clinicalDecisionsAsPatient   ClinicalDecision[]       @relation("PatientClinicalDecisions")
+  clinicalDecisionsMade        ClinicalDecision[]       @relation("StaffClinicalDecisions")
 
   @@index([role])
 }
@@ -157,11 +203,15 @@ model Appointment {
   scheduledAt DateTime
   status      AppointmentStatus @default(SCHEDULED)
   notes       String?           @db.Text
+  /** Consultation virtuelle GLP-1 (vidéo synchrone ou selon la législation locale). */
+  isTeleconsult Boolean         @default(false)
+  dossierGlp1Id String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
   @@index([userId])
   @@index([scheduledAt])
+  @@index([dossierGlp1Id])
 }
 
 model RefreshToken {
@@ -221,4 +271,110 @@ model Questionnaire {
   medicaments     Boolean
   medicamentsDesc String?
   submittedAt     DateTime @default(now())
+
+  dossiersGlp1 DossierGlp1[]
+}
+
+model DossierGlp1 {
+  id                   String        @id @default(uuid())
+  patientId            String
+  patient              User          @relation("PatientDossiers", fields: [patientId], references: [id], onDelete: Cascade)
+  questionnaireId      String?
+  questionnaire        Questionnaire? @relation(fields: [questionnaireId], references: [id], onDelete: SetNull)
+  medecinId            String?
+  medecin              User?         @relation("MedecinDossiers", fields: [medecinId], references: [id], onDelete: SetNull)
+  status               DossierStatus @default(EN_ATTENTE_MEDECIN)
+  healthInfoSnapshot   Json?
+  suggestionImc        Float?
+  suggestionEligibilite String?      @db.Text
+  triageSnapshot       Json?
+  notesMedecin         String?       @db.Text
+  motifRefus           String?       @db.Text
+  decisionDate         DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  prescription Prescription?
+
+  @@index([patientId])
+  @@index([status])
+  @@index([medecinId])
+  @@index([createdAt])
+}
+
+model Prescription {
+  id                    String             @id @default(uuid())
+  numeroOrdonnance      String             @unique @default(uuid())
+  patientId             String
+  patient               User               @relation("PatientPrescriptions", fields: [patientId], references: [id], onDelete: Cascade)
+  medecinId             String
+  medecin               User               @relation("MedecinPrescriptions", fields: [medecinId], references: [id], onDelete: Cascade)
+  dossierGlp1Id         String             @unique
+  dossierGlp1           DossierGlp1        @relation(fields: [dossierGlp1Id], references: [id], onDelete: Cascade)
+  medicament            String
+  dosage                String
+  frequence             String
+  duree                 String
+  instructions          String             @db.Text
+  modeAdministration    String?
+  renouvellementAutorise Boolean           @default(false)
+  nombreRenouvellements Int                @default(0)
+  notesMedicales        String             @db.Text
+  status                PrescriptionStatus @default(BROUILLON)
+  signatureDate         DateTime?
+  signatureMedecin      String?
+  pdfUrl                String?            @db.Text
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  @@index([patientId])
+  @@index([medecinId])
+  @@index([status])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  sender     User     @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("MessagesReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  content    String   @db.Text
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+model EligibilityHistory {
+  id          String            @id @default(uuid())
+  patientId   String
+  patient     User              @relation("PatientEligibilityHistory", fields: [patientId], references: [id], onDelete: Cascade)
+  changedById String?
+  changedBy   User?             @relation("StaffEligibilityHistory", fields: [changedById], references: [id], onDelete: SetNull)
+  oldStatus   EligibilityStatus
+  newStatus   EligibilityStatus
+  note        String?           @db.Text
+  createdAt   DateTime          @default(now())
+
+  @@index([patientId])
+  @@index([createdAt])
+}
+
+model ClinicalDecision {
+  id              String               @id @default(uuid())
+  patientUserId   String
+  patient         User                 @relation("PatientClinicalDecisions", fields: [patientUserId], references: [id], onDelete: Cascade)
+  decidedByUserId String
+  decidedBy       User                 @relation("StaffClinicalDecisions", fields: [decidedByUserId], references: [id], onDelete: Cascade)
+  kind            ClinicalDecisionKind
+  eligibility     EligibilityStatus
+  medication      PrescriptionMedication?
+  clinicalNote    String?              @db.Text
+  patientMessage  String?              @db.Text
+  createdAt       DateTime             @default(now())
+
+  @@index([patientUserId])
+  @@index([createdAt])
 }

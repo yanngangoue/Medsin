@@ -15,6 +15,7 @@ function clientIp(req: Request): string | null {
 
 const schema = z.object({
   prenom: z.string().min(1),
+  nom: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(8),
 });
@@ -49,11 +50,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Email déjà utilisé" }, { status: 409 });
   }
 
+  const prenom = parsed.data.prenom.trim();
+  const nom = parsed.data.nom.trim();
   const hash = await bcrypt.hash(parsed.data.password, 12);
   const user = await prisma.user.create({
     data: {
-      prenom: parsed.data.prenom,
-      name: parsed.data.prenom,
+      prenom,
+      name: `${prenom} ${nom}`,
       email,
       passwordHash: hash,
       emailVerified: new Date(),

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
   if (!dossier) return badRequest("Dossier introuvable");
   if (!canAccessDossier(auth.role, auth.user.id, dossier)) return forbidden();
-  if (dossier.status !== "APPROUVE") {
+  if (!["APPROUVE", "EN_ATTENTE_CONSULTATION"].includes(dossier.status)) {
     return badRequest("Le dossier doit être approuvé par un médecin avant l'ordonnance");
   }
   if (dossier.prescription) return badRequest("Ordonnance déjà créée pour ce dossier");

@@ -10,12 +10,17 @@ import { forbidden, badRequest } from "@/lib/api-errors";
 
 type Params = { params: Promise<{ id: string }> };
 
-const FINAL_STATUSES: DossierStatus[] = ["APPROUVE", "REFUSE", "INFO_REQUISE"];
+const FINAL_STATUSES: DossierStatus[] = ["APPROUVE", "REFUSE", "INFO_REQUISE", "EN_ATTENTE_CONSULTATION"];
 
 function mapProfileEligibility(status: DossierStatus): EligibilityStatus {
-  if (status === "APPROUVE") return "ELIGIBLE";
-  if (status === "REFUSE") return "NOT_ELIGIBLE";
+  if (status === "APPROUVE" || status === "EN_ATTENTE_CONSULTATION") return "ELIGIBLE";
+  if (status === "REFUSE" || status === "EXCLU_PRE_DIAGNOSTIC") return "NOT_ELIGIBLE";
   return "MEDICAL_REVIEW_REQUIRED";
+}
+
+function mapDecisionToDossierStatus(decision: DossierStatus): DossierStatus {
+  if (decision === "APPROUVE") return "EN_ATTENTE_CONSULTATION";
+  return decision;
 }
 
 export async function PATCH(req: Request, { params }: Params) {
@@ -46,7 +51,7 @@ export async function PATCH(req: Request, { params }: Params) {
     return badRequest("Décision déjà enregistrée — modification impossible");
   }
 
-  const newStatus = parsed.data.decision as DossierStatus;
+  const newStatus = mapDecisionToDossierStatus(parsed.data.decision as DossierStatus);
   const oldProfileStatus = dossier.patient.profile?.eligibility ?? "PENDING";
 
   const updated = await prisma.dossierGlp1.update({

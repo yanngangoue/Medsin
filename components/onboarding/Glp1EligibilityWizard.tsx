@@ -35,12 +35,8 @@ import {
   readGlp1WizardProgress,
 } from "@/lib/patient/glp1-session-client";
 import { GLP1_LANDING_PATH } from "@/lib/patient/glp1-flow-routes";
-import {
-  hasMeaningfulGlp1Answers,
-  inferLastCompletedGlp1Step,
-  isGlp1StepComplete,
-  seedGlp1SessionForResume,
-} from "@/lib/patient/glp1-wizard-progress";
+import { Glp1ExclusionScreen } from "@/components/onboarding/Glp1ExclusionScreen";
+import { runGlp1PreDiagnosticTriage } from "@/lib/patient/glp1-triage";
 
 const INSCRIPTION_PATH = "/auth/inscription?service=gestion-poids";
 const CONFIRMATION_PATH = "/onboarding/confirmation?service=gestion-poids";
@@ -54,7 +50,7 @@ function persistGlp1Answers(answers: Glp1EligibilityAnswers) {
   }
 }
 
-type Phase = "intro" | "questions";
+type Phase = "intro" | "questions" | "excluded";
 
 function toggleInList(list: string[], id: string, noneId?: string): string[] {
   if (noneId && id === noneId) return [noneId];
@@ -77,6 +73,9 @@ export function Glp1EligibilityWizard() {
   const [answers, setAnswers] = useState<Glp1EligibilityAnswers>({});
   const [finishing, setFinishing] = useState(false);
   const [finishError, setFinishError] = useState<string | null>(null);
+  const [exclusionReasons, setExclusionReasons] = useState<
+    ReturnType<typeof runGlp1PreDiagnosticTriage>["reasons"]
+  >([]);
 
   const patch = useCallback((partial: Partial<Glp1EligibilityAnswers>) => {
     setAnswers((prev) => ({ ...prev, ...partial }));
@@ -192,6 +191,20 @@ export function Glp1EligibilityWizard() {
     setFinishError(null);
     setFinishing(true);
     try {
+      const triage = runGlp1PreDiagnosticTriage(answers);
+      if (triage.excluded) {
+        setExclusionReasons(triage.reasons);
+        setPhase("excluded");
+        if (isAuthenticated) {
+          await fetch("/api/onboarding/glp1-dossier", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answers }),
+          });
+        }
+        return;
+      }
+
       try {
         sessionStorage.setItem(GLP1_ELIGIBILITY_STORAGE_KEY, JSON.stringify(answers));
       } catch {
@@ -325,7 +338,11 @@ export function Glp1EligibilityWizard() {
     <div className="min-h-screen bg-white">
       <Glp1WizardHeader back={headerBack} forward={headerForward} />
 
-      {phase === "intro" ? (
+      {phase === "excluded" ? (
+        <main>
+          <Glp1ExclusionScreen reasons={exclusionReasons} />
+        </main>
+      ) : phase === "intro" ? (
         <main className="mx-auto max-w-lg px-4 pb-12 pt-2 sm:px-6">
           <div className="flex gap-1.5 pt-2">
             {Array.from({ length: 5 }, (_, i) => (
@@ -340,8 +357,8 @@ export function Glp1EligibilityWizard() {
             <span className="text-[#1D9E75]">sans régimes restrictifs ni exercices intensifs</span>
           </h1>
           <p className="mx-auto mt-4 max-w-md text-center text-sm leading-relaxed text-slate-600">
-            Répondez aux questions suivantes afin que nous puissions déterminer votre admissibilité à
-            un programme médical de perte de poids encadré au Québec.
+            Formulaire de santé détaillé : un tri automatique pré-diagnostique vérifiera votre
+            admissibilité avant transmission à un professionnel de santé.
           </p>
 
           {isAuthenticated && prenom ? (

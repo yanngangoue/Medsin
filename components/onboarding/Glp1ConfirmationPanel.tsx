@@ -7,39 +7,50 @@ import { explainGlp1SimulationStatus } from "@/lib/eligibility";
 import type { Glp1DossierSummary } from "@/lib/patient/glp1-dossier";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 
-function journeySteps(eligibility: EligibilityStatus) {
-  const thirdLabel =
-    eligibility === "NOT_ELIGIBLE" ? "Résultat" : "Revue médicale";
+function journeySteps(summary: Glp1DossierSummary) {
+  if (summary.excluded || summary.eligibility === "NOT_ELIGIBLE") {
+    return [
+      { id: "form", label: "Formulaire", done: true },
+      { id: "triage", label: "Tri auto.", done: true, active: false },
+      { id: "review", label: "Exclusion", done: false, active: true },
+      { id: "next", label: "Consultation", done: false, active: false },
+    ];
+  }
   return [
-    { id: "eval", label: "Évaluation GLP-1" },
-    { id: "account", label: "Compte créé" },
-    { id: "review", label: thirdLabel },
-    { id: "next", label: "Prochaine étape" },
-  ] as const;
+    { id: "form", label: "Formulaire", done: true },
+    { id: "triage", label: "Tri validé", done: true },
+    { id: "review", label: "Revue pro.", done: false, active: true },
+    { id: "next", label: "Consultation", done: false, active: false },
+  ];
 }
 
-function eligibilityCopy(status: EligibilityStatus): { title: string; body: string } {
-  switch (status) {
+function eligibilityCopy(summary: Glp1DossierSummary): { title: string; body: string } {
+  if (summary.excluded) {
+    return {
+      title: "Parcours GLP-1 interrompu au tri pré-diagnostique",
+      body: "Des critères d'exclusion stricts ont été identifiés. Votre dossier n'est pas transmis à un professionnel pour ce parcours.",
+    };
+  }
+  switch (summary.eligibility) {
     case "ELIGIBLE":
       return {
-        title: "Profil potentiellement admissible",
-        body: "Selon notre simulation, votre profil correspond aux critères GLP-1. Un professionnel de santé confirmera votre dossier sous 24 à 48 h.",
+        title: "Profil admissible — consultation à planifier",
+        body: "Un professionnel de santé a validé votre dossier. Prochaine étape : consultation virtuelle, puis prescription si indiquée cliniquement.",
       };
     case "NOT_ELIGIBLE":
       return {
-        title: "GLP-1 : non admissible en simulation",
-        body: "Selon les informations fournies, ce parcours ne correspond pas aux critères de simulation. D'autres services MedSim peuvent vous accompagner.",
+        title: "GLP-1 : non admissible",
+        body: "Ce parcours ne correspond pas à votre profil. D'autres services MedSim peuvent vous accompagner.",
       };
     case "MEDICAL_REVIEW_REQUIRED":
       return {
-        title: "Revue médicale requise",
-        body: "Votre dossier nécessite l'examen d'un professionnel de santé. Vous serez contacté si des précisions sont nécessaires.",
+        title: "Dossier transmis au professionnel de santé",
+        body: "Votre formulaire a passé le tri automatique. Un professionnel analyse vos données sous 24 à 48 h. La décision thérapeutique finale lui appartient exclusivement.",
       };
-    case "PENDING":
     default:
       return {
-        title: "Dossier en cours d'analyse",
-        body: "Votre évaluation a été enregistrée. Un professionnel examine vos réponses.",
+        title: "Dossier enregistré",
+        body: "Votre évaluation a été enregistrée.",
       };
   }
 }
@@ -52,9 +63,9 @@ type Props = {
 };
 
 export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: Props) {
-  const msg = eligibilityCopy(summary.eligibility);
-  const showAlternatives = summary.eligibility === "NOT_ELIGIBLE";
-  const steps = journeySteps(summary.eligibility);
+  const msg = eligibilityCopy(summary);
+  const showAlternatives = summary.excluded || summary.eligibility === "NOT_ELIGIBLE";
+  const steps = journeySteps(summary);
   const simulationReason =
     showAlternatives && summary.imc > 0
       ? explainGlp1SimulationStatus(summary.eligibility, summary.imc, "")
@@ -65,8 +76,8 @@ export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: P
       <nav className="mb-8" aria-label="Étapes du parcours">
         <ol className="grid grid-cols-4 gap-1 sm:gap-2">
           {steps.map((step, i) => {
-            const done = i < 2;
-            const active = i === 2;
+            const done = "done" in step ? step.done : i < 2;
+            const active = "active" in step ? step.active : i === 2;
             return (
               <li key={step.id} className="flex flex-col items-center text-center">
                 <span
@@ -166,9 +177,20 @@ export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: P
         Accéder à mon espace patient
       </Link>
 
+      {summary.triageReasons && summary.triageReasons.length > 0 ? (
+        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-left text-sm">
+          <p className="font-medium text-amber-950">Critères d&apos;exclusion identifiés</p>
+          <ul className="mt-2 space-y-1 text-xs text-amber-900">
+            {summary.triageReasons.map((r) => (
+              <li key={r.code}>• {r.labelFr}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <p className="mt-6 text-center text-[11px] text-slate-400">
-        Simulation logicielle — ne remplace pas un avis médical. Un professionnel confirme toute
-        décision thérapeutique.
+        Aucune prescription automatique. Seul un professionnel de santé peut prescrire un traitement
+        GLP-1, après consultation virtuelle si requis.
       </p>
     </div>
   );

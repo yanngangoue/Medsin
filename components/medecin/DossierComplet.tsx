@@ -32,9 +32,11 @@ function formatElapsed(createdAt: string): string {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  EN_ATTENTE_MEDECIN: "En attente médecin",
-  EN_COURS_REVISION: "En cours de révision",
-  INFO_REQUISE: "Info requise",
+  EXCLU_PRE_DIAGNOSTIC: "Exclu au tri pré-diagnostique",
+  EN_ATTENTE_MEDECIN: "En attente — revue professionnelle",
+  EN_COURS_REVISION: "Analyse en cours",
+  INFO_REQUISE: "Informations requises",
+  EN_ATTENTE_CONSULTATION: "Approuvé — consultation virtuelle",
   APPROUVE: "Approuvé",
   REFUSE: "Refusé",
   ANNULE: "Annulé",

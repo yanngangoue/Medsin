@@ -15,6 +15,7 @@ import {
 } from "@/lib/patient/glp1-eligibility-questions";
 import { GLP1_WEIGHT_GOAL_OPTIONS } from "@/lib/patient/glp1-weight-goal";
 import { formatGlp1EligibilitySummary } from "@/lib/patient/glp1-eligibility-summary";
+import { runGlp1PreDiagnosticTriage, type Glp1TriageResult } from "@/lib/patient/glp1-triage";
 
 export const GLP1_HEALTH_INFO_VERSION = 1;
 
@@ -25,6 +26,7 @@ export type Glp1HealthInfoPayload = {
   weightGoalLabel: string;
   eligibilityLabel: string;
   imc: number;
+  triage?: Glp1TriageResult;
 };
 
 const yesNoSchema = z.enum(["oui", "non"]);
@@ -152,6 +154,8 @@ export type Glp1DossierSummary = ReturnType<typeof formatGlp1EligibilitySummary>
   eligibility: EligibilityStatus;
   eligibilityLabel: string;
   submittedAtIso: string;
+  excluded?: boolean;
+  triageReasons?: Glp1TriageResult["reasons"];
 };
 
 export function buildGlp1DossierSummary(
@@ -184,11 +188,18 @@ export async function persistGlp1Dossier(
   }
 
   const data = parsed.data;
+  const triage = runGlp1PreDiagnosticTriage(data);
   const { status, labelFr, bmi, age, medicalHistory } = resolveGlp1Eligibility(data);
   const submittedAt = new Date();
   const weightKg = Number.parseFloat(data.weightKg);
   const heightCm = Number.parseFloat(data.heightCm);
-  const idealWeightKg = Number.parseFloat(data.idealWeightKg);
+
+  const eligibility: EligibilityStatus = triage.excluded
+    ? "NOT_ELIGIBLE"
+    : "MEDICAL_REVIEW_REQUIRED";
+  const eligibilityLabel = triage.excluded
+    ? "Non admissible au parcours GLP-1 (tri pré-diagnostique)"
+    : "En attente d'évaluation par un professionnel de santé";
 
   const healthPayload: Glp1HealthInfoPayload = {
     version: GLP1_HEALTH_INFO_VERSION,
@@ -196,8 +207,9 @@ export async function persistGlp1Dossier(
     submittedAt: submittedAt.toISOString(),
     weightGoalLabel:
       GLP1_WEIGHT_GOAL_OPTIONS.find((o) => o.id === data.weightGoal)?.label ?? data.weightGoal,
-    eligibilityLabel: labelFr,
+    eligibilityLabel,
     imc: bmi,
+    triage,
   };
 
   const bpLabel =
@@ -236,7 +248,7 @@ export async function persistGlp1Dossier(
       heightCm,
       bmi,
       medicalHistory,
-      eligibility: "MEDICAL_REVIEW_REQUIRED",
+      eligibility,
       onboardingDone: true,
       healthInfo: extendedHealthInfo as unknown as Prisma.InputJsonValue,
     },
@@ -248,7 +260,7 @@ export async function persistGlp1Dossier(
       heightCm,
       bmi,
       medicalHistory,
-      eligibility: "MEDICAL_REVIEW_REQUIRED",
+      eligibility,
       onboardingDone: true,
       healthInfo: extendedHealthInfo as unknown as Prisma.InputJsonValue,
       ...(displayName ? { fullName: displayName } : {}),
@@ -260,23 +272,32 @@ export async function persistGlp1Dossier(
     select: { id: true },
   });
 
-  const suggestionText =
-    `Suggestion système (non médicale) : ${labelFr}. ` +
-    `Basée sur IMC ${bmi.toFixed(1)} et critères déclaratifs uniquement. ` +
-    `Simulation : ${status}. Décision finale : médecin.`;
+  const suggestionText = triage.excluded
+    ? `Tri pré-diagnostique : exclusion automatique (${triage.reasons.length} critère(s)). Décision thérapeutique : non applicable à cette étape.`
+    : `Suggestion système (non médicale) : ${labelFr}. ` +
+      `Basée sur IMC ${bmi.toFixed(1)} et critères déclaratifs uniquement. ` +
+      `Simulation : ${status}. Décision finale : professionnel de santé uniquement.`;
 
   await prisma.dossierGlp1.create({
     data: {
       patientId: userId,
       questionnaireId: questionnaire?.id ?? null,
-      status: "EN_ATTENTE_MEDECIN",
+      status: triage.excluded ? "EXCLU_PRE_DIAGNOSTIC" : "EN_ATTENTE_MEDECIN",
       suggestionImc: bmi,
       suggestionEligibilite: suggestionText,
       healthInfoSnapshot: extendedHealthInfo as unknown as Prisma.InputJsonValue,
+      triageSnapshot: triage as unknown as Prisma.InputJsonValue,
+      motifRefus: triage.excluded
+        ? triage.reasons.map((r) => r.labelFr).join(" · ")
+        : null,
     },
   });
 
-  return buildGlp1DossierSummary(data, status, labelFr, bmi, submittedAt);
+  return {
+    ...buildGlp1DossierSummary(data, eligibility, eligibilityLabel, bmi, submittedAt),
+    excluded: triage.excluded,
+    triageReasons: triage.reasons,
+  };
 }
 
 export async function getGlp1DossierForUser(userId: string): Promise<{
