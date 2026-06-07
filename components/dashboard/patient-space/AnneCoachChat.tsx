@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnneCoachCheckInModal } from "@/components/dashboard/patient-space/AnneCoachCheckInModal";
 import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
-import { tendancePoids } from "@/lib/coach-ia";
+import { tendancePoids } from "@/lib/coach-weight-trends";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
 import type { WeightCheckInPublic, WeightProgramPublic } from "@/lib/patient/weight-program";
 

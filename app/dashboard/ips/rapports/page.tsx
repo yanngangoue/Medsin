@@ -8,23 +8,44 @@ export default async function IpsRapportsAnnePage() {
   const session = await requireIpsSession();
   if (!session) redirect("/connexion?callbackUrl=/dashboard/ips/rapports");
 
-  const reports = isDemoMode()
-    ? []
-    : await prisma.weightCheckIn.findMany({
+  let reports: {
+    id: string;
+    userId: string;
+    aiReport: string | null;
+    recordedAt: Date;
+    user: { prenom: string | null; name: string | null };
+  }[] = [];
+
+  if (!isDemoMode()) {
+    const ipsPatients = await prisma.medicalQuestionnaire.findMany({
+      where: { ipsId: session.user.id },
+      select: { userId: true },
+      distinct: ["userId"],
+    });
+    const userIds = ipsPatients.map((p) => p.userId);
+
+    if (userIds.length > 0) {
+      const rows = await prisma.weightCheckIn.findMany({
         where: {
           aiReport: { not: null },
-          user: {
-            medicalQuestionnaires: {
-              some: { ipsId: session.user.id },
-            },
-          },
+          userId: { in: userIds },
         },
         orderBy: { recordedAt: "desc" },
         take: 30,
-        include: {
-          user: { select: { prenom: true, name: true } },
-        },
       });
+
+      const users = await prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, prenom: true, name: true },
+      });
+      const userById = new Map(users.map((u) => [u.id, u]));
+
+      reports = rows.map((r) => ({
+        ...r,
+        user: userById.get(r.userId) ?? { prenom: null, name: null },
+      }));
+    }
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
@@ -52,7 +73,7 @@ export default async function IpsRapportsAnnePage() {
                   A
                 </span>
                 <p className="text-sm font-bold text-slate-900">
-                  {patientDisplayName(r.user.prenom, r.user.name)}
+                  {patientDisplayName(r.user.prenom ?? "", r.user.name)}
                   <span className="font-normal text-slate-500">
                     {" "}
                     · {new Date(r.recordedAt).toLocaleDateString("fr-CA")}

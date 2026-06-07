@@ -40,17 +40,17 @@ export function MedsimLanding({ connectedPatient = null }: Props) {
         </div>
       ) : null}
 
-      <MarketingNavbar isPatientSession={isPatientSession} />
+      <MarketingNavbar />
       <main className="flex-1">
-        <MarketingHero isPatientSession={isPatientSession} />
+        <MarketingHero />
         <MarketingTrustBar />
         <MarketingHowItWorks />
         <MarketingAiCoach />
         <MarketingResults />
-        <MarketingMedications isPatientSession={isPatientSession} />
-        <MarketingPricing isPatientSession={isPatientSession} />
+        <MarketingMedications />
+        <MarketingPricing />
         <MarketingFaq />
-        <MarketingCta isPatientSession={isPatientSession} />
+        <MarketingCta />
       </main>
       <MarketingFooter />
     </div>

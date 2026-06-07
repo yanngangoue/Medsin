@@ -27,6 +27,13 @@ export async function GET() {
     session.user.role as "IPS" | "MEDECIN" | "ADMIN",
   );
 
+  const ipsPatientUserIds = await prisma.medicalQuestionnaire.findMany({
+    where: { ipsId: session.user.id },
+    select: { userId: true },
+    distinct: ["userId"],
+  });
+  const ipsUserIds = ipsPatientUserIds.map((r) => r.userId);
+
   const [questionnaires, unreadAgg, anneReportsCount] = await Promise.all([
     prisma.medicalQuestionnaire.findMany({
       where: {
@@ -51,11 +58,7 @@ export async function GET() {
     prisma.weightCheckIn.count({
       where: {
         aiReport: { not: null },
-        user: {
-          medicalQuestionnaires: {
-            some: { ipsId: session.user.id },
-          },
-        },
+        ...(ipsUserIds.length > 0 ? { userId: { in: ipsUserIds } } : { userId: "__none__" }),
       },
     }),
   ]);

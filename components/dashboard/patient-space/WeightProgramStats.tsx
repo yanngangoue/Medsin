@@ -1,4 +1,4 @@
-import { tendancePoids } from "@/lib/coach-ia";
+import { tendancePoids } from "@/lib/coach-weight-trends";
 import type { WeightCheckInPublic, WeightProgramPublic } from "@/lib/patient/weight-program";
 
 type Props = {

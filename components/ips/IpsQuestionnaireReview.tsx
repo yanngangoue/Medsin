@@ -262,7 +262,12 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
           <div className="space-y-2">
             <h2 className="text-sm font-bold text-slate-900">Questionnaire médical</h2>
             <CollapsibleSection title="Biométrie & objectifs" defaultOpen>
-              <QuestionnaireSectionsView q={q} />
+              <QuestionnaireSectionsView q={{
+                ...q,
+                medicalHistory: q.medicalHistory as import('@prisma/client').Prisma.JsonValue,
+                currentMedications: q.currentMedications as import('@prisma/client').Prisma.JsonValue,
+                allergies: q.allergies as import('@prisma/client').Prisma.JsonValue,
+              }} />
             </CollapsibleSection>
             <CollapsibleSection title="Motivation & mode de vie">
               <p className="text-sm text-slate-700">{q.motivations}</p>

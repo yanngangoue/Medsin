@@ -140,10 +140,7 @@ export default function DevInteropTestClient({ userId, role, prenom }: Props) {
                 const res = await fetch("/api/dev/metabolic-recompute", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body:
-                    role === "ADMIN"
-                      ? JSON.stringify({ patientUserId: patientIdForPro.trim() || userId })
-                      : JSON.stringify({}),
+                  body: JSON.stringify({}),
                 });
                 const json = await res.json().catch(() => ({}));
                 append(`Recalcul profil (${res.status})`, json);

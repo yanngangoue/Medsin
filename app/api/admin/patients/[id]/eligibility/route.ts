@@ -38,6 +38,11 @@ export async function PATCH(req: Request, { params }: Params) {
       userId: id,
       fullName: patient.prenom || patient.name || "",
       eligibility: parsed.data.status,
+      age: 0,
+      weightKg: 0,
+      heightCm: 0,
+      bmi: 0,
+      medicalHistory: "",
     },
     update: { eligibility: parsed.data.status },
   });

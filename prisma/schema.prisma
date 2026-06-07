@@ -708,3 +708,35 @@ model AppNotification {
   @@index([userId])
   @@index([isRead])
 }
+
+/** Journal des envois transactionnels (idempotence Resend). */
+model EmailLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  toEmail   String
+  template  String
+  entityKey String?
+  subject   String
+  status    String
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([template, entityKey], name: "template_entityKey")
+  @@index([userId])
+}
+
+/** Audit actions médecin sur dossiers patients. */
+model AuditMedical {
+  id        String   @id @default(uuid())
+  medecinId String
+  patientId String
+  action    String
+  details   Json
+  ipAddress String?
+  userAgent String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([medecinId])
+  @@index([patientId])
+}

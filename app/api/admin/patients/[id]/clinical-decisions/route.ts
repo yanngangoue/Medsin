@@ -35,9 +35,20 @@ export async function POST(req: Request, { params }: Params) {
   });
   if (!patient) return badRequest("Patient introuvable");
 
+  const fullName = patient.prenom || patient.name || "";
+
   await prisma.patientProfile.upsert({
     where: { userId: id },
-    create: { userId: id, fullName: "", eligibility: parsed.data.eligibility },
+    create: {
+      userId: id,
+      fullName,
+      eligibility: parsed.data.eligibility,
+      age: 0,
+      weightKg: 0,
+      heightCm: 0,
+      bmi: 0,
+      medicalHistory: "",
+    },
     update: { eligibility: parsed.data.eligibility },
   });
 

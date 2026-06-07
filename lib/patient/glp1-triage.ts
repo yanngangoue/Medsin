@@ -28,10 +28,10 @@ function labelForId(id: string): string {
 }
 
 /** Situations health1 — contre-indications absolues au parcours automatisé. */
-const HEALTH1_EXCLUSION_IDS = new Set(GLP1_HEALTH_1.map((h) => h.id));
+const HEALTH1_EXCLUSION_IDS = new Set<string>(GLP1_HEALTH_1.map((h) => h.id));
 
 /** Antécédents health2/health3 — exclusion stricte immédiate. */
-const ADDITIONAL_EXCLUSION_IDS = new Set([
+const ADDITIONAL_EXCLUSION_IDS = new Set<string>([
   "substance_use",
   "t1",
   "retinopathy",

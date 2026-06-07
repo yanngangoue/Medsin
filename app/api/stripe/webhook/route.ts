@@ -17,6 +17,16 @@ function subscriptionIdFrom(
   return typeof value === "string" ? value : value.id;
 }
 
+function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
+  const legacy = (invoice as Stripe.Invoice & {
+    subscription?: string | Stripe.Subscription | null;
+  }).subscription;
+  if (legacy) return subscriptionIdFrom(legacy);
+
+  const parentSub = invoice.parent?.subscription_details?.subscription;
+  return subscriptionIdFrom(parentSub as string | Stripe.Subscription | null | undefined);
+}
+
 export async function POST(req: Request) {
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -47,9 +57,9 @@ export async function POST(req: Request) {
 
     if (event.type === "invoice.payment_succeeded") {
       const invoice = event.data.object as Stripe.Invoice;
-      const subscriptionId = subscriptionIdFrom(invoice.subscription);
+      const subscriptionId = subscriptionIdFromInvoice(invoice);
 
-      if (subscriptionId && invoice.billing_reason === "subscription_cycle") {
+      if (subscriptionId && invoice.billing_reason === "subscription_cycle" && invoice.id) {
         await handleSubscriptionRenewal(subscriptionId, invoice.id);
       }
     }
@@ -61,8 +71,8 @@ export async function POST(req: Request) {
 
     if (event.type === "invoice.payment_failed") {
       const invoice = event.data.object as Stripe.Invoice;
-      const subscriptionId = subscriptionIdFrom(invoice.subscription);
-      if (subscriptionId) {
+      const subscriptionId = subscriptionIdFromInvoice(invoice);
+      if (subscriptionId && invoice.id) {
         await handlePaymentFailed(subscriptionId, invoice.id);
       }
     }

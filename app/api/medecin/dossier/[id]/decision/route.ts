@@ -71,6 +71,11 @@ export async function PATCH(req: Request, { params }: Params) {
       userId: dossier.patientId,
       fullName: dossier.patient.prenom || dossier.patient.name || "",
       eligibility: mapProfileEligibility(newStatus),
+      age: 0,
+      weightKg: 0,
+      heightCm: 0,
+      bmi: 0,
+      medicalHistory: "",
     },
     update: { eligibility: mapProfileEligibility(newStatus) },
   });

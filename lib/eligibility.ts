@@ -73,3 +73,18 @@ export function simulateGlp1Eligibility(input: EligibilityInput): {
 
   return { status: EligibilityStatus.NOT_ELIGIBLE, labelFr: "Non éligible" };
 }
+
+/** Explication courte de la simulation d'éligibilité (UI — pas un avis médical). */
+export function explainGlp1SimulationStatus(
+  status: EligibilityStatus,
+  bmi: number,
+  _medicalHistory: string,
+): string {
+  if (status === "NOT_ELIGIBLE") {
+    return `Simulation : IMC ${bmi.toFixed(1)} — en dehors des critères démo habituels (IMC > 30, ou > 27 avec comorbidité liée au poids).`;
+  }
+  if (status === "MEDICAL_REVIEW_REQUIRED") {
+    return `Simulation : IMC ${bmi.toFixed(1)} — profil nécessitant une revue par un professionnel avant toute décision.`;
+  }
+  return `Simulation : IMC ${bmi.toFixed(1)} — profil admissible au sens de la simulation logicielle.`;
+}

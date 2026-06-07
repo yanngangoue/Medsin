@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { forbidden, unauthorized } from "@/lib/api-errors";
-import { computeBmi, simulateGlp1Eligibility } from "@/lib/eligibility";
+import { computeBmi, explainGlp1SimulationStatus, simulateGlp1Eligibility } from "@/lib/eligibility";
 import { getSessionUser } from "@/lib/session";
 
 const schema = z.object({
@@ -30,7 +30,8 @@ export async function POST(req: Request) {
   return NextResponse.json({
     bmi,
     eligibility: result.status,
-    reasons: result.reasons,
+    labelFr: result.labelFr,
+    reason: explainGlp1SimulationStatus(result.status, bmi, medicalHistory),
     disclaimer: "Simulation indicative — seul un professionnel de santé peut confirmer l'admissibilité.",
   });
 }

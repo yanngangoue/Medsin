@@ -32,7 +32,7 @@ export async function GET(_req: Request, { params }: Params) {
     entity: id,
   });
 
-  return new NextResponse(file.bytes, {
+  return new NextResponse(new Uint8Array(file.bytes), {
     headers: {
       "Content-Type": file.mimeType,
       "Content-Disposition": `inline; filename="${file.fileName}"`,

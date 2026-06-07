@@ -35,6 +35,12 @@ import {
   readGlp1WizardProgress,
 } from "@/lib/patient/glp1-session-client";
 import { GLP1_LANDING_PATH } from "@/lib/patient/glp1-flow-routes";
+import {
+  hasMeaningfulGlp1Answers,
+  inferLastCompletedGlp1Step,
+  isGlp1StepComplete,
+  seedGlp1SessionForResume,
+} from "@/lib/patient/glp1-wizard-progress";
 import { Glp1ExclusionScreen } from "@/components/onboarding/Glp1ExclusionScreen";
 import { runGlp1PreDiagnosticTriage } from "@/lib/patient/glp1-triage";
 
@@ -142,7 +148,9 @@ export function Glp1EligibilityWizard() {
 
   useEffect(() => {
     persistGlp1Answers(answers);
-    persistGlp1WizardProgress({ phase, step });
+    if (phase === "intro" || phase === "questions") {
+      persistGlp1WizardProgress({ phase, step });
+    }
   }, [answers, phase, step]);
 
   const staggerKey = phase === "questions" ? step : -1;
