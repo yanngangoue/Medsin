@@ -1,100 +1,83 @@
-import { auth } from "./auth.edge";
-import { defaultHomeForRole, requiredRoleForPath } from "@/lib/rbac";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-const PUBLIC_PREFIXES = [
-  "/eligibilite",
-  "/auth/inscription",
-  "/connexion",
-  "/medicaments",
-  "/confidentialite",
-] as const;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-function isPublicPath(pathname: string): boolean {
-  if (pathname === "/") return true;
-  return PUBLIC_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
-}
+  // Routes publiques — pas de vérification
+  const publicRoutes = [
+    "/",
+    "/eligibilite",
+    "/eligibilite/resultat",
+    "/connexion",
+    "/auth/connexion",
+    "/auth/inscription",
+    "/auth/inscription",
+    "/confidentialite",
+    "/politique-confidentialite",
+    "/conditions-utilisation",
+    "/politique-remboursement",
+    "/conformite",
+    "/garantie",
+    "/contact",
+    "/projet",
+    "/acces-refuse",
+  ];
 
-function loginRedirect(req: Request, pathname: string): Response {
-  const login = new URL("/connexion", req.url);
-  login.searchParams.set("callbackUrl", pathname);
-  return Response.redirect(login);
-}
-
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const session = req.auth;
-
-  if (isPublicPath(pathname)) {
-    return;
-  }
-
+  // Routes API publiques
   if (
-    pathname === "/questionnaire" ||
-    pathname === "/paiement" ||
-    pathname === "/examen-en-cours"
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/onboarding/eligibilite") ||
+    pathname.startsWith("/api/stripe/webhook") ||
+    pathname.startsWith("/api/cron") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/favicon")
   ) {
-    if (!session) {
-      return loginRedirect(req, pathname);
-    }
-    if (session.user.role !== "PATIENT") {
-      return Response.redirect(new URL("/acces-refuse", req.url));
-    }
-    return;
+    return NextResponse.next();
   }
 
-  if (pathname.startsWith("/dashboard/patient")) {
-    if (!session) {
-      return loginRedirect(req, pathname);
-    }
-    if (session.user.role !== "PATIENT") {
-      return Response.redirect(new URL("/acces-refuse", req.url));
-    }
-    return;
+  // Vérifier si route publique
+  if (publicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"))) {
+    return NextResponse.next();
   }
 
-  if (pathname.startsWith("/dashboard/ips")) {
-    if (!session) {
-      return loginRedirect(req, pathname);
-    }
-    if (session.user.role !== "IPS") {
-      return Response.redirect(new URL("/acces-refuse", req.url));
-    }
-    return;
+  // Vérifier le token JWT
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  // Non connecté → rediriger vers connexion
+  if (!token) {
+    const loginUrl = new URL("/connexion", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname.startsWith("/dashboard")) {
-    if (!session) {
-      return loginRedirect(req, pathname);
-    }
-    return Response.redirect(new URL(defaultHomeForRole(session.user.role), req.url));
+  const role = token.role as string;
+
+  // Protection dashboard IPS
+  if (pathname.startsWith("/dashboard/ips") && role !== "IPS") {
+    return NextResponse.redirect(new URL("/acces-refuse", request.url));
   }
 
-  const required = requiredRoleForPath(pathname);
-  if (!required) {
-    return;
+  // Protection dashboard médecin
+  if (pathname.startsWith("/medecin") && role !== "MEDECIN" && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/acces-refuse", request.url));
   }
 
-  if (!session) {
-    return loginRedirect(req, pathname);
+  // Protection dashboard admin
+  if (pathname.startsWith("/admin") && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/acces-refuse", request.url));
   }
 
-  if (session.user.role !== required) {
-    return Response.redirect(new URL("/acces-refuse", req.url));
-  }
-});
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    "/questionnaire",
-    "/paiement",
-    "/examen-en-cours",
-    "/dashboard/:path*",
-    "/patient/:path*",
-    "/pharmacien/:path*",
-    "/medecin/:path*",
-    "/nutritionniste/:path*",
-    "/admin/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|images|icons|fonts).*)",
   ],
 };
