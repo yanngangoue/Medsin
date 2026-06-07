@@ -1,76 +1,56 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Routes publiques — pas de vérification
-  const publicRoutes = [
+  // Routes et fichiers statiques — laisser passer
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/stripe/webhook") ||
+    pathname.startsWith("/api/cron") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/favicon") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
+  // Routes publiques
+  const publicPaths = [
     "/",
     "/eligibilite",
-    "/eligibilite/resultat",
     "/connexion",
-    "/auth/connexion",
-    "/auth/inscription",
-    "/auth/inscription",
+    "/auth",
     "/confidentialite",
-    "/politique-confidentialite",
-    "/conditions-utilisation",
-    "/politique-remboursement",
+    "/politique",
+    "/conditions",
     "/conformite",
     "/garantie",
     "/contact",
     "/projet",
     "/acces-refuse",
+    "/landing",
+    "/mvp",
+    "/patient",
+    "/onboarding",
   ];
 
-  // Routes API publiques
-  if (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/api/onboarding/eligibilite") ||
-    pathname.startsWith("/api/stripe/webhook") ||
-    pathname.startsWith("/api/cron") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/favicon")
-  ) {
+  if (publicPaths.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  // Vérifier si route publique
-  if (publicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"))) {
-    return NextResponse.next();
-  }
-
-  // Vérifier le token JWT
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Vérifier le cookie de session NextAuth
+  const sessionToken =
+    request.cookies.get("next-auth.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value;
 
   // Non connecté → rediriger vers connexion
-  if (!token) {
+  if (!sessionToken) {
     const loginUrl = new URL("/connexion", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
-  }
-
-  const role = token.role as string;
-
-  // Protection dashboard IPS
-  if (pathname.startsWith("/dashboard/ips") && role !== "IPS") {
-    return NextResponse.redirect(new URL("/acces-refuse", request.url));
-  }
-
-  // Protection dashboard médecin
-  if (pathname.startsWith("/medecin") && role !== "MEDECIN" && role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/acces-refuse", request.url));
-  }
-
-  // Protection dashboard admin
-  if (pathname.startsWith("/admin") && role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/acces-refuse", request.url));
   }
 
   return NextResponse.next();
@@ -78,6 +58,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|images|icons|fonts).*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
