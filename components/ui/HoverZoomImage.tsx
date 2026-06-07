@@ -51,11 +51,11 @@ export function HoverZoomImage({
       setGroupActive(false);
     };
 
-    groupEl.addEventListener("mouseover", onOver);
-    groupEl.addEventListener("mouseout", onOut);
+    groupEl.addEventListener("mouseover", onOver as EventListener);
+    groupEl.addEventListener("mouseout", onOut as EventListener);
     return () => {
-      groupEl.removeEventListener("mouseover", onOver);
-      groupEl.removeEventListener("mouseout", onOut);
+      groupEl.removeEventListener("mouseover", onOver as EventListener);
+      groupEl.removeEventListener("mouseout", onOut as EventListener);
     };
   }, [groupHover]);
 
