@@ -35,25 +35,6 @@ export default function PolitiqueRemboursementPage() {
         été rendu (ex. consultation annulée par MedSim) ou en cas d&apos;erreur de facturation avérée.
       </p>
 
-      <h2 className="pt-4 text-base font-semibold text-slate-900">Catalogue Nutri+ (compléments)</h2>
-      <p>
-        Pour une commande de compléments partenaires (poudres, gélules) :
-      </p>
-      <ul className="list-disc space-y-2 pl-5">
-        <li>
-          <strong>Produit non conforme ou endommagé</strong> : signalement dans les 48 h suivant la
-          réception, avec photos si possible — remboursement ou nouvel envoi selon le cas.
-        </li>
-        <li>
-          <strong>Annulation avant expédition</strong> : remboursement intégral si le partenaire n&apos;a pas
-          encore expédié la commande (délai variable selon le fournisseur).
-        </li>
-        <li>
-          <strong>Après réception acceptée</strong> : aucun remboursement sauf vice caché ou erreur prouvée
-          de notre part ou du partenaire.
-        </li>
-      </ul>
-
       <h2 className="pt-4 text-base font-semibold text-slate-900">Modalités de remboursement</h2>
       <p>
         Les remboursements approuvés sont crédités sur le mode de paiement initial, dans un délai de 5 à 10
@@ -63,8 +44,8 @@ export default function PolitiqueRemboursementPage() {
 
       <h2 className="pt-4 text-base font-semibold text-slate-900">Cas non remboursables</h2>
       <p>
-        Ne donnent pas lieu à remboursement : changement d&apos;avis après ouverture partielle des compléments,
-        non-respect du plan de suivi convenu, informations erronées fournies au dossier, ou services déjà
+        Ne donnent pas lieu à remboursement : non-respect du plan de suivi convenu, informations erronées
+        fournies au dossier, ou services déjà
         entièrement rendus conformément au contrat.
       </p>
 

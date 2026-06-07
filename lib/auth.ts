@@ -1,9 +1,15 @@
+/**
+ * JWT cookie legacy (`medsim_token`) — conservé pour nettoyage à la déconnexion.
+ * L'authentification applicative utilise NextAuth (`@/auth`, `getSessionUser`).
+ */
 import { SignJWT } from "jose/jwt/sign";
 import { jwtVerify } from "jose/jwt/verify";
 import { cookies } from "next/headers";
 import type { User } from "@prisma/client";
 
 const COOKIE_NAME = "medsim_token";
+
+/** @deprecated Préférer `getSessionUser()` depuis `@/lib/session`. */
 
 function getSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
@@ -62,6 +68,7 @@ export async function getTokenFromCookies(): Promise<string | null> {
   return jar.get(COOKIE_NAME)?.value ?? null;
 }
 
+/** @deprecated Utiliser `getSessionUser()` depuis `@/lib/session`. */
 export async function getSessionPayload(): Promise<JwtPayload | null> {
   const token = await getTokenFromCookies();
   if (!token) return null;

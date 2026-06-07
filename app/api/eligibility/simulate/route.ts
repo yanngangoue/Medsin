@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { forbidden, unauthorized } from "@/lib/api-errors";
 import { computeBmi, simulateGlp1Eligibility } from "@/lib/eligibility";
-import { getSessionPayload } from "@/lib/auth";
+import { getSessionUser } from "@/lib/session";
 
 const schema = z.object({
   age: z.number().int(),
@@ -10,14 +11,13 @@ const schema = z.object({
   medicalHistory: z.string(),
 });
 
-/** Simulation uniquement — pas d’avis médical. */
+/** Simulation uniquement — pas d'avis médical. */
 export async function POST(req: Request) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (user.role !== "PATIENT") return forbidden();
 
-  const raw = await req.json().catch(() => null);
+  const raw: unknown = await req.json().catch(() => null);
   const parsed = schema.safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -29,8 +29,8 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     bmi,
-    status: result.status,
-    disclaimer:
-      "Résultat de simulation logicielle à des fins de démonstration uniquement. Ce n’est pas un avis médical.",
+    eligibility: result.status,
+    reasons: result.reasons,
+    disclaimer: "Simulation indicative — seul un professionnel de santé peut confirmer l'admissibilité.",
   });
 }

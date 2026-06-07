@@ -6,9 +6,11 @@ import type { Glp1DossierSummary } from "@/lib/patient/glp1-dossier";
 import { buildPatientJourneySimple } from "@/lib/patient/patient-space";
 import { PatientGlp1DossierCard } from "@/components/dashboard/patient-space/PatientGlp1DossierCard";
 import { PatientPrescriptionCard } from "@/components/dashboard/patient-space/PatientPrescriptionCard";
+import { PatientDashboardQuickNav } from "@/components/dashboard/patient-space/PatientDashboardQuickNav";
+import { PatientWeightProgramCard } from "@/components/dashboard/patient-space/PatientWeightProgramCard";
+import { PatientAiCoachPanel } from "@/components/dashboard/patient-space/PatientAiCoachPanel";
 import { PatientJourneyStrip } from "@/components/dashboard/patient-space/PatientJourneyStrip";
 import { PatientCareHub } from "@/components/dashboard/patient-space/PatientCareHub";
-import { PatientSpaceServices } from "@/components/dashboard/patient-space/PatientSpaceServices";
 import { PatientSpaceShell } from "@/components/dashboard/patient-space/PatientSpaceShell";
 
 type Props = {
@@ -49,15 +51,19 @@ export function PatientMonEspace({
       <div className="patient-space-enter space-y-8">
         <PatientJourneyStrip steps={journey} />
 
+        <PatientDashboardQuickNav />
+
         <PatientPrescriptionCard />
+
+        <PatientWeightProgramCard />
+
+        <PatientAiCoachPanel compact />
 
         <PatientGlp1DossierCard
           eligibility={eligibility}
           hasGlp1Dossier={hasGlp1Dossier}
           glp1Summary={glp1Summary}
         />
-
-        <PatientSpaceServices highlightGlp1={!hasGlp1Dossier} hasGlp1Dossier={hasGlp1Dossier} />
 
         <PatientCareHub
           userId={userId}

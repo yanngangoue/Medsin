@@ -20,21 +20,9 @@ export const PROJECT_MAP_SECTIONS: ProjectMapSection[] = [
     title: "Accueil & parcours public",
     links: [
       { href: "/landing", label: "Landing marketing" },
-      { href: "/nutrition", label: "Landing nutrition" },
       { href: "/onboarding", label: "Onboarding — choix parcours" },
       { href: "/onboarding/gestion-poids", label: "Gestion du poids (GLP-1)" },
-      { href: "/onboarding/repas-sante", label: "Repas santé" },
       { href: "/contact", label: "Contact" },
-    ],
-  },
-  {
-    title: "Nutri+",
-    links: [
-      { href: "/onboarding/nutri-plus", label: "Accueil Nutri+" },
-      { href: "/onboarding/nutri-plus/produits", label: "Produits" },
-      { href: "/onboarding/nutri-plus/questionnaire", label: "Questionnaire" },
-      { href: "/onboarding/nutri-plus/inscription", label: "Inscription" },
-      { href: "/onboarding/nutri-plus/confirmation", label: "Confirmation" },
     ],
   },
   {
@@ -69,8 +57,11 @@ export const PROJECT_MAP_SECTIONS: ProjectMapSection[] = [
   {
     title: "Patient — dossier & téléconsultation",
     links: [
-      { href: "/dashboard/patient", label: "Dashboard patient" },
-      { href: "/dashboard/patient/dossier", label: "Dossier patient" },
+      { href: "/dashboard/patient", label: "Dashboard patient (hub)" },
+      { href: "/dashboard/patient/programme", label: "Programme poids" },
+      { href: "/dashboard/patient/progression", label: "Progression & courbes" },
+      { href: "/dashboard/patient/coach", label: "Coach IA Claude" },
+      { href: "/dashboard/patient/dossier", label: "Dossier GLP-1" },
       { href: "/appointments", label: "Rendez-vous" },
       { href: "/onboarding/questionnaire", label: "Questionnaire" },
       { href: "/onboarding/confirmation", label: "Confirmation onboarding" },
@@ -78,11 +69,11 @@ export const PROJECT_MAP_SECTIONS: ProjectMapSection[] = [
   },
   {
     title: "Interopérabilité & métabolisme",
-    description: "API FHIR + comportement alimentaire (consentement requis pour ingestion).",
+    description: "API FHIR + données métaboliques (consentement requis pour ingestion).",
     links: [
       { href: "/dev/interop-test", label: "Page de test interop (boutons)", note: "PATIENT connecté" },
       { href: "/api/interop/v1/metabolic/consent/dietary", label: "API — consentement", note: "POST" },
-      { href: "/api/interop/v1/metabolic/intake/meal", label: "API — repas", note: "POST" },
+      { href: "/api/interop/v1/metabolic/intake/glp1", label: "API — GLP-1", note: "POST" },
       { href: "/projet", label: "Cette carte (raccourci /projet)" },
     ],
   },

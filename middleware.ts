@@ -5,6 +5,30 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
 
+  if (pathname.startsWith("/dashboard/patient")) {
+    if (!session) {
+      const login = new URL("/connexion", req.url);
+      login.searchParams.set("callbackUrl", pathname);
+      return Response.redirect(login);
+    }
+    if (session.user.role !== "PATIENT") {
+      return Response.redirect(new URL("/acces-refuse", req.url));
+    }
+    return;
+  }
+
+  if (pathname.startsWith("/dashboard/ips")) {
+    if (!session) {
+      const login = new URL("/connexion", req.url);
+      login.searchParams.set("callbackUrl", pathname);
+      return Response.redirect(login);
+    }
+    if (session.user.role !== "IPS" && session.user.role !== "MEDECIN" && session.user.role !== "ADMIN") {
+      return Response.redirect(new URL("/acces-refuse", req.url));
+    }
+    return;
+  }
+
   if (pathname.startsWith("/dashboard")) {
     if (!session) {
       const login = new URL("/connexion", req.url);

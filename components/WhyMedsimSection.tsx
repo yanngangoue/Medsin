@@ -13,7 +13,7 @@ function CheckIcon({ className }: { className?: string }) {
 
 const POINTS = [
   "Médecins et pharmaciens licenciés au Canada",
-  "Suivi médical et nutritionnel coordonné",
+  "Suivi médical et assistant IA proactif (Claude)",
   "IA d’analyse et de personnalisation métabolique",
   "Conformité Loi\u202f25 et sécurité des données patients",
 ] as const;

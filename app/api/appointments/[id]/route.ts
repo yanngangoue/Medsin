@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSessionPayload } from "@/lib/auth";
-import { getSessionUser, isStaffRole } from "@/lib/session";
 import { forbidden, unauthorized } from "@/lib/api-errors";
+import { getSessionUser, isStaffRole } from "@/lib/session";
 import { toAppointmentDto } from "@/lib/telehealth/appointments-service";
 import {
   buildJitsiMeetingUrl,
@@ -12,17 +11,14 @@ import {
 type Params = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Params) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
 
-  const staff = await getSessionUser();
-  const isStaff = staff && isStaffRole(staff.role);
-
+  const isStaff = isStaffRole(user.role);
   const { id } = await params;
+
   const appointment = await prisma.appointment.findFirst({
-    where: isStaff ? { id } : { id, userId: session.sub },
+    where: isStaff ? { id } : { id, userId: user.id },
     include: {
       user: { select: { id: true, prenom: true, name: true, email: true } },
     },
@@ -32,7 +28,7 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "Rendez-vous introuvable" }, { status: 404 });
   }
 
-  if (!isStaff && appointment.userId !== session.sub) {
+  if (!isStaff && appointment.userId !== user.id) {
     return forbidden();
   }
 

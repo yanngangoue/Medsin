@@ -1,7 +1,8 @@
 import type { Role } from "@prisma/client";
 
 export const ROLE_HOME: Record<Role, string> = {
-  PATIENT: "/patient",
+  PATIENT: "/dashboard/patient",
+  IPS: "/dashboard/ips",
   PHARMACIEN: "/pharmacien",
   MEDECIN: "/medecin",
   NUTRITIONNISTE: "/nutritionniste",
@@ -13,6 +14,7 @@ export function requiredRoleForPath(pathname: string): Role | null {
   if (pathname === "/patient" || pathname.startsWith("/patient/")) return "PATIENT";
   if (pathname === "/pharmacien" || pathname.startsWith("/pharmacien/")) return "PHARMACIEN";
   if (pathname === "/medecin" || pathname.startsWith("/medecin/")) return "MEDECIN";
+  if (pathname === "/ips" || pathname.startsWith("/ips/")) return "IPS";
   if (pathname === "/nutritionniste" || pathname.startsWith("/nutritionniste/")) return "NUTRITIONNISTE";
   if (pathname === "/admin" || pathname.startsWith("/admin/")) return "ADMIN";
   return null;

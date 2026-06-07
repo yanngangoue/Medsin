@@ -1,0 +1,259 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { writeAuditLog } from "@/lib/audit";
+import { sendEmail } from "@/lib/email/send-email";
+import { requireIpsSession } from "@/lib/ips/auth";
+import { canAccessQuestionnaire } from "@/lib/ips/questionnaire-access";
+import { auditMedicalRecordAccess } from "@/lib/audit-medical";
+import { generateIpsAiSummary } from "@/lib/ips/generate-ai-summary";
+import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
+import { isDemoMode } from "@/lib/is-demo-mode";
+import { generatePrescriptionPdf } from "@/lib/pdf-generator";
+import { prisma } from "@/lib/prisma";
+
+type Params = { params: Promise<{ id: string }> };
+
+const approveSchema = z.object({
+  action: z.enum(["approve", "reject", "refer", "save_notes"]),
+  ipsNotes: z.string().optional(),
+  medication: z.string().optional(),
+  dosage: z.string().optional(),
+  duration: z.number().int().min(1).max(12).optional(),
+  refills: z.number().int().min(0).max(12).optional(),
+  instructions: z.string().optional(),
+  rejectReason: z.string().optional(),
+});
+
+export async function GET(_req: Request, { params }: Params) {
+  const session = await requireIpsSession();
+  if (!session) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  if (isDemoMode()) {
+    return NextResponse.json({ error: "Mode démo — dossier indisponible" }, { status: 404 });
+  }
+
+  const questionnaire = await prisma.medicalQuestionnaire.findUnique({
+    where: { id },
+    include: {
+      user: { select: { id: true, prenom: true, email: true } },
+      medicationFulfillment: true,
+    },
+  });
+
+  if (!questionnaire) {
+    return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+  }
+
+  if (
+    !canAccessQuestionnaire(questionnaire, {
+      id: session.user.id,
+      role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
+    })
+  ) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+  }
+
+  await auditMedicalRecordAccess({
+    accessorId: session.user.id,
+    patientId: questionnaire.userId,
+    resource: "medical_questionnaire",
+    resourceId: id,
+  });
+
+  const eligibility = await prisma.eligibilityCheck.findFirst({
+    where: { userId: questionnaire.userId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const aiSummary = await generateIpsAiSummary({
+    ...questionnaire,
+    age: eligibility?.age ?? null,
+  });
+
+  return NextResponse.json({
+    questionnaire,
+    aiSummary,
+    age: eligibility?.age ?? null,
+    receivedAt: questionnaire.createdAt.toISOString(),
+  });
+}
+
+export async function PATCH(req: Request, { params }: Params) {
+  const session = await requireIpsSession();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const body: unknown = await req.json().catch(() => null);
+  const parsed = approveSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Données invalides" }, { status: 400 });
+  }
+
+  if (isDemoMode()) {
+    return NextResponse.json({ ok: true, demo: true });
+  }
+
+  const questionnaire = await prisma.medicalQuestionnaire.findUnique({
+    where: { id },
+    include: { user: true, medicationFulfillment: true },
+  });
+
+  if (!questionnaire) {
+    return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+  }
+
+  if (
+    !canAccessQuestionnaire(questionnaire, {
+      id: session.user.id,
+      role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
+    })
+  ) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+  }
+
+  const { action, ipsNotes, medication, dosage, duration, refills, instructions, rejectReason } =
+    parsed.data;
+
+  if (action === "save_notes") {
+    await prisma.medicalQuestionnaire.update({
+      where: { id },
+      data: { ipsNotes: ipsNotes ?? null, status: "UNDER_REVIEW", ipsId: session.user.id },
+    });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action === "reject") {
+    await prisma.medicalQuestionnaire.update({
+      where: { id },
+      data: {
+        status: "REJECTED",
+        ipsNotes: rejectReason ?? ipsNotes ?? null,
+        ipsId: session.user.id,
+        reviewedAt: new Date(),
+      },
+    });
+    return NextResponse.json({ ok: true, status: "REJECTED" });
+  }
+
+  if (action === "refer") {
+    await prisma.medicalQuestionnaire.update({
+      where: { id },
+      data: {
+        status: "UNDER_REVIEW",
+        ipsNotes: ipsNotes ?? "Référé au médecin superviseur",
+        ipsId: session.user.id,
+      },
+    });
+    return NextResponse.json({ ok: true, status: "UNDER_REVIEW" });
+  }
+
+  if (action === "approve") {
+    if (!medication || !dosage || !duration) {
+      return NextResponse.json({ error: "Ordonnance incomplète" }, { status: 400 });
+    }
+
+    if (questionnaire.medicationFulfillment) {
+      return NextResponse.json({
+        ok: true,
+        fulfillmentId: questionnaire.medicationFulfillment.id,
+        status: questionnaire.status,
+      });
+    }
+
+    const pharmacy = await prisma.pharmacyPartner.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const ipsUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { prenom: true, name: true, medecinLicenseNumber: true },
+    });
+
+    const pdfBuffer = generatePrescriptionPdf({
+      patientName: questionnaire.user.prenom,
+      medication,
+      dosage,
+      durationMonths: duration,
+      refills: refills ?? 2,
+      instructions: instructions ?? "",
+      ipsName: ipsUser?.prenom ?? ipsUser?.name ?? "IPS MedSim",
+      ipsLicense: ipsUser?.medecinLicenseNumber ?? undefined,
+      issuedAt: new Date(),
+    });
+    const pdfUrl = `data:application/pdf;base64,${pdfBuffer.toString("base64")}`;
+
+    const fulfillment = await prisma.medicationFulfillment.create({
+      data: {
+        questionnaireId: id,
+        userId: questionnaire.userId,
+        ipsId: session.user.id,
+        medication,
+        dosage,
+        duration,
+        refills: refills ?? 2,
+        instructions: instructions ?? "",
+        pharmacyId: pharmacy?.id ?? null,
+        status: "ISSUED",
+        paymentStatus: "PENDING",
+        amountCents: monthlyPriceCentsForMedication(medication),
+        pdfUrl,
+        pdfGeneratedAt: new Date(),
+      },
+    });
+
+    await prisma.fulfillmentStatusHistory.create({
+      data: { fulfillmentId: fulfillment.id, status: "ISSUED", note: "Ordonnance approuvée par IPS" },
+    });
+
+    await prisma.medicalQuestionnaire.update({
+      where: { id },
+      data: {
+        status: "PRESCRIPTION_ISSUED",
+        ipsId: session.user.id,
+        ipsNotes: ipsNotes ?? null,
+        reviewedAt: new Date(),
+      },
+    });
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
+    await sendEmail({
+      to: questionnaire.user.email,
+      subject: "Votre ordonnance MedSim est prête",
+      template: "prescription_ready",
+      entityKey: `prescription_ready:${fulfillment.id}`,
+      userId: questionnaire.userId,
+      html: `<p>Bonjour ${questionnaire.user.prenom},</p><p>Votre IPS a approuvé votre dossier. Procédez au paiement pour lancer la livraison : <a href="${baseUrl}/paiement?fulfillment=${fulfillment.id}">Payer maintenant</a>.</p>`,
+      text: `Bonjour ${questionnaire.user.prenom}, votre ordonnance est prête. Paiement : ${baseUrl}/paiement?fulfillment=${fulfillment.id}`,
+    });
+
+    await prisma.appNotification.create({
+      data: {
+        userId: questionnaire.userId,
+        type: "prescription_ready",
+        title: "Votre ordonnance est prête",
+        body: "Procédez au paiement pour lancer la livraison de votre médicament.",
+      },
+    });
+
+    await writeAuditLog({
+      userId: session.user.id,
+      action: "ips_prescription_approved",
+      entity: fulfillment.id,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      fulfillmentId: fulfillment.id,
+      status: "PRESCRIPTION_ISSUED",
+    });
+  }
+
+  return NextResponse.json({ error: "Action inconnue" }, { status: 400 });
+}

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getSessionPayload } from "@/lib/auth";
+import { forbidden, unauthorized } from "@/lib/api-errors";
 import { generatePatientSummary } from "@/lib/patient-summary";
+import { getSessionUser } from "@/lib/session";
 
 const bodySchema = z.object({
   age: z.coerce.number().int().min(18).max(120),
@@ -13,12 +14,11 @@ const bodySchema = z.object({
 
 /** Génère un résumé descriptif (Claude). Pas un avis médical. */
 export async function POST(req: Request) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (user.role !== "PATIENT") return forbidden();
 
-  const raw = await req.json().catch(() => null);
+  const raw: unknown = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       summary,
       disclaimer:
-        "Texte informatif produit par un outil automatisé. Ce n’est pas un diagnostic ni un conseil médical.",
+        "Texte informatif produit par un outil automatisé. Ce n'est pas un diagnostic ni un conseil médical.",
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Erreur inconnue";

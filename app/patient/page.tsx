@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { signOutMedSim } from "@/lib/client-sign-out";
 import { objectifLabel } from "@/lib/questionnaire-labels";
 import { parseQuestionnaireResponse, type QuestionnaireApiPayload } from "@/lib/questionnaire-api";
 
@@ -38,7 +39,7 @@ export default function PatientDashboardPage() {
   }, [status, session?.user?.role, router]);
 
   async function logout() {
-    await signOut({ callbackUrl: "/" });
+    await signOutMedSim("/");
   }
 
   if (status === "loading" || !session?.user || !questionnaireFetched) {

@@ -6,6 +6,7 @@ import { PatientServicesHub } from "@/components/patient/PatientServicesHub";
 import { PatientStickyScrollHeader } from "@/components/patient/PatientStickyScrollHeader";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 import type { PatientHubContext } from "@/lib/patient/patient-hub";
+import { PATIENT_HOMEPAGE_GRADIENT } from "@/lib/patient/homepage-surface";
 import { PATIENT_SERVICE_SECTIONS } from "@/lib/patient/service-sections";
 
 type ConnectedPatient = {
@@ -26,16 +27,16 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
   const prenom = connectedPatient?.prenom ?? "";
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className={`min-h-screen ${PATIENT_HOMEPAGE_GRADIENT}`}>
       {hasAccount ? (
-        <div className="border-b border-[#C8E6D9]/60 bg-[#F0FBF7] px-4 py-2.5 sm:px-6">
+        <div className="border-b border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-sm sm:px-6">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 text-sm">
-            <p className="text-slate-700">
-              Bonjour, <span className="font-semibold text-slate-900">{prenom}</span>
+            <p className="text-white/90">
+              Bonjour, <span className="font-semibold text-white">{prenom}</span>
             </p>
             <Link
               href={GLP1_PATIENT_DASHBOARD_PATH}
-              className="font-semibold text-[#1D9E75] hover:text-[var(--teal-900)] hover:underline"
+              className="font-semibold text-white hover:text-white/80 hover:underline"
             >
               Mon espace patient →
             </Link>
@@ -51,7 +52,6 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
             hasQuestionnaire: false,
             eligibility: "PENDING",
             hasGlp1Dossier: false,
-            hasNutriPlusDossier: false,
           }
         }
         showAuthLinks={!hasAccount}
@@ -65,15 +65,15 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
         ))}
 
         {hasAccount ? (
-          <section className="mx-auto max-w-2xl rounded-2xl border border-[#C8E6D9]/80 bg-[#F0FBF7] p-6 text-center shadow-sm sm:mt-4 sm:p-8">
-            <h2 className="text-lg font-semibold text-slate-900">Votre suivi personnel</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          <section className="mx-auto max-w-2xl rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-sm backdrop-blur-sm sm:mt-4 sm:p-8">
+            <h2 className="text-lg font-semibold text-white">Votre suivi personnel</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/85">
               Dossier, messages et rendez-vous sont dans votre espace patient. Ici, vous parcourez
               librement la présentation des services MedSim.
             </p>
             <Link
               href={GLP1_PATIENT_DASHBOARD_PATH}
-              className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#1D9E75] px-6 text-sm font-semibold text-white hover:bg-[#188763]"
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-semibold text-[#1D4D3A] hover:bg-white/95"
             >
               Ouvrir mon espace patient
             </Link>

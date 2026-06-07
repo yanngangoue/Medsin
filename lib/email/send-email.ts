@@ -1,6 +1,11 @@
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
 
+export type EmailAttachment = {
+  filename: string;
+  content: string;
+};
+
 export type SendEmailInput = {
   to: string;
   subject: string;
@@ -10,6 +15,7 @@ export type SendEmailInput = {
   userId?: string | null;
   /** Clé unique pour éviter les doublons (ex. appointment:uuid:reminder_24h). */
   entityKey?: string | null;
+  attachments?: EmailAttachment[];
 };
 
 export type SendEmailResult = { ok: boolean; skipped?: boolean; error?: string };
@@ -56,6 +62,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
           subject: input.subject,
           html: input.html,
           text: input.text,
+          ...(input.attachments?.length ? { attachments: input.attachments } : {}),
         }),
       });
       if (!res.ok) {

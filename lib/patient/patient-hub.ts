@@ -12,7 +12,6 @@ export type PatientHubContext = {
   hasQuestionnaire: boolean;
   eligibility: EligibilityStatus;
   hasGlp1Dossier?: boolean;
-  hasNutriPlusDossier?: boolean;
 };
 
 export type PatientHubServiceAction = {
@@ -45,18 +44,6 @@ export function getPatientHubServiceAction(
         statusLabel: "À commencer",
         ctaLabel: "Démarrer l'évaluation GLP-1",
         href: GLP1_EVALUATION_PATH,
-      };
-    case "nutri-plus":
-      return {
-        statusLabel: ctx.hasNutriPlusDossier ? "Actif" : "Découverte",
-        ctaLabel: "Découvrir Nutri+",
-        href: "/onboarding/nutri-plus",
-      };
-    case "repas-sante":
-      return {
-        statusLabel: "Commande",
-        ctaLabel: "Composer ma boîte repas",
-        href: "/onboarding/repas-sante",
       };
     default:
       return {

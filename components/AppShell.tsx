@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { MedsimLogo } from "@/components/MedsimLogo";
-import { signOut } from "next-auth/react";
+import { signOutMedSim } from "@/lib/client-sign-out";
 
 export function AppShell({
   children,
@@ -31,7 +31,7 @@ export function AppShell({
                 type="button"
                 className="rounded-lg px-3 py-1.5 text-slate-600 hover:bg-slate-100"
                 onClick={() => {
-                  void signOut({ callbackUrl: "/" });
+                  void signOutMedSim("/");
                 }}
               >
                 Déconnexion

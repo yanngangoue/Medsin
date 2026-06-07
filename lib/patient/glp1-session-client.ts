@@ -58,7 +58,8 @@ export async function syncGlp1DraftToServer(): Promise<{
 }> {
   const answers = readGlp1AnswersFromSessionStorage();
   if (!answers?.weightGoal) {
-    return { ok: false, error: "Aucune évaluation en attente." };
+    // Pas de brouillon local — le patient complétera l'évaluation après connexion.
+    return { ok: true };
   }
 
   const res = await fetch("/api/onboarding/glp1-dossier", {

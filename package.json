@@ -17,9 +17,11 @@
     "server:dev": "tsx watch server/index.ts",
     "server:start": "tsx server/index.ts",
     "test:interop": "tsx lib/interop/__tests__/gateway.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "cutout:pens": "python scripts/cutout-pen-images.py"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.102.0",
     "@auth/prisma-adapter": "^2.11.2",
     "@clerk/clerk-react": "^5.61.6",
     "@hookform/resolvers": "^5.2.2",

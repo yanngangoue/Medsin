@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
+import { Glp1ProductCards } from "@/components/patient/Glp1ProductCards";
+import { ELIGIBILITY_QUESTIONNAIRE_PATH } from "@/lib/patient/promo-banner-assets";
 import { getServiceCtaHref, type PatientServiceSection } from "@/lib/patient/service-sections";
 
 type Props = {
@@ -35,59 +36,21 @@ function CheckItem({
       >
         <CheckIcon />
       </span>
-      <span className="text-[15px] leading-snug text-slate-700">{children}</span>
+      <span className="text-[15px] leading-snug text-white/90">{children}</span>
     </li>
-  );
-}
-
-function SectionPhoto({
-  src,
-  alt,
-  variant = "person",
-  productFrameClass,
-  productCover = false,
-}: {
-  src: string;
-  alt: string;
-  variant?: "person" | "product";
-  productFrameClass?: string;
-  productCover?: boolean;
-}) {
-  const isProduct = variant === "product";
-  const isLocalImage = src.startsWith("/");
-
-  const frameClass = isProduct
-    ? productFrameClass ?? "aspect-[4/3] bg-white"
-    : "aspect-[3/4] rounded-2xl bg-slate-100 shadow-sm";
-
-  const imgClass = isProduct
-    ? productCover
-      ? "object-cover object-center"
-      : "object-contain object-center"
-    : "object-cover object-center";
-
-  return (
-    <HoverZoomImage
-      src={src}
-      alt={alt}
-      fill
-      unoptimized={isLocalImage}
-      zoom={isProduct ? "subtle" : "default"}
-      containerClassName={`w-full ${frameClass}`}
-      imageClassName={imgClass}
-      sizes={isProduct ? "(max-width: 640px) 100vw, 560px" : "(max-width: 640px) 50vw, 320px"}
-    />
   );
 }
 
 export function PatientServiceDetailSection({ section }: Props) {
   const accentClass = section.accentClass ?? "bg-[var(--teal)]";
   const accentTextClass = section.accentTextClass ?? "text-[var(--teal)]";
+  const ctaHref = getServiceCtaHref(section.id);
+  const showProductCards = section.id === "gestion-poids";
 
   return (
     <section
       id={section.id}
-      className={`scroll-mt-24 border-b border-slate-200/80 py-12 last:border-b-0 sm:py-16${
+      className={`scroll-mt-24 border-b border-white/15 py-12 last:border-b-0 sm:py-16${
         section.sectionClassName ? ` ${section.sectionClassName}` : ""
       }`}
       aria-labelledby={`${section.id}-title`}
@@ -100,36 +63,24 @@ export function PatientServiceDetailSection({ section }: Props) {
         </p>
         <h2
           id={`${section.id}-title`}
-          className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-[32px]"
+          className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-[32px]"
         >
           {section.title}
         </h2>
 
-        <div className="relative mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-4 sm:mt-8 sm:max-w-3xl sm:gap-5">
-          <div className="translate-y-0 sm:translate-y-2">
-            <SectionPhoto src={section.imagePrimary} alt={section.imagePrimaryAlt} />
-          </div>
-          <div className="-translate-y-3 sm:-translate-y-5">
-            <SectionPhoto src={section.imageSecondary} alt={section.imageSecondaryAlt} />
-          </div>
-        </div>
+        {showProductCards ? (
+          <Glp1ProductCards
+            href={ELIGIBILITY_QUESTIONNAIRE_PATH}
+            className="mx-auto mt-6 max-w-5xl sm:mt-8"
+          />
+        ) : null}
 
-        <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-slate-600 sm:mt-8 sm:text-base">
+        <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-white/85 sm:mt-8 sm:text-base">
           {section.body}
         </p>
 
-        <div className="mx-auto mt-6 max-w-md sm:mt-8 sm:max-w-lg">
-          <SectionPhoto
-            src={section.productImage}
-            alt={section.productImageAlt}
-            variant="product"
-            productFrameClass={section.productFrameClass}
-            productCover={section.productCover ?? false}
-          />
-        </div>
-
-        <div className="mx-auto mt-6 max-w-md text-left sm:mt-8">
-          <p className="text-center text-base font-semibold text-slate-900">
+        <div className="mx-auto mt-8 max-w-md text-left sm:mt-10">
+          <p className="text-center text-base font-semibold text-white">
             {section.includesTitle}
           </p>
           <ul className="mt-3 space-y-3 sm:mt-4 sm:space-y-3.5">
@@ -141,9 +92,21 @@ export function PatientServiceDetailSection({ section }: Props) {
           </ul>
         </div>
 
+        <p className="mx-auto mt-5 max-w-md text-xs leading-relaxed text-white/70 sm:text-sm">
+          Données chiffrées et hébergées au Canada. Conformité{" "}
+          <Link href="/conformite" className="font-medium text-white underline underline-offset-2">
+            Loi 25
+          </Link>{" "}
+          (Québec) et LPRPDE —{" "}
+          <Link href="/confidentialite" className="font-medium text-white underline underline-offset-2">
+            Politique de confidentialité
+          </Link>
+          .
+        </p>
+
         <Link
-          href={getServiceCtaHref(section.id)}
-          className={`mt-6 inline-flex items-center justify-center rounded-[10px] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-95 sm:mt-8 ${accentClass}`}
+          href={ctaHref}
+          className="mt-6 inline-flex items-center justify-center rounded-[10px] bg-white px-5 py-2.5 text-sm font-semibold text-[#1D4D3A] shadow-sm transition hover:bg-white/95 sm:mt-8"
         >
           En savoir plus
         </Link>
@@ -151,4 +114,3 @@ export function PatientServiceDetailSection({ section }: Props) {
     </section>
   );
 }
-

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
+import { Glp1PromoBanner } from "@/components/patient/Glp1PromoBanner";
 import type { buildPatientHubActions } from "@/lib/patient/patient-hub";
+import { ELIGIBILITY_QUESTIONNAIRE_PATH } from "@/lib/patient/promo-banner-assets";
 import { getServiceSectionAnchor } from "@/lib/patient/service-landing-paths";
 
 type HubItem = ReturnType<typeof buildPatientHubActions>[number];
@@ -28,8 +30,20 @@ function ArrowIcon() {
 }
 
 export function PatientHubServicesGrid({ services, mode, useSectionAnchors = false }: Props) {
+  if (services.length === 1 && useSectionAnchors) {
+    return (
+      <div className="relative z-10 mx-auto mt-5 max-w-5xl sm:mt-6">
+        <Glp1PromoBanner href={ELIGIBILITY_QUESTIONNAIRE_PATH} />
+      </div>
+    );
+  }
+
   return (
-    <ul className="relative z-10 mt-8 grid gap-4 sm:mt-10 sm:grid-cols-3 sm:gap-5">
+    <ul
+      className={`relative z-10 mt-8 grid gap-4 sm:mt-10 sm:gap-5 ${
+        services.length === 1 ? "max-w-md sm:grid-cols-1" : "sm:grid-cols-3"
+      }`}
+    >
       {services.map((service) => {
         const isLocalImage = service.image.startsWith("/");
         const href = useSectionAnchors
@@ -38,13 +52,18 @@ export function PatientHubServicesGrid({ services, mode, useSectionAnchors = fal
             ? service.discoverHref
             : service.action.href;
         const footerLabel =
-          mode === "public" ? "Découvrir" : service.action.ctaLabel;
+          mode === "public"
+            ? useSectionAnchors
+              ? "En savoir plus"
+              : "Découvrir"
+            : service.action.ctaLabel;
 
         return (
-          <li key={service.id}>
+          <li key={service.id} className="h-full">
             <Link
               href={href}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              aria-label={`${service.title} — ${footerLabel}`}
+              className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <HoverZoomImage
                 src={service.image}
@@ -53,7 +72,8 @@ export function PatientHubServicesGrid({ services, mode, useSectionAnchors = fal
                 unoptimized={isLocalImage}
                 zoom="default"
                 groupHover
-                containerClassName={`aspect-[4/3] w-full ${service.panelClass}`}
+                clickable
+                containerClassName={`aspect-[4/3] w-full shrink-0 ${service.panelClass}`}
                 imageClassName="object-cover object-center"
                 sizes="(max-width: 640px) 90vw, 320px"
               />

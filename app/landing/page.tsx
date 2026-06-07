@@ -6,7 +6,6 @@ import { StepsDetail } from "@/components/StepsDetail";
 import { WhyMedsimSection } from "@/components/WhyMedsimSection";
 import { MetabolicHealthSection } from "@/components/MetabolicHealthSection";
 import { AIAssistantSection } from "@/components/AIAssistantSection";
-import { NutritionSection } from "@/components/NutritionSection";
 import { MetricsSection } from "@/components/MetricsSection";
 import { PolicySection } from "@/components/PolicySection";
 import { Footer } from "@/components/Footer";
@@ -24,7 +23,6 @@ export default function LandingPage() {
         <WhyMedsimSection />
         <MetabolicHealthSection />
         <AIAssistantSection />
-        <NutritionSection />
         <MetricsSection />
         <PolicySection />
       </main>

@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
+import { authorizeCron } from "@/lib/cron/auth";
 import { prisma } from "@/lib/prisma";
 import { notifyAppointmentReminder } from "@/lib/email/notify";
-
-function authorizeCron(req: Request): boolean {
-  const secret = process.env.MEDSIM_CRON_SECRET?.trim();
-  if (!secret) return process.env.NODE_ENV === "development";
-  const auth = req.headers.get("authorization");
-  return auth === `Bearer ${secret}`;
-}
 
 /** Rappels RDV 24 h et ~15 min — appeler via cron (ex. toutes les 5 min). */
 export async function POST(req: Request) {

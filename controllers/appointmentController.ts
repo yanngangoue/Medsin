@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSessionPayload } from "@/lib/auth";
+import { forbidden, unauthorized } from "@/lib/api-errors";
+import { getSessionUser } from "@/lib/session";
 import { appointmentSchema } from "@/lib/validations";
 
 export async function listAppointments() {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (user.role !== "PATIENT") return forbidden();
+
   const items = await prisma.appointment.findMany({
-    where: { userId: session.sub },
+    where: { userId: user.id },
     orderBy: { scheduledAt: "asc" },
   });
   return NextResponse.json({ appointments: items });
 }
 
 export async function createAppointment(body: unknown) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (user.role !== "PATIENT") return forbidden();
 
   const parsed = appointmentSchema.safeParse(body);
   if (!parsed.success) {
@@ -33,11 +33,11 @@ export async function createAppointment(body: unknown) {
 
   const appt = await prisma.appointment.create({
     data: {
-      userId: session.sub,
+      userId: user.id,
       scheduledAt: when,
       notes: parsed.data.notes ?? null,
     },
   });
 
-  return NextResponse.json({ appointment: appt });
+  return NextResponse.json({ appointment: appt }, { status: 201 });
 }

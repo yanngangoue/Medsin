@@ -45,7 +45,7 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
   {
     id: "mounjaro",
     panelClass: "bg-[#EEF2F6]",
-    image: "/images/glp1-mounjaro-pen.jpg",
+    image: "/images/glp1-mounjaro-pen.png",
     imageAlt: "Stylo Mounjaro KwikPen tirzépatide",
     localImage: true,
     variant: "product",

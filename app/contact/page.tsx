@@ -25,7 +25,7 @@ export default function ContactPage() {
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Contact</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-600">
-          Une question sur votre parcours, Nutri+ ou nos services ? Écrivez-nous.
+          Une question sur votre parcours GLP-1 ou nos services ? Écrivez-nous.
         </p>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-2">

@@ -3,9 +3,10 @@ import {
   GLP1_PATIENT_DASHBOARD_PATH,
   GLP1_PATIENT_DOSSIER_PATH,
 } from "@/lib/patient/glp1-flow-routes";
+import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
 import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 
-export type PatientNavItemId = "home" | "space" | "dossier" | "contact";
+export type PatientNavItemId = "home" | "space" | "poids" | "dossier" | "contact";
 
 export type PatientNavItem = {
   id: PatientNavItemId;
@@ -17,6 +18,11 @@ export function buildPatientNavItems(hasGlp1Dossier: boolean): PatientNavItem[] 
   return [
     { id: "home", label: "Accueil", href: PUBLIC_CATALOG_HOME },
     { id: "space", label: "Mon espace", href: GLP1_PATIENT_DASHBOARD_PATH },
+    {
+      id: "poids",
+      label: "Mon suivi poids",
+      href: PATIENT_DASHBOARD_ROUTES.poids,
+    },
     {
       id: "dossier",
       label: hasGlp1Dossier ? "Mon dossier GLP-1" : "Évaluation GLP-1",
@@ -34,6 +40,14 @@ export function isPatientNavActive(pathname: string, item: PatientNavItem): bool
   if (item.id === "home") return pathname === "/";
   if (item.id === "space") {
     return pathname === GLP1_PATIENT_DASHBOARD_PATH || pathname.startsWith("/dashboard/patient/consultation");
+  }
+  if (item.id === "poids") {
+    return (
+      pathname.startsWith(PATIENT_DASHBOARD_ROUTES.poids) ||
+      pathname.startsWith(PATIENT_DASHBOARD_ROUTES.programme) ||
+      pathname.startsWith(PATIENT_DASHBOARD_ROUTES.progression) ||
+      pathname.startsWith(PATIENT_DASHBOARD_ROUTES.coach)
+    );
   }
   if (item.id === "dossier") {
     return (

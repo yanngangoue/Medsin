@@ -22,7 +22,7 @@ export const GLP1_MEDICATIONS: readonly Glp1Medication[] = [
     highlights: [
       "Réduction de l'appétit",
       "Suivi médical inclus",
-      "Accompagnement nutritionnel",
+      "Assistant IA proactif",
     ],
     image: "/images/glp1-ozempic-box.png",
     imageAlt: "Boîte Ozempic et stylo injectable sémaglutide",
@@ -57,7 +57,7 @@ export const GLP1_MEDICATIONS: readonly Glp1Medication[] = [
       "Prescription sur évaluation",
       "Suivi personnalisé",
     ],
-    image: "/images/glp1-mounjaro-pen.jpg",
+    image: "/images/glp1-mounjaro-pen.png",
     imageAlt: "Stylo Mounjaro KwikPen tirzépatide pour injection hebdomadaire",
     localImage: true,
     badge: "Sur prescription",
@@ -75,7 +75,7 @@ export const GLP1_BENEFITS = [
   },
   {
     title: "Accompagnement global",
-    text: "Nutrition, objectifs et assistance 24/7 au même endroit sur MedSim.",
+    text: "Assistant IA, objectifs et assistance 24/7 au même endroit sur MedSim.",
   },
 ] as const;
 

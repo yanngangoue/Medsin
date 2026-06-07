@@ -29,7 +29,6 @@ type Props = {
   questionnaire: Questionnaire;
   profileBmi: number | null;
   hasGlp1Dossier: boolean;
-  hasNutriPlusDossier?: boolean;
 };
 
 export function PatientDashboardClient({
@@ -40,7 +39,6 @@ export function PatientDashboardClient({
   questionnaire,
   profileBmi,
   hasGlp1Dossier,
-  hasNutriPlusDossier = false,
 }: Props) {
   const [staffId, setStaffId] = useState<string | null>(null);
 
@@ -62,7 +60,7 @@ export function PatientDashboardClient({
         variant="connected"
         prenom={prenom}
         showAuthLinks={false}
-        hubContext={{ hasQuestionnaire, eligibility, hasGlp1Dossier, hasNutriPlusDossier }}
+        hubContext={{ hasQuestionnaire, eligibility, hasGlp1Dossier }}
       />
 
       <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-8">

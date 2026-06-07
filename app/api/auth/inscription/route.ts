@@ -21,7 +21,13 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Corps de requête invalide" }, { status: 400 });
+  }
+
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Données invalides" }, { status: 400 });
@@ -29,6 +35,7 @@ export async function POST(req: Request) {
 
   const email = parsed.data.email.trim().toLowerCase();
 
+  try {
   if (isDemoMode()) {
     if (demoUserExists(email)) {
       return NextResponse.json({ error: "Email déjà utilisé" }, { status: 409 });
@@ -70,4 +77,11 @@ export async function POST(req: Request) {
   });
   resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);
   return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
+  } catch (e) {
+    console.error("[inscription]", e);
+    return NextResponse.json(
+      { error: "Impossible de créer le compte. Réessayez ou contactez le support." },
+      { status: 500 },
+    );
+  }
 }

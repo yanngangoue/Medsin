@@ -43,7 +43,7 @@ function ConnexionForm() {
         return;
       }
       const session = await getSession();
-      const home = session?.user?.role ? defaultHomeForRole(session.user.role) : "/patient";
+      const home = session?.user?.role ? defaultHomeForRole(session.user.role) : "/dashboard/patient";
       const raw = searchParams.get("callbackUrl");
       const callbackUrl =
         raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : null;

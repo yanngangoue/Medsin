@@ -74,7 +74,7 @@ export function ProjectHub() {
         ))}
 
         <p className="pb-8 text-center text-xs text-slate-400">
-          Commit local : <code>0d7fd72</code> — interop FHIR, métabolisme, Nutri+, espaces pro
+          Commit local — interop FHIR, GLP-1, assistant IA, espaces pro
         </p>
       </main>
     </div>

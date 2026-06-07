@@ -9,9 +9,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Medsim — Perte de poids GLP-1",
+  title: {
+    default: "MedSim — Perte de poids GLP-1 avec Anne, coach santé IA",
+    template: "%s · MedSim",
+  },
   description:
-    "Consultations en ligne et parcours personnalisé. Aucune ordonnance réelle sur cette version.",
+    "Prescription GLP-1 en ligne, livraison discrète et Anne, coach santé IA proactive pour les Canadiens francophones.",
 };
 
 export default function RootLayout({

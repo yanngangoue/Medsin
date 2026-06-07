@@ -20,15 +20,6 @@ export default function GarantiePage() {
         pour évaluer un remboursement partiel ou un ajustement du parcours, selon les conditions en vigueur
         au moment de votre inscription.
       </p>
-      <h2 className="pt-4 text-base font-semibold text-slate-900">Catalogue Nutri+</h2>
-      <p>
-        Pour les commandes de compléments partenaires (poudres, gélules), toute réclamation concernant la
-        qualité ou la conformité doit être signalée dans les 48 heures suivant réception via notre page{" "}
-        <Link href="/contact" className="text-[var(--teal-900)] underline">
-          Contact
-        </Link>
-        .
-      </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Exclusions</h2>
       <p>
         La garantie ne s&apos;applique pas en cas de non-respect des recommandations médicales ou

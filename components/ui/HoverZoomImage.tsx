@@ -2,14 +2,12 @@ import Image, { type ImageProps } from "next/image";
 
 type ZoomStrength = "subtle" | "default" | "strong";
 
-/** Zoom quand le curseur est sur le conteneur image. */
 const CONTAINER_HOVER_ZOOM: Record<ZoomStrength, string> = {
   subtle: "hover:[&_img]:scale-105",
   default: "hover:[&_img]:scale-110",
   strong: "hover:[&_img]:scale-[1.14]",
 };
 
-/** Zoom quand un ancêtre a la classe `group` (ex. carte cliquable entière). */
 const GROUP_HOVER_ZOOM: Record<ZoomStrength, string> = {
   subtle: "group-hover:[&_img]:scale-105",
   default: "group-hover:[&_img]:scale-110",
@@ -20,21 +18,19 @@ type Props = ImageProps & {
   containerClassName?: string;
   imageClassName?: string;
   zoom?: ZoomStrength;
-  /** Activer le zoom au survol d’un parent `.group` (cartes lien, etc.). */
   groupHover?: boolean;
+  clickable?: boolean;
 };
 
-/**
- * Image avec zoom fluide au survol (style MEDVi).
- * Le zoom cible l’élément img rendu par next/image (y compris dans un span).
- */
 export function HoverZoomImage({
   containerClassName = "",
   imageClassName = "",
   zoom = "default",
   groupHover = false,
+  clickable = false,
   alt,
   className,
+  fill,
   ...imageProps
 }: Props) {
   const isLocal = typeof imageProps.src === "string" && imageProps.src.startsWith("/");
@@ -49,10 +45,16 @@ export function HoverZoomImage({
 
   return (
     <div
-      className={`relative cursor-default overflow-hidden ${CONTAINER_HOVER_ZOOM[zoom]} ${groupHover ? GROUP_HOVER_ZOOM[zoom] : ""} ${containerClassName}`}
+      className={`relative overflow-hidden ${clickable ? "cursor-pointer" : "cursor-default"} ${fill ? "[&>span]:!absolute [&>span]:!inset-0 [&>span]:!block [&>span]:!size-full" : ""} ${CONTAINER_HOVER_ZOOM[zoom]} ${groupHover ? GROUP_HOVER_ZOOM[zoom] : ""} ${containerClassName}`}
       data-hover-zoom=""
     >
-      <Image alt={alt} className={mergedImageClass} unoptimized={isLocal} {...imageProps} />
+      <Image
+        alt={alt}
+        className={mergedImageClass}
+        fill={fill}
+        unoptimized={imageProps.unoptimized ?? isLocal}
+        {...imageProps}
+      />
     </div>
   );
 }

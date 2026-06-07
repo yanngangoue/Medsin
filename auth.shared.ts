@@ -6,7 +6,7 @@ const secure = process.env.NODE_ENV === "production";
 export default {
   trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
+  session: { strategy: "jwt", maxAge: 60 * 60 * 24, updateAge: 60 * 60 * 12 },
   /** Remplacé dans `auth.node` (Node) ; tableau vide pour Edge / typage NextAuthConfig. */
   providers: [],
   pages: {

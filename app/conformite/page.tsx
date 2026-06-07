@@ -22,8 +22,8 @@ export default function ConformitePage() {
       <h2 className="pt-4 text-base font-semibold text-slate-900">Renseignements de santé</h2>
       <p>
         Les données médicales sont traitées uniquement par des professionnels autorisés dans le cadre de
-        leur mandat. Les échanges avec les partenaires Nutri+ (fournisseurs de compléments) sont limités
-        aux informations nécessaires à la commande et au suivi nutritionnel.
+        leur mandat. Les échanges avec l&apos;assistant IA de suivi sont limités aux informations
+        nécessaires à l&apos;accompagnement proactif du patient.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Télémédecine</h2>
       <p>

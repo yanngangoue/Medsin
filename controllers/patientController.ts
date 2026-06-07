@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSessionPayload } from "@/lib/auth";
+import { forbidden, unauthorized } from "@/lib/api-errors";
 import { computeBmi, simulateGlp1Eligibility } from "@/lib/eligibility";
+import { getSessionUser } from "@/lib/session";
 import { onboardingSchema } from "@/lib/validations";
 
 export async function saveOnboarding(body: unknown) {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (user.role !== "PATIENT") return forbidden();
 
   const parsed = onboardingSchema.safeParse(body);
   if (!parsed.success) {
@@ -24,9 +24,9 @@ export async function saveOnboarding(body: unknown) {
   });
 
   const profile = await prisma.patientProfile.upsert({
-    where: { userId: session.sub },
+    where: { userId: user.id },
     create: {
-      userId: session.sub,
+      userId: user.id,
       age,
       weightKg,
       heightCm,
@@ -50,21 +50,19 @@ export async function saveOnboarding(body: unknown) {
 }
 
 export async function getMe() {
-  const session = await getSessionPayload();
-  if (!session?.sub) {
-    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.sub },
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
     include: { profile: true, appointments: { orderBy: { scheduledAt: "asc" }, take: 20 } },
   });
 
-  if (!user) {
+  if (!dbUser) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
   }
 
-  const { passwordHash: _ph, ...safeUser } = user;
+  const { passwordHash: _ph, ...safeUser } = dbUser;
   void _ph;
   return NextResponse.json({ user: safeUser });
 }

@@ -86,7 +86,7 @@ const BLOCKS = [
   },
   {
     title: "Recommandations personnalisées",
-    text: "Suggestions ciblées sur la nutrition et les habitudes de vie, cohérentes avec votre profil — jamais à la place d’un avis médical.",
+    text: "Suggestions ciblées sur vos objectifs GLP-1 et habitudes de vie, cohérentes avec votre profil — jamais à la place d’un avis médical.",
     Icon: IconRecommend,
   },
   {

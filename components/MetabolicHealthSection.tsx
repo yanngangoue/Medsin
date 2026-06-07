@@ -13,16 +13,16 @@ function IconMetabolic({ className }: { className?: string }) {
   );
 }
 
-function IconNutrition({ className }: { className?: string }) {
+function IconAssistant({ className }: { className?: string }) {
   return (
     <svg className={className} width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
-        d="M12 3c-2 4-6 5-6 10a6 6 0 0 0 12 0c0-5-4-6-6-10Z"
+        d="M12 3a7 7 0 0 1 7 7v2a3 3 0 0 1-3 3h-1l-2 3-2-3h-1a3 3 0 0 1-3-3v-2a7 7 0 0 1 7-7Z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
       />
-      <path d="M12 14v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M9 10h.01M12 10h.01M15 10h.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -50,9 +50,9 @@ const CARDS = [
     Icon: IconMetabolic,
   },
   {
-    title: "Nutrition personnalisée",
-    body: "Recommandations alimentaires cohérentes avec votre traitement et votre mode de vie, sans promesse miracle.",
-    Icon: IconNutrition,
+    title: "Assistant IA proactif",
+    body: "Claude vous accompagne au quotidien : rappels, objectifs et signaux à partager avec votre équipe médicale.",
+    Icon: IconAssistant,
   },
   {
     title: "Gestion du stress et du sommeil",
@@ -79,7 +79,7 @@ export function MetabolicHealthSection() {
             jour.
           </p>
           <p className="mt-5 text-left text-[14px] leading-relaxed text-neutral-700 sm:text-center sm:text-[15px]">
-            Medsim propose un accompagnement global : santé métabolique, sommeil, énergie, nutrition et bien-être
+            Medsim propose un accompagnement global : santé métabolique, sommeil, énergie, assistant IA et bien-être
             comportemental — articulés autour de votre dossier médical et des décisions de votre professionnel de santé.
             Chaque axe est intégré dans un parcours sobre, mesurable et réaliste.
           </p>

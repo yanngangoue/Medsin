@@ -44,14 +44,13 @@ export function LandingHighlights() {
       </div>
 
       <div className={sectionShell}>
-        <h2 className="text-base font-semibold text-slate-900">Nutrition et mode de vie</h2>
+        <h2 className="text-base font-semibold text-slate-900">Suivi proactif par assistant IA</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-          Une alimentation colorée et équilibrée pour soutenir votre parcours — fraîche, simple et motivante au
-          quotidien.
+          Un accompagnement intelligent au quotidien — rappels, objectifs et continuité entre vos consultations GLP-1.
         </p>
         <LandingSectionImage
           src={NUTRITION_IMAGE}
-          alt="Assiette colorée de légumes et aliments frais, repas équilibré et appétissant"
+          alt="Patiente consulte son suivi de santé sur mobile avec accompagnement numérique"
           aspect="four-three"
           className="mt-6"
         />
