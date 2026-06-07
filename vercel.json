@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/rappel-check-in",
-      "schedule": "0 14 * * 1"
+      "schedule": "0 13 * * 1"
     },
     {
       "path": "/api/cron/rapport-ips",
@@ -15,10 +15,6 @@
     {
       "path": "/api/cron/data-retention",
       "schedule": "0 6 * * 0"
-    },
-    {
-      "path": "/api/cron/email-reminders",
-      "schedule": "*/5 * * * *"
     }
   ]
 }
