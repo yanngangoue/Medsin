@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnneCoachCheckInModal } from "@/components/dashboard/patient-space/AnneCoachCheckInModal";
+import { AnneWeeklyStatusCard } from "@/components/dashboard/patient-space/AnneWeeklyStatusCard";
 import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
 import { tendancePoids } from "@/lib/coach-weight-trends";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
@@ -114,6 +115,10 @@ function SidebarContent({
 
       <hr className="my-5 border-gray-100" />
 
+      <AnneWeeklyStatusCard />
+
+      <hr className="my-5 border-gray-100" />
+
       {program ? (
         <div className="rounded-xl border border-gray-100 bg-white p-4 text-sm shadow-sm">
           <p className="font-semibold text-slate-800">📊 Cette semaine</p>
@@ -153,10 +158,37 @@ function SidebarContent({
       <button
         type="button"
         onClick={onCheckIn}
-        className="mt-4 w-full rounded-xl bg-[#1D4D3A] py-2.5 text-sm font-semibold text-white transition hover:bg-[#163d2e]"
+        disabled={!program}
+        className="mt-4 w-full rounded-xl bg-[#1D4D3A] py-2.5 text-sm font-semibold text-white transition hover:bg-[#163d2e] disabled:cursor-not-allowed disabled:opacity-40"
       >
         Faire mon check-in
       </button>
+
+      <hr className="my-5 border-gray-100" />
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Ce qu&apos;Anne fait pour vous
+        </p>
+        <ul className="mt-3 space-y-2 text-sm text-slate-700">
+          <li className="flex gap-2">
+            <span className="text-[#3EBD93]">✓</span>
+            Analyse vos check-ins (poids, énergie, sommeil, nausées)
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#3EBD93]">✓</span>
+            Contact proactif chaque lundi à 9 h
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#3EBD93]">✓</span>
+            Rapport hebdo à votre IPS chaque vendredi
+          </li>
+          <li className="flex gap-2">
+            <span className="text-[#3EBD93]">✓</span>
+            Escalade automatique si besoin
+          </li>
+        </ul>
+      </div>
 
       <hr className="my-5 border-gray-100" />
 
@@ -190,7 +222,7 @@ type Props = {
   prenom: string;
 };
 
-export function AnneCoachChat({ prenom: _prenom }: Props) {
+export function AnneCoachChat({ prenom }: Props) {
   const [messages, setMessages] = useState<AiCoachMessagePublic[]>([]);
   const [program, setProgram] = useState<WeightProgramPublic | null>(null);
   const [checkIns, setCheckIns] = useState<WeightCheckInPublic[]>([]);

@@ -144,7 +144,9 @@ function PatientOrdonnanceViewInner({ prenom, fulfillmentId }: Props) {
 
         <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6 sm:px-6 sm:py-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Mon ordonnance</h1>
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+              Mon ordonnance &amp; livraison
+            </h1>
             {!loading && prescription && hasPdf ? (
               <a
                 href={`/api/patient/prescription/${prescription.id}/pdf`}

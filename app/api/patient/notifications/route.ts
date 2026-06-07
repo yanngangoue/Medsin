@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasCheckInThisWeekQuebec } from "@/lib/anne/schedule";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { forbidden, unauthorized } from "@/lib/api-errors";
@@ -13,7 +14,7 @@ export async function GET() {
   const now = new Date();
   const hubContext = await loadPatientHubContext(user.id);
 
-  const [unreadMessages, nextAppointment] = await Promise.all([
+  const [unreadMessages, nextAppointment, weightProgram] = await Promise.all([
     prisma.message.count({
       where: { receiverId: user.id, read: false },
     }),
@@ -26,6 +27,12 @@ export async function GET() {
       orderBy: { scheduledAt: "asc" },
       select: { id: true, scheduledAt: true },
     }),
+    prisma.weightProgram.findUnique({
+      where: { userId: user.id },
+      include: {
+        checkIns: { orderBy: { recordedAt: "desc" }, take: 14 },
+      },
+    }),
   ]);
 
   let upcomingVideo = false;
@@ -33,10 +40,17 @@ export async function GET() {
     upcomingVideo = getVideoJoinWindow(nextAppointment.scheduledAt).canJoin;
   }
 
+  const checkInPending =
+    weightProgram != null &&
+    weightProgram.status === "ACTIVE" &&
+    weightProgram.isActive &&
+    !hasCheckInThisWeekQuebec(weightProgram.checkIns);
+
   return NextResponse.json({
     unreadMessages,
     upcomingVideo,
     nextAppointmentId: nextAppointment?.id ?? null,
     hasGlp1Dossier: Boolean(hubContext.hasGlp1Dossier),
+    checkInPending,
   });
 }

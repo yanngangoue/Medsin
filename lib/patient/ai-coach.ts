@@ -1,5 +1,8 @@
-import { coachRepondre, messageProactifApresCheckIn } from "@/lib/coach-ia";
+import { analyserCheckIn, coachRepondre, detecterEscalade } from "@/lib/coach-ia";
+import { saveAnneIpsReport, resolvePatientIpsId } from "@/lib/anne/reports";
+import { sendEmail } from "@/lib/email/send-email";
 import type { WeightCheckInPublic, WeightProgramPublic } from "@/lib/patient/weight-program";
+import { listCheckIns } from "@/lib/patient/weight-program";
 import { prisma } from "@/lib/prisma";
 
 export type AiCoachMessagePublic = {
@@ -152,7 +155,7 @@ export async function ensureCoachWelcome(input: {
   return toAiCoachMessagePublic(row);
 }
 
-/** Appelé automatiquement après chaque check-in — persiste le message proactif du coach. */
+/** Appelé automatiquement après chaque check-in — analyse, message patient, rapport IPS, escalade. */
 export async function enregistrerMessageProactifApresCheckIn(input: {
   userId: string;
   prenom: string;
@@ -164,21 +167,79 @@ export async function enregistrerMessageProactifApresCheckIn(input: {
   });
   if (!programRow) return null;
 
+  const historique = await listCheckIns(input.userId, 14);
   let content: string;
+  let rapportIps: string | null = null;
+  let escalade = detecterEscalade(input.dernierCheckIn, historique);
+
   try {
-    content = await messageProactifApresCheckIn(input.program, input.dernierCheckIn, {
-      prenom: input.prenom,
-      checkInsRecents: input.program.recentCheckIns,
-    });
+    const analyse = await analyserCheckIn(
+      input.dernierCheckIn,
+      historique,
+      input.program,
+      { prenom: input.prenom },
+    );
+    content = analyse.messagePatient;
+    rapportIps = analyse.rapportIps;
+    escalade = analyse.escalade;
   } catch {
     const delta =
-      input.program.recentCheckIns.length >= 2
-        ? input.dernierCheckIn.weight - input.program.recentCheckIns[1]!.weight
+      historique.length >= 2
+        ? input.dernierCheckIn.weight - historique[1]!.weight
         : null;
     content =
       delta != null && delta < 0
         ? `Beau travail — ${Math.abs(delta).toFixed(1)} kg de moins depuis votre dernier check-in. Gardez cette régularité cette semaine.`
         : `Check-in enregistré à ${input.dernierCheckIn.weight.toFixed(1)} kg. Continuez vos pesées régulières — c'est ce qui fait la différence avec votre parcours GLP-1.`;
+  }
+
+  await prisma.weightCheckIn.update({
+    where: { id: input.dernierCheckIn.id },
+    data: { aiReport: rapportIps, isEscalation: escalade },
+  });
+
+  const ipsId = await resolvePatientIpsId(input.userId);
+  if (ipsId && rapportIps) {
+    await saveAnneIpsReport({
+      userId: input.userId,
+      ipsId,
+      content: rapportIps,
+      kind: "CHECK_IN",
+      isEscalation: escalade,
+    });
+  }
+
+  if (escalade && ipsId) {
+    await prisma.chatThread.updateMany({
+      where: { patientId: input.userId, professionalId: ipsId },
+      data: { isUrgent: true },
+    });
+
+    const ips = await prisma.user.findUnique({
+      where: { id: ipsId },
+      select: { email: true, prenom: true },
+    });
+
+    if (ips) {
+      await sendEmail({
+        to: ips.email,
+        subject: `[Urgent] Escalade patient — ${input.prenom || "Patient"}`,
+        template: "ips_escalation",
+        entityKey: `escalation:checkin:${input.dernierCheckIn.id}`,
+        userId: ipsId,
+        html: `<p>Escalade détectée après check-in. Consultez le rapport Anne dans MedSim.</p>`,
+        text: "Escalade détectée après check-in.",
+      });
+    }
+
+    await prisma.appNotification.create({
+      data: {
+        userId: ipsId,
+        type: "ESCALADE",
+        title: "Escalade patient — Anne",
+        body: `${input.prenom || "Un patient"} nécessite un suivi renforcé (check-in récent).`,
+      },
+    });
   }
 
   const row = await prisma.aiCoachMessage.create({

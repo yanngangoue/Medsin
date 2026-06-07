@@ -50,7 +50,7 @@ export function PatientNav({
 }: Props) {
   const pathname = usePathname();
   const items = buildPatientNavItems(hasGlp1Dossier);
-  const { unreadMessages, upcomingVideo } = usePatientNotifications();
+  const { unreadMessages, upcomingVideo, checkInPending } = usePatientNotifications();
   const [menuOpen, setMenuOpen] = useState(false);
   const panelId = useId();
   const isDark = variant === "dark";
@@ -113,6 +113,8 @@ export function PatientNav({
                 {unreadMessages > 0 ? <NavBadge count={unreadMessages} /> : null}
                 {upcomingVideo ? <NavBadge count={0} pulse /> : null}
               </>
+            ) : item.id === "poids" && checkInPending ? (
+              <NavBadge count={0} pulse />
             ) : null;
           return (
             <Link key={item.id} href={item.href} className={linkClass(active)}>
@@ -181,6 +183,9 @@ export function PatientNav({
                     {item.id === "contact" && upcomingVideo ? (
                       <span className="text-xs font-medium text-amber-700">Visio ouverte</span>
                     ) : null}
+                    {item.id === "poids" && checkInPending ? (
+                      <span className="text-xs font-medium text-amber-700">Check-in en attente</span>
+                    ) : null}
                   </span>
                 </Link>
               );
@@ -202,7 +207,7 @@ export function PatientNav({
 export function PatientNavSubBar({ hasGlp1Dossier }: { hasGlp1Dossier: boolean }) {
   const pathname = usePathname();
   const items = buildPatientNavItems(hasGlp1Dossier);
-  const { unreadMessages, upcomingVideo } = usePatientNotifications();
+  const { unreadMessages, upcomingVideo, checkInPending } = usePatientNotifications();
 
   return (
     <div className="border-b border-slate-100 bg-slate-50/80 px-4 py-2 sm:px-6">
@@ -222,6 +227,9 @@ export function PatientNavSubBar({ hasGlp1Dossier }: { hasGlp1Dossier: boolean }
                 <NavBadge count={unreadMessages} />
               ) : null}
               {item.id === "contact" && upcomingVideo ? (
+                <NavBadge count={0} pulse />
+              ) : null}
+              {item.id === "poids" && checkInPending ? (
                 <NavBadge count={0} pulse />
               ) : null}
             </Link>

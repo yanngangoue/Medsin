@@ -5,8 +5,13 @@ import { buildCoachWelcomeMessage } from "@/lib/patient/ai-coach";
 import { createWeightProgram } from "@/lib/patient/weight-program";
 import {
   dispatchFulfillmentToPharmacy,
-  notifyFulfillmentStatusChange,
+  notifyPatientPreparationEmail,
+  notifyPharmacyDispatched,
 } from "@/lib/pharmacy/fulfillment-notify";
+import {
+  ensureFulfillmentPdf,
+  estimatedDeliveryDate,
+} from "@/lib/pharmacy/fulfillment-pdf";
 import { prisma } from "@/lib/prisma";
 
 const appUrl = () => process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
@@ -78,6 +83,10 @@ async function processFulfillmentPayment(
 
   if (!fulfillment || fulfillment.paymentStatus === "PAID") return;
 
+  const eta = estimatedDeliveryDate(new Date(), 3);
+
+  await ensureFulfillmentPdf(prescriptionId);
+
   await prisma.medicationFulfillment.update({
     where: { id: prescriptionId },
     data: {
@@ -86,6 +95,7 @@ async function processFulfillmentPayment(
       stripeSessionId,
       stripePaymentIntentId: stripePaymentIntentId ?? null,
       status: "SENT_TO_PHARMACY",
+      estimatedDelivery: eta,
     },
   });
 
@@ -96,7 +106,8 @@ async function processFulfillmentPayment(
       note: "Paiement confirmé — envoi pharmacie",
     },
   });
-  await notifyFulfillmentStatusChange(prescriptionId, "SENT_TO_PHARMACY");
+
+  await notifyPharmacyDispatched(prescriptionId);
 
   const pharmacyNotified = await dispatchFulfillmentToPharmacy(prescriptionId);
 
@@ -112,7 +123,7 @@ async function processFulfillmentPayment(
   await prisma.fulfillmentStatusHistory.create({
     data: { fulfillmentId: prescriptionId, status: "IN_PREPARATION" },
   });
-  await notifyFulfillmentStatusChange(prescriptionId, "IN_PREPARATION");
+  await notifyPatientPreparationEmail(prescriptionId, eta);
 
   const q = fulfillment.questionnaire;
   let program = await prisma.weightProgram.findUnique({
@@ -176,9 +187,10 @@ async function processFulfillmentPayment(
     userId: fulfillment.userId,
     html: `<p>Bonjour ${fulfillment.user.prenom},</p>
 <p><strong>Votre paiement est confirmé.</strong></p>
-<p>Votre médicament est en cours de préparation.</p>
+<p>Votre ordonnance a été envoyée à la pharmacie. Votre médicament est en cours de préparation.</p>
+<p>Livraison estimée : <strong>${eta.toLocaleDateString("fr-CA", { dateStyle: "long" })}</strong></p>
 <p><a href="${appUrl()}/dashboard/patient/ordonnance">Suivre ma livraison</a> · <a href="${appUrl()}/dashboard/patient/coach-ia">Parler à Anne</a></p>`,
-    text: `Bonjour ${fulfillment.user.prenom}, votre paiement est confirmé. Votre médicament est en cours de préparation.`,
+    text: `Bonjour ${fulfillment.user.prenom}, paiement confirmé. Livraison estimée : ${eta.toLocaleDateString("fr-CA")}.`,
   });
 
   await prisma.appNotification.create({
@@ -186,7 +198,7 @@ async function processFulfillmentPayment(
       userId: fulfillment.userId,
       type: "PAYMENT_CONFIRMED",
       title: "Paiement confirmé",
-      body: "Votre paiement est confirmé. Votre médicament est en cours de préparation.",
+      body: "Votre ordonnance a été envoyée à la pharmacie 💊. Votre médicament est en cours de préparation.",
       sentByEmail: true,
     },
   });

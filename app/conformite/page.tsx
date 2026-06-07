@@ -34,18 +34,17 @@ export default function ConformitePage() {
       <h2 className="pt-4 text-base font-semibold text-slate-900">Responsable de la protection</h2>
       <p>
         Pour toute question relative à la conformité :{" "}
-        <a href="mailto:privacy@medsim.ca" className="text-[var(--teal-900)] underline">
-          privacy@medsim.ca
+        <a href="mailto:confidentialite@medsim.ca" className="text-[var(--teal-900)] underline">
+          confidentialite@medsim.ca
         </a>
         . Voir aussi notre{" "}
-        <Link href="/politique-confidentialite" className="text-[var(--teal-900)] underline">
+        <Link href="/confidentialite" className="text-[var(--teal-900)] underline">
           politique de confidentialité
         </Link>
         .
       </p>
       <p className="pt-4 text-xs text-slate-500">
-        Document informatif — version démo. Une politique de gouvernance complète sera publiée avant mise
-        en production grand public.
+        Dernière mise à jour : 6 juin 2026.
       </p>
     </LegalPageLayout>
   );

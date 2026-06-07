@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
 import type { WeightProgramPublic } from "@/lib/patient/weight-program";
+import { NAUSEE_LABELS } from "@/lib/weight-tracking";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   defaultWeight?: number;
   onSuccess: (coachMessage: AiCoachMessagePublic | null, program: WeightProgramPublic | null) => void;
+  onSubmitStart?: () => void;
 };
-
-const NAUSEE_LABELS = ["Aucune", "Légère", "Modérée", "Marquée", "Forte", "Sévère"];
 
 function StarRow({
   value,
@@ -27,7 +27,7 @@ function StarRow({
           key={n}
           type="button"
           onClick={() => onChange(n)}
-          className={`text-2xl transition ${n <= value ? "text-amber-400" : "text-slate-300"}`}
+          className={`text-2xl transition hover:scale-110 ${n <= value ? "text-amber-400" : "text-slate-300"}`}
           aria-label={`${n} étoile${n > 1 ? "s" : ""}`}
         >
           ★
@@ -37,7 +37,13 @@ function StarRow({
   );
 }
 
-export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess }: Props) {
+export function AnneCoachCheckInModal({
+  open,
+  onClose,
+  defaultWeight,
+  onSuccess,
+  onSubmitStart,
+}: Props) {
   const [weight, setWeight] = useState(defaultWeight?.toString() ?? "");
   const [energie, setEnergie] = useState(3);
   const [sommeil, setSommeil] = useState(7);
@@ -45,6 +51,12 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open && defaultWeight != null) {
+      setWeight(defaultWeight.toString());
+    }
+  }, [open, defaultWeight]);
 
   if (!open) return null;
 
@@ -58,6 +70,7 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
 
     setSaving(true);
     setError(null);
+    onSubmitStart?.();
 
     try {
       const res = await fetch("/api/patient/weight-program/check-ins", {
@@ -84,6 +97,7 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
 
       onSuccess(data.coachMessage ?? null, data.program ?? null);
       onClose();
+      setNotes("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inattendue.");
     } finally {
@@ -101,12 +115,14 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
       />
       <div className="relative z-10 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl">
         <h2 className="text-lg font-bold text-slate-900">Mon check-in de la semaine</h2>
-        <p className="mt-1 text-sm text-slate-500">Anne analysera vos données dès l&apos;envoi.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          Anne analyse vos données automatiquement
+        </p>
 
         <form onSubmit={(e) => void handleSubmit(e)} className="mt-5 space-y-5">
           <div>
             <label htmlFor="checkin-weight" className="text-sm font-medium text-slate-700">
-              Poids actuel (kg)
+              ① Poids actuel (kg)
             </label>
             <input
               id="checkin-weight"
@@ -122,7 +138,7 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
           </div>
 
           <div>
-            <p className="text-sm font-medium text-slate-700">Énergie cette semaine</p>
+            <p className="text-sm font-medium text-slate-700">② Énergie cette semaine</p>
             <div className="mt-2">
               <StarRow value={energie} onChange={setEnergie} />
             </div>
@@ -130,14 +146,14 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
 
           <div>
             <label htmlFor="checkin-sommeil" className="flex justify-between text-sm font-medium text-slate-700">
-              <span>Sommeil moyen</span>
+              <span>③ Sommeil moyen</span>
               <span className="text-[#1D4D3A]">{sommeil} h</span>
             </label>
             <input
               id="checkin-sommeil"
               type="range"
               min={4}
-              max={10}
+              max={12}
               step={0.5}
               value={sommeil}
               onChange={(e) => setSommeil(parseFloat(e.target.value))}
@@ -145,14 +161,16 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
             />
             <div className="mt-1 flex justify-between text-xs text-slate-400">
               <span>4 h</span>
-              <span>10 h</span>
+              <span>12 h</span>
             </div>
           </div>
 
           <div>
             <label htmlFor="checkin-nausee" className="flex justify-between text-sm font-medium text-slate-700">
-              <span>Nausées</span>
-              <span className="text-[#1D4D3A]">{NAUSEE_LABELS[nausee]}</span>
+              <span>④ Nausées</span>
+              <span className="text-[#1D4D3A]">
+                {nausee} — {NAUSEE_LABELS[nausee]}
+              </span>
             </label>
             <input
               id="checkin-nausee"
@@ -164,7 +182,7 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
               onChange={(e) => setNausee(parseInt(e.target.value, 10))}
               className="mt-2 w-full accent-[#1D4D3A]"
             />
-            <div className="mt-1 flex justify-between text-xs text-slate-400">
+            <div className="mt-1 flex justify-between text-[10px] text-slate-400">
               <span>0</span>
               <span>5</span>
             </div>
@@ -172,11 +190,11 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
 
           <div>
             <label htmlFor="checkin-notes" className="text-sm font-medium text-slate-700">
-              Note optionnelle
+              ⑤ Note optionnelle
             </label>
             <textarea
               id="checkin-notes"
-              rows={2}
+              rows={3}
               maxLength={500}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -192,7 +210,7 @@ export function AnneCoachCheckInModal({ open, onClose, defaultWeight, onSuccess 
             disabled={saving}
             className="w-full rounded-xl bg-[#1D4D3A] py-3 text-sm font-semibold text-white transition hover:bg-[#163d2e] disabled:opacity-50"
           >
-            {saving ? "Envoi…" : "Envoyer à Anne →"}
+            {saving ? "Anne analyse…" : "Envoyer à Anne →"}
           </button>
         </form>
       </div>

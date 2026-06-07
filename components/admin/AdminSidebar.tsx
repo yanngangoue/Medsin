@@ -7,6 +7,7 @@ import { SignOutButton } from "@/components/role-portal/SignOutButton";
 const NAV = [
   { href: "/admin/dashboard", label: "Tableau de bord", short: "Accueil", icon: "🏠" },
   { href: "/admin/patients", label: "Patients", short: "Patients", icon: "👥" },
+  { href: "/admin/pharmacies", label: "Pharmacie", short: "Pharma", icon: "💊" },
   { href: "/admin/messages", label: "Messages", short: "Messages", icon: "💬" },
   { href: "/admin/settings", label: "Paramètres", short: "Réglages", icon: "⚙️" },
 ] as const;

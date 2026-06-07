@@ -1,21 +1,22 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCsrfToken, signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
-import { syncGlp1DraftToServer } from "@/lib/patient/glp1-session-client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { syncGlp1DraftToServer } from "@/lib/patient/glp1-session-client";
+import {
+  getEligibilitySessionIdForLink,
+  resolvePatientPostAuthPath,
+} from "@/lib/onboarding/post-auth-redirect";
 import { inscriptionSchema, type InscriptionFormValues } from "@/lib/schemas/inscription";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
 import { BackSection } from "@/components/navigation/BackSection";
-import { GLP1_CONFIRMATION_PATH } from "@/lib/patient/glp1-flow-routes";
-import { glp1QuestionnaireResumeUrl } from "@/lib/patient/glp1-wizard-progress";
 
 function AuthInscriptionForm() {
   const router = useRouter();
@@ -33,16 +34,19 @@ function AuthInscriptionForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function resolvePostAuthPath() {
-    if (safeCallback) return safeCallback;
-    if (isGlp1) return GLP1_CONFIRMATION_PATH;
-    return "/dashboard/patient";
-  }
+  const postAuthPath = useCallback(
+    () =>
+      resolvePatientPostAuthPath({
+        callbackUrl: safeCallback,
+        serviceGestionPoids: isGlp1,
+      }),
+    [safeCallback, isGlp1],
+  );
 
   useEffect(() => {
     if (status !== "authenticated") return;
-    router.replace(resolvePostAuthPath());
-  }, [status, isGlp1, safeCallback, router]);
+    router.replace(postAuthPath());
+  }, [status, router, postAuthPath]);
 
   const {
     register,
@@ -53,6 +57,16 @@ function AuthInscriptionForm() {
     mode: "onChange",
     defaultValues: { prenom: "", nom: "", email: "", password: "", confirmPassword: "" },
   });
+
+  async function linkEligibilitySession(): Promise<void> {
+    const sessionId = getEligibilitySessionIdForLink();
+    if (!sessionId) return;
+    await fetch("/api/onboarding/eligibilite/link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    });
+  }
 
   async function onSubmit(data: InscriptionFormValues) {
     setApiError(null);
@@ -87,9 +101,11 @@ function AuthInscriptionForm() {
       });
       if (signInResult?.error) {
         setApiError("Compte créé. Connectez-vous depuis la page Connexion.");
-        router.push("/auth/connexion");
+        router.push("/connexion");
         return;
       }
+
+      await linkEligibilitySession();
 
       if (isGlp1) {
         const sync = await syncGlp1DraftToServer();
@@ -102,7 +118,7 @@ function AuthInscriptionForm() {
         }
       }
 
-      router.push(resolvePostAuthPath());
+      router.push(postAuthPath());
       router.refresh();
     } finally {
       setIsSubmitting(false);
@@ -124,30 +140,22 @@ function AuthInscriptionForm() {
           <MedsimLogo />
         </Link>
         <div className="mb-4">
-          {isGlp1 ? (
-            <BackSection
-              back={{ href: glp1QuestionnaireResumeUrl(), label: "Retour" }}
-              forward={{
-                href: GLP1_CONFIRMATION_PATH,
-                label: "Suivant",
-                disabled: true,
-              }}
-              hint="Créez votre compte pour accéder à la confirmation (Suivant)."
-            />
-          ) : (
-            <BackSection
-              back={{ href: "/", label: "Retour" }}
-              hint="Retour à l'accueil MedSim."
-            />
-          )}
+          <BackSection
+            back={{ href: isGlp1 ? "/eligibilite/resultat" : "/", label: "Retour" }}
+            hint={
+              isGlp1
+                ? "Créez votre compte pour poursuivre le questionnaire médical."
+                : "Retour à l'accueil MedSim."
+            }
+          />
         </div>
         <Card>
           <h1 className="text-xl font-semibold text-slate-900">Créer un compte</h1>
           <p className="mt-1 text-sm text-slate-600">
             {isGlp1 ? (
               <>
-                Dernière étape du parcours <span className="font-medium">GLP-1</span> : enregistrez vos
-                réponses sur un compte patient.
+                Dernière étape avant le questionnaire médical GLP-1 — vos réponses d&apos;éligibilité
+                seront conservées.
               </>
             ) : (
               <>Créez votre compte patient MedSim pour suivre votre parcours de santé.</>
@@ -206,7 +214,9 @@ function AuthInscriptionForm() {
               {errors.password ? (
                 <p className="mt-1 text-[12px] text-red-600/90">{errors.password.message}</p>
               ) : (
-                <p className="mt-1 text-[11px] text-slate-500">8 caractères minimum, avec lettres et chiffres.</p>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  8 caractères minimum, avec lettres et chiffres.
+                </p>
               )}
             </div>
             <div>
@@ -234,7 +244,7 @@ function AuthInscriptionForm() {
 
           <p className="mt-6 text-center text-sm text-slate-600">
             Déjà inscrit ?{" "}
-            <Link href="/auth/connexion" className="font-medium text-[#16a34a] hover:underline">
+            <Link href="/connexion" className="font-medium text-[#16a34a] hover:underline">
               Se connecter
             </Link>
           </p>

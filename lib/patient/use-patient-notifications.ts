@@ -7,6 +7,7 @@ export type PatientNotifications = {
   upcomingVideo: boolean;
   nextAppointmentId: string | null;
   hasGlp1Dossier: boolean;
+  checkInPending: boolean;
 };
 
 const EMPTY: PatientNotifications = {
@@ -14,6 +15,7 @@ const EMPTY: PatientNotifications = {
   upcomingVideo: false,
   nextAppointmentId: null,
   hasGlp1Dossier: false,
+  checkInPending: false,
 };
 
 export function usePatientNotifications(enabled = true) {
@@ -37,7 +39,12 @@ export function usePatientNotifications(enabled = true) {
     void refresh();
     if (!enabled) return;
     const id = window.setInterval(() => void refresh(), 60_000);
-    return () => window.clearInterval(id);
+    const onCheckIn = () => void refresh();
+    window.addEventListener("medsim:check-in-complete", onCheckIn);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("medsim:check-in-complete", onCheckIn);
+    };
   }, [refresh, enabled]);
 
   return { ...data, loading, refresh };

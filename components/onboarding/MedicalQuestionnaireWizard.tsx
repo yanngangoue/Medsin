@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { readEligibilityDraft } from "@/lib/onboarding/eligibility-session";
@@ -32,7 +32,6 @@ export function MedicalQuestionnaireWizard() {
   const [section, setSection] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const [form, setForm] = useState<Partial<MedicalQuestionnaireV2>>({
     chronicConditions: [],
     medications: [],
@@ -49,6 +48,8 @@ export function MedicalQuestionnaireWizard() {
     consentAiCoach: undefined,
     consentPrivacy: undefined,
   });
+  const formRef = useRef(form);
+  formRef.current = form;
 
   useEffect(() => {
     const elig = readEligibilityDraft();
@@ -71,6 +72,22 @@ export function MedicalQuestionnaireWizard() {
     })();
   }, []);
 
+  const autosave = useCallback(async () => {
+    await fetch("/api/onboarding/medical-questionnaire", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formRef.current),
+    });
+  }, []);
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const id = setInterval(() => {
+      void autosave();
+    }, 30_000);
+    return () => clearInterval(id);
+  }, [status, autosave]);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace(
@@ -81,14 +98,6 @@ export function MedicalQuestionnaireWizard() {
 
   const bmi =
     form.height && form.weight ? computeBmi(form.weight, form.height) : null;
-
-  async function autosave() {
-    await fetch("/api/onboarding/medical-questionnaire", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-  }
 
   async function submit() {
     setSaving(true);
@@ -108,8 +117,24 @@ export function MedicalQuestionnaireWizard() {
     router.push("/examen-en-cours");
   }
 
-  if (status === "loading" || status === "unauthenticated") {
-    return <p className="text-center text-sm text-[#6B7280]">Chargement…</p>;
+  if (status === "loading") {
+    return (
+      <div className={`${dsCard} mx-auto max-w-lg text-center`}>
+        <p className="text-sm text-[#6B7280]">Chargement…</p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className={`${dsCard} mx-auto max-w-lg text-center`}>
+        <h2 className="text-lg font-bold text-[#1A1A2E]">Connexion requise</h2>
+        <p className="mt-3 text-sm text-[#6B7280]">
+          Créez un compte ou connectez-vous pour remplir le questionnaire médical (environ 5 minutes).
+        </p>
+        <p className="mt-4 text-sm text-[#6B7280]">Redirection vers l&apos;inscription…</p>
+      </div>
+    );
   }
 
   return (

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 
 /** Jeunes sportifs souriants en tenue d’entraînement (photo de groupe / équipe). */
 const HERO_IMAGE =
@@ -98,13 +98,15 @@ export function HeroSection() {
 
         <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[20px] shadow-sm ring-1 ring-black/[0.06] sm:aspect-[3/4]">
-            <Image
+            <HoverZoomImage
               src={HERO_IMAGE}
-              alt="Jeunes femme et homme souriants en tenue sportive avec leur équipe après l’entraînement"
+              alt="Jeunes femme et homme souriants en tenue sportive avec leur équipe après l'entraînement"
               fill
-              className="object-cover object-[center_35%]"
-              sizes="(max-width: 1024px) 100vw, 45vw"
               priority
+              zoom="subtle"
+              containerClassName="absolute inset-0 size-full"
+              imageClassName="object-cover object-[center_35%]"
+              sizes="(max-width: 1024px) 100vw, 45vw"
             />
 
             {/* Éléments graphiques génériques (non médicaments de marque) pour évoquer l’accompagnement GLP-1 */}

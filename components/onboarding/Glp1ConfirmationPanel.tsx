@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import type { EligibilityStatus } from "@prisma/client";
 import { EligibilityBadge } from "@/components/EligibilityBadge";
 import { explainGlp1SimulationStatus } from "@/lib/eligibility";
 import type { Glp1DossierSummary } from "@/lib/patient/glp1-dossier";

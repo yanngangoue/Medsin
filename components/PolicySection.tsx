@@ -20,14 +20,14 @@ export function PolicySection() {
 
         <p className="mt-5 text-[10px] leading-relaxed text-neutral-400">
           Vos données médicales sont protégées conformément à la LPRPS. En utilisant Medsim, vous acceptez nos{" "}
-          <a href="#conditions-utilisation" className="underline underline-offset-2 hover:text-neutral-600">
+          <a href="/conditions-utilisation" className="underline underline-offset-2 hover:text-neutral-600">
             conditions d&apos;utilisation
           </a>{" "}
           et notre{" "}
-          <a href="#politique-confidentialite" className="underline underline-offset-2 hover:text-neutral-600">
+          <a href="/confidentialite" className="underline underline-offset-2 hover:text-neutral-600">
             politique de confidentialité
           </a>
-          . · Version démo — Aucune ordonnance réelle générée.
+          .
         </p>
       </div>
     </section>

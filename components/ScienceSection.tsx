@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 
 const SCIENCE_IMAGE =
   "https://images.unsplash.com/photo-1532187863486-de326f703798?w=900&q=85";
@@ -13,15 +13,14 @@ export function ScienceSection() {
   return (
     <section className="bg-[var(--teal-50)] py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] shadow-sm ring-1 ring-black/[0.06]">
-          <Image
-            src={SCIENCE_IMAGE}
-            alt="Représentation moléculaire et recherche en laboratoire pharmaceutique"
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
-        </div>
+        <HoverZoomImage
+          src={SCIENCE_IMAGE}
+          alt="Représentation moléculaire et recherche en laboratoire pharmaceutique"
+          fill
+          containerClassName="aspect-[4/3] w-full rounded-[12px] shadow-sm ring-1 ring-black/[0.06]"
+          imageClassName="object-cover"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+        />
 
         <div className="min-w-0">
           <h2 className="text-[28px] font-bold tracking-tight text-[var(--gray-900)] sm:text-[32px]">

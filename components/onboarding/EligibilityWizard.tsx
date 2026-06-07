@@ -1,14 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { computeBmi } from "@/lib/eligibility";
 import {
   evaluateEligibility,
-  type EligibilityResult,
 } from "@/lib/onboarding/eligibility-result";
 import {
+  ELIGIBILITY_RESULT_KEY,
   getOrCreateEligibilitySessionId,
   saveEligibilityDraft,
   type EligibilityDraft,
@@ -16,7 +15,6 @@ import {
 import { dsBtnPrimary, dsBtnSecondary, dsCard } from "@/lib/design-system";
 
 const TOTAL_STEPS = 5;
-const ELIGIBILITY_RESULT_KEY = "medsim.eligibility.result";
 
 type DiabetesAnswer = EligibilityDraft["hasDiabetes"];
 type ApiStatus = "ELIGIBLE" | "NOT_ELIGIBLE" | "BORDERLINE";
@@ -25,7 +23,6 @@ export function EligibilityWizard() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-  const [notEligibleResult, setNotEligibleResult] = useState<EligibilityResult | null>(null);
 
   const [age, setAge] = useState(35);
   const [heightCm, setHeightCm] = useState(170);
@@ -66,56 +63,61 @@ export function EligibilityWizard() {
 
       const payload = (await res.json().catch(() => null)) as {
         status?: ApiStatus;
-        result?: EligibilityResult;
         error?: string;
       } | null;
 
       if (!res.ok || !payload?.status) {
         const local = evaluateEligibility(draft);
-        if (local.outcome === "not_eligible") {
-          sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "NOT_ELIGIBLE");
-          setNotEligibleResult(local);
-          setSubmitting(false);
-          return;
+        sessionStorage.setItem(
+          ELIGIBILITY_RESULT_KEY,
+          local.outcome === "eligible"
+            ? "ELIGIBLE"
+            : local.outcome === "borderline"
+              ? "BORDERLINE"
+              : "NOT_ELIGIBLE",
+        );
+        if (local.outcome === "borderline") {
+          sessionStorage.setItem("medsim.eligibility.borderline", "1");
         }
-        if (local.outcome === "eligible") {
-          sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "ELIGIBLE");
-          router.push("/questionnaire");
-          return;
-        }
-        sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "BORDERLINE");
-        sessionStorage.setItem("medsim.eligibility.borderline", "1");
-        router.push("/questionnaire?borderline=1");
+        router.push(
+          `/eligibilite/resultat?status=${
+            local.outcome === "eligible"
+              ? "ELIGIBLE"
+              : local.outcome === "borderline"
+                ? "BORDERLINE"
+                : "NOT_ELIGIBLE"
+          }`,
+        );
         return;
       }
 
       sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, payload.status);
 
       if (payload.status === "ELIGIBLE") {
-        router.push("/questionnaire");
+        router.push("/eligibilite/resultat?status=ELIGIBLE");
         return;
       }
 
       if (payload.status === "BORDERLINE") {
         sessionStorage.setItem("medsim.eligibility.borderline", "1");
-        router.push("/questionnaire?borderline=1");
+        router.push("/eligibilite/resultat?status=BORDERLINE");
         return;
       }
 
-      setNotEligibleResult(payload.result ?? evaluateEligibility(draft));
+      router.push("/eligibilite/resultat?status=NOT_ELIGIBLE");
     } catch {
       const local = evaluateEligibility(draft);
-      if (local.outcome === "not_eligible") {
-        sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "NOT_ELIGIBLE");
-        setNotEligibleResult(local);
-      } else if (local.outcome === "eligible") {
-        sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "ELIGIBLE");
-        router.push("/questionnaire");
-      } else {
-        sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, "BORDERLINE");
+      const status =
+        local.outcome === "eligible"
+          ? "ELIGIBLE"
+          : local.outcome === "borderline"
+            ? "BORDERLINE"
+            : "NOT_ELIGIBLE";
+      sessionStorage.setItem(ELIGIBILITY_RESULT_KEY, status);
+      if (status === "BORDERLINE") {
         sessionStorage.setItem("medsim.eligibility.borderline", "1");
-        router.push("/questionnaire?borderline=1");
       }
+      router.push(`/eligibilite/resultat?status=${status}`);
     } finally {
       setSubmitting(false);
     }
@@ -131,40 +133,6 @@ export function EligibilityWizard() {
 
   function prev() {
     if (step > 1) setStep((s) => s - 1);
-  }
-
-  if (notEligibleResult) {
-    return (
-      <div className={`${dsCard} mx-auto max-w-lg border-orange-100 bg-[#FFF7ED] text-center`}>
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#EA580C]">
-          Non admissible pour l&apos;instant
-        </p>
-        <h2 className="mt-3 text-2xl font-bold text-[#1A1A2E]">
-          On comprend — ce n&apos;est pas un « non » définitif
-        </h2>
-        <p className="mt-4 text-sm leading-relaxed text-[#6B7280]">
-          {notEligibleResult.message}
-        </p>
-        <p className="mt-4 text-sm leading-relaxed text-[#6B7280]">
-          Votre santé passe avant tout. Si votre situation change, vous pourrez refaire le test.
-          En attendant, le 811 et votre médecin de famille demeurent d&apos;excellentes ressources
-          au Québec.
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href="https://www.quebec.ca/sante/trouver-une-ressource/info-sante-811"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={dsBtnPrimary}
-          >
-            Info-Santé 811
-          </Link>
-          <Link href="/" className={dsBtnSecondary}>
-            Retour à l&apos;accueil
-          </Link>
-        </div>
-      </div>
-    );
   }
 
   return (

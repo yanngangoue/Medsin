@@ -1,4 +1,5 @@
 import { COACH_NAME } from "@/lib/coach-brand";
+import { hasCheckInThisWeekQuebec } from "@/lib/anne/schedule";
 import { sendEmail } from "@/lib/email/send-email";
 import { envoyerRappelHebdomadaire } from "@/lib/coach-ia";
 import { getWeightProgramForUser } from "@/lib/patient/weight-program";
@@ -11,7 +12,11 @@ export type RappelCheckInResult = {
   skipped: number;
 };
 
-/** Tous les lundis à 9 h — rappel check-in hebdo pour patients actifs. */
+const POIDS_DASHBOARD_URL =
+  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+  "http://localhost:3001";
+
+/** Chaque lundi 9 h (Québec) — rappel check-in hebdo pour patients actifs. */
 export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
   if (isDemoMode()) {
     return { patientsContacted: 0, emailsSent: 0, skipped: 0 };
@@ -21,22 +26,18 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
     where: { status: "ACTIVE", isActive: true },
     include: {
       user: { select: { id: true, email: true, prenom: true, name: true } },
-      checkIns: { orderBy: { recordedAt: "desc" }, take: 1 },
+      checkIns: { orderBy: { recordedAt: "desc" }, take: 14 },
     },
   });
 
   let patientsContacted = 0;
   let emailsSent = 0;
   let skipped = 0;
+  const weekKey = new Date().toISOString().slice(0, 10);
 
   for (const program of programs) {
-    const dernierCheckIn = program.checkIns[0] ?? null;
-    const daysSince =
-      dernierCheckIn != null
-        ? (Date.now() - dernierCheckIn.recordedAt.getTime()) / (1000 * 60 * 60 * 24)
-        : 999;
-
-    if (daysSince < 5) {
+    const checkInThisWeek = hasCheckInThisWeekQuebec(program.checkIns);
+    if (checkInThisWeek) {
       skipped += 1;
       continue;
     }
@@ -52,11 +53,9 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
 
     try {
       const dernierPublic = publicProgram.recentCheckIns[0];
-      messageCoach = await envoyerRappelHebdomadaire(
-        publicProgram,
-        dernierPublic ?? null,
-        { prenom },
-      );
+      messageCoach = await envoyerRappelHebdomadaire(publicProgram, dernierPublic ?? null, {
+        prenom,
+      });
     } catch {
       /* fallback message */
     }
@@ -80,14 +79,18 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
       },
     });
 
+    const preview =
+      messageCoach.length > 180 ? `${messageCoach.slice(0, 177)}…` : messageCoach;
+    const poidsLink = `${POIDS_DASHBOARD_URL}/dashboard/patient/poids`;
+
     const emailResult = await sendEmail({
       to: program.user.email,
-      subject: "Votre check-in hebdomadaire MedSim",
+      subject: "Anne a un message pour vous 🌿",
       template: "weekly_checkin_reminder",
-      entityKey: `weekly_checkin:${program.userId}:${new Date().toISOString().slice(0, 10)}`,
+      entityKey: `weekly_checkin:${program.userId}:${weekKey}`,
       userId: program.userId,
-      html: `<p>Bonjour ${prenom},</p><p>${messageCoach}</p>`,
-      text: messageCoach,
+      html: `<p>Bonjour ${prenom},</p><p>${preview}</p><p><a href="${poidsLink}">Faire mon check-in →</a></p>`,
+      text: `${preview}\n\nFaire mon check-in : ${poidsLink}`,
     });
 
     patientsContacted += 1;

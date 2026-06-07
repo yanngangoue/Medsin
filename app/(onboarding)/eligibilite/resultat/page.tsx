@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { ELIGIBILITY_RESULT_KEY } from "@/lib/onboarding/eligibility-session";
 import { dsBtnPrimary, dsBtnSecondary, dsCard } from "@/lib/design-system";
 
-const ELIGIBILITY_RESULT_KEY = "medsim.eligibility.result";
+const INSCRIPTION_QUESTIONNAIRE =
+  "/auth/inscription?service=gestion-poids&callbackUrl=%2Fquestionnaire";
+
 
 type EligibilityDisplayStatus = "ELIGIBLE" | "NOT_ELIGIBLE" | "BORDERLINE";
 
@@ -54,8 +57,8 @@ function EligibiliteResultatContent() {
           Vos réponses indiquent qu&apos;un parcours GLP-1 pourrait vous convenir. Poursuivez avec
           le questionnaire médical complet — environ 5 minutes, sans engagement.
         </p>
-        <Link href="/questionnaire" className={`mt-8 inline-flex h-14 items-center ${dsBtnPrimary}`}>
-          Commencer mon évaluation →
+        <Link href={INSCRIPTION_QUESTIONNAIRE} className={`mt-8 inline-flex h-14 items-center ${dsBtnPrimary}`}>
+          Créer mon compte et continuer →
         </Link>
       </div>
     );
@@ -104,10 +107,10 @@ function EligibiliteResultatContent() {
         quand même poursuivre le questionnaire — notre équipe confirmera votre admissibilité.
       </p>
       <Link
-        href="/questionnaire?borderline=1"
+        href={INSCRIPTION_QUESTIONNAIRE}
         className={`mt-8 inline-flex h-14 items-center ${dsBtnPrimary}`}
       >
-        Poursuivre mon évaluation →
+        Créer mon compte et continuer →
       </Link>
     </div>
   );

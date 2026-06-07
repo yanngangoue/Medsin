@@ -1,5 +1,6 @@
 export const ELIGIBILITY_SESSION_KEY = "medsim.eligibility.sessionId";
 export const ELIGIBILITY_DRAFT_KEY = "medsim.eligibility.draft";
+export const ELIGIBILITY_RESULT_KEY = "medsim.eligibility.result";
 
 export function getOrCreateEligibilitySessionId(): string {
   if (typeof window === "undefined") return "";

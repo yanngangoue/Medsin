@@ -17,6 +17,7 @@
     "server:dev": "tsx watch server/index.ts",
     "server:start": "tsx server/index.ts",
     "test:interop": "tsx lib/interop/__tests__/gateway.test.ts",
+    "test:mvp": "tsx scripts/test-mvp-flows.ts",
     "typecheck": "tsc --noEmit",
     "cutout:pens": "python scripts/cutout-pen-images.py"
   },
@@ -35,6 +36,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.74.0",
+    "recharts": "^3.8.1",
     "stripe": "^18.0.0",
     "zod": "^3.25.46"
   },

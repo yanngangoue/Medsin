@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useState } from "react";
 import {
   ELIGIBILITY_QUESTIONNAIRE_PATH,
   GLP1_PEN_VISUALS,
@@ -13,8 +14,25 @@ type Props = {
   className?: string;
 };
 
-function PenVisual({ pen, side }: { pen: Glp1PenVisual; side: "left" | "right" }) {
+type CursorOffset = { x: number; y: number };
+
+function PenVisual({
+  pen,
+  side,
+  hovered,
+  offset,
+}: {
+  pen: Glp1PenVisual;
+  side: "left" | "right";
+  hovered: boolean;
+  offset: CursorOffset;
+}) {
   const tilt = side === "left" ? "-rotate-[14deg]" : "rotate-[14deg]";
+  const parallaxX = offset.x * (side === "left" ? 1 : -1);
+  const scale = hovered ? 1.1 : 1;
+  const transform = hovered
+    ? `translate(${parallaxX}%, ${offset.y}%) scale(${scale})`
+    : undefined;
 
   return (
     <div className={`flex shrink-0 justify-center ${tilt}`}>
@@ -24,7 +42,8 @@ function PenVisual({ pen, side }: { pen: Glp1PenVisual; side: "left" | "right" }
         width={220}
         height={560}
         unoptimized
-        className="h-[min(240px,42vw)] w-auto max-h-[300px] object-contain object-center drop-shadow-[0_18px_36px_rgba(0,0,0,0.35)]"
+        style={{ transform }}
+        className="h-[min(240px,42vw)] w-auto max-h-[300px] object-contain object-center drop-shadow-[0_18px_36px_rgba(0,0,0,0.35)] transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none motion-reduce:!transform-none"
         sizes="(max-width: 640px) 42vw, 220px"
       />
     </div>
@@ -34,9 +53,13 @@ function PenVisual({ pen, side }: { pen: Glp1PenVisual; side: "left" | "right" }
 function VerticalPenColumn({
   side,
   direction,
+  hovered,
+  offset,
 }: {
   side: "left" | "right";
   direction: "down" | "up";
+  hovered: boolean;
+  offset: CursorOffset;
 }) {
   const loop = [...GLP1_PEN_VISUALS, ...GLP1_PEN_VISUALS, ...GLP1_PEN_VISUALS];
   const maskClass =
@@ -55,7 +78,13 @@ function VerticalPenColumn({
         }`}
       >
         {loop.map((pen, index) => (
-          <PenVisual key={`${side}-${pen.id}-${index}`} pen={pen} side={side} />
+          <PenVisual
+            key={`${side}-${pen.id}-${index}`}
+            pen={pen}
+            side={side}
+            hovered={hovered}
+            offset={offset}
+          />
         ))}
       </div>
     </div>
@@ -66,12 +95,31 @@ export function Glp1PromoBanner({
   href = ELIGIBILITY_QUESTIONNAIRE_PATH,
   className = "",
 }: Props) {
+  const [hovered, setHovered] = useState(false);
+  const [offset, setOffset] = useState<CursorOffset>({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setOffset({ x: x * 8, y: y * 8 });
+  }, []);
+
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => {
+    setHovered(false);
+    setOffset({ x: 0, y: 0 });
+  }, []);
+
   return (
     <div
-      className={`promo-banner-root relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a5c45] via-[#1D4D3A] to-[#7fd4b0] shadow-xl ${className}`.trim()}
+      className={`promo-banner-root group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a5c45] via-[#1D4D3A] to-[#7fd4b0] shadow-xl ${className}`.trim()}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
     >
-      <VerticalPenColumn side="left" direction="down" />
-      <VerticalPenColumn side="right" direction="up" />
+      <VerticalPenColumn side="left" direction="down" hovered={hovered} offset={offset} />
+      <VerticalPenColumn side="right" direction="up" hovered={hovered} offset={offset} />
 
       <div className="pointer-events-none relative z-10 flex min-h-[260px] flex-col items-center justify-center px-6 py-9 text-center sm:min-h-[300px] sm:px-10 md:min-h-[320px] md:px-16">
         <p className="text-xs font-medium text-white/90 sm:text-sm">

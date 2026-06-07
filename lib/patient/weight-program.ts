@@ -25,7 +25,7 @@ export type WeightProgramPublic = {
   recentCheckIns: WeightCheckInPublic[];
 };
 
-function toCheckInPublic(row: WeightCheckIn): WeightCheckInPublic {
+export function toCheckInPublic(row: WeightCheckIn): WeightCheckInPublic {
   return {
     id: row.id,
     weight: row.weight,

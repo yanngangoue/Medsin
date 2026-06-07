@@ -18,3 +18,12 @@ export function resolveCarrierTrackingUrl(
 
   return `https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=${encodeURIComponent(n)}`;
 }
+
+/** Libellé transporteur selon le format du numéro de suivi. */
+export function carrierLabelFromTracking(trackingNumber: string | null | undefined): string {
+  if (!trackingNumber?.trim()) return "transporteur";
+  const n = trackingNumber.trim().replace(/\s/g, "");
+  if (/^[A-Z]{2}\d{9}[A-Z]{2}$/i.test(n)) return "Postes Canada";
+  if (/^\d{10,14}$/.test(n)) return "Purolator";
+  return "transporteur";
+}

@@ -24,6 +24,13 @@ const STAFF = [
     role: "MEDECIN" as const,
     license: "12345",
   },
+  {
+    prenom: "IPS Test",
+    email: "ips-test@medsim.ca",
+    password: "Test1234!",
+    role: "IPS" as const,
+    license: "IPS-9001",
+  },
 ];
 
 function baseWizard(overrides: Partial<Glp1EligibilityAnswers> = {}): Glp1EligibilityAnswers {
@@ -303,6 +310,7 @@ async function main() {
   console.log("\nComptes de test :");
   console.log("  admin@medsim.ca / Admin2026!");
   console.log("  medecin@medsim.ca / Medecin2026!");
+  console.log("  ips-test@medsim.ca / Test1234!");
   console.log("  Patients : *@medsim.ca / Patient2026!");
 }
 

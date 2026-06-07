@@ -44,7 +44,6 @@ export const PROJECT_MAP_SECTIONS: ProjectMapSection[] = [
       { href: "/medecin/ordonnances", label: "Médecin — ordonnances" },
       { href: "/medecin/agenda", label: "Médecin — agenda" },
       { href: "/medecin/messages", label: "Médecin — messages" },
-      { href: "/nutritionniste", label: "Nutritionniste", note: "rôle NUTRITIONNISTE" },
       { href: "/pharmacien", label: "Pharmacien", note: "rôle PHARMACIEN" },
       { href: "/admin", label: "Admin", note: "rôle ADMIN" },
       { href: "/admin/dashboard", label: "Admin — tableau de bord" },
@@ -80,7 +79,7 @@ export const PROJECT_MAP_SECTIONS: ProjectMapSection[] = [
   {
     title: "Pages légales",
     links: [
-      { href: "/politique-confidentialite", label: "Politique de confidentialité" },
+      { href: "/confidentialite", label: "Politique de confidentialité" },
       { href: "/conditions-utilisation", label: "Conditions d’utilisation" },
       { href: "/politique-remboursement", label: "Politique de remboursement" },
       { href: "/conformite", label: "Conformité" },

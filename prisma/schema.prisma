@@ -97,9 +97,15 @@ enum GlpMessageRole {
   AI_COACH
 }
 
+enum AnneReportKind {
+  CHECK_IN
+  WEEKLY
+}
+
 enum WeightCheckInStatus {
   PENDING
   COMPLETED
+  SKIPPED
   MISSED
 }
 
@@ -156,6 +162,8 @@ model User {
   professionalChatThreads      ChatThread[]           @relation("ProfessionalThreads")
   chatMessagesSent             ChatMessage[]
   appNotifications             AppNotification[]
+  anneReportsAsPatient         AnneIpsReport[]        @relation("AnneReportsPatient")
+  anneReportsAsIps             AnneIpsReport[]        @relation("AnneReportsIps")
 
   @@index([role])
 }
@@ -485,6 +493,7 @@ model WeightCheckIn {
   reminderSentAt  DateTime?
   completedAt     DateTime?
   aiReport        String?             @db.Text
+  isEscalation    Boolean             @default(false)
   reportSentToIps Boolean             @default(false)
   reportSentAt    DateTime?
   recordedAt      DateTime            @default(now())
@@ -506,6 +515,24 @@ model AiCoachMessage {
 
   @@index([programId])
   @@index([createdAt])
+}
+
+/** Rapports structurés Anne → IPS (check-in ou hebdomadaire). */
+model AnneIpsReport {
+  id           String         @id @default(uuid())
+  userId       String
+  ipsId        String
+  kind         AnneReportKind @default(CHECK_IN)
+  weekNumber   Int?
+  content      String         @db.Text
+  isEscalation Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+
+  user User @relation("AnneReportsPatient", fields: [userId], references: [id], onDelete: Cascade)
+  ips  User @relation("AnneReportsIps", fields: [ipsId], references: [id], onDelete: Cascade)
+
+  @@index([ipsId, createdAt])
+  @@index([userId, createdAt])
 }
 
 // ─── Parcours GLP-1 v2 (Felix-killer) — coexiste avec DossierGlp1 legacy ───

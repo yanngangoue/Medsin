@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { coachRepondreStream } from "@/lib/coach-ia";
+import { coachRepondreStream, coachRepondreStreamSansProgramme } from "@/lib/coach-ia";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import {
   buildCoachNoProgramMessage,
@@ -158,7 +158,60 @@ export async function POST(req: Request) {
   });
 
   if (!programRow) {
-    return NextResponse.json({ error: "Programme actif introuvable" }, { status: 404 });
+    const stream = new ReadableStream({
+      async start(controller) {
+        const userEphemeral = {
+          id: `user-${Date.now()}`,
+          role: "user" as const,
+          content: messageText,
+          createdAt: new Date().toISOString(),
+          isProactive: false,
+        };
+        controller.enqueue(encoder.encode(sseLine({ type: "user", message: userEphemeral })));
+
+        try {
+          const fullReply = await coachRepondreStreamSansProgramme(
+            prenom,
+            [],
+            messageText,
+            (chunk) => {
+              controller.enqueue(encoder.encode(sseLine({ type: "token", text: chunk })));
+            },
+          );
+
+          controller.enqueue(
+            encoder.encode(
+              sseLine({
+                type: "done",
+                assistantMessage: {
+                  id: `assistant-${Date.now()}`,
+                  role: "assistant",
+                  content: fullReply,
+                  createdAt: new Date().toISOString(),
+                  isProactive: false,
+                },
+              }),
+            ),
+          );
+          controller.close();
+        } catch (e) {
+          const errMsg = e instanceof Error ? e.message : "Erreur coach IA";
+          const status = errMsg.includes("ANTHROPIC_API_KEY") ? 503 : 502;
+          controller.enqueue(
+            encoder.encode(sseLine({ type: "error", error: errMsg, status })),
+          );
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
+    });
   }
 
   const checkInsRecents = await listCheckIns(session.user.id, 10);

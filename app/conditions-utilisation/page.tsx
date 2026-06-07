@@ -39,7 +39,7 @@ export default function ConditionsUtilisationPage() {
           Contact
         </Link>
         {" · "}
-        <Link href="/politique-confidentialite" className="text-[var(--teal-900)] underline">
+        <Link href="/confidentialite" className="text-[var(--teal-900)] underline">
           Politique de confidentialité
         </Link>
       </p>

@@ -5,21 +5,79 @@ import { tendancePoids } from "@/lib/coach-weight-trends";
 
 export const COACH_MODEL = "claude-sonnet-4-20250514";
 
-export const COACH_SYSTEM_PROMPT = `Tu t'appelles ${COACH_NAME}. Tu es la coach santé IA de MedSim, plateforme médicale québécoise spécialisée en gestion du poids avec GLP-1. Tu parles français canadien, tu es chaleureux, empathique, factuel et proactif. Tu te présentes toujours comme ${COACH_NAME}, jamais comme un humain ni comme un médecin.
+/** Gabarit obligatoire des rapports hebdomadaires IPS (vendredi 8 h). */
+export const ANNE_RAPPORT_IPS_GABARIT = `═══════════════════════════════
+RAPPORT ANNE — [Nom] — Sem.[N]
+═══════════════════════════════
+📊 DONNÉES
+Poids : X kg (Δ -X,X kg)
+Énergie : X/5 | Sommeil : Xh
+Nausées : X/5
 
-RÔLE :
-- Analyser poids, énergie, sommeil et effets secondaires
-- Initier des check-ins proactifs — tu contactes le patient en premier
-- Conseiller sur les effets secondaires courants (nausées, fatigue) avec des astuces pratiques
-- Escalader vers l'IPS si perte > 2 kg/semaine, nausée ≥ 4/5, ou détresse prolongée
-- Préparer des rapports structurés pour l'équipe clinique
+📈 TENDANCE 4 SEMAINES
+[Analyse en 2 phrases]
 
-LIMITES :
-- Jamais de diagnostic ni modification de prescription — « discutez avec votre IPS »
-- Tu es une IA, pas un professionnel de santé
-- Urgence → 811 ou 911
+⚠️ POINTS D'ATTENTION
+[Liste ou "Aucun"]
 
-FORMAT : 3 à 5 phrases, 1–2 emojis max, terminer par une question ouverte.`;
+💬 EXTRAITS CONVERSATION
+[3 échanges significatifs]
+
+🔔 RECOMMANDATION
+☐ Maintenir dose
+☐ Envisager ajustement
+☐ Consultation requise
+═══════════════════════════════`;
+
+export const COACH_SYSTEM_PROMPT = `Tu t'appelles ${COACH_NAME}. Tu es la coach santé IA de MedSim — plateforme médicale québécoise en gestion du poids GLP-1. Tu parles français canadien (Québec), chaleureuse, empathique, factuelle et proactive.
+
+IDENTITÉ OBLIGATOIRE
+- Tu es ${COACH_NAME}, une intelligence artificielle — jamais une humaine, jamais une IPS, jamais une médecin.
+- Mentionne clairement que tu es une IA lorsque c'est pertinent (accueil, conseils sensibles).
+
+═══ TES 5 RESPONSABILITÉS ═══
+
+1) APRÈS CHAQUE CHECK-IN PATIENT
+   • Analyser : poids + énergie (1-5) + sommeil (h) + nausées (1-5) + notes
+   • Envoyer un message personnalisé au patient (3 à 5 phrases, 1-2 emojis max, question ouverte)
+   • Générer un rapport structuré pour l'IPS (format MedSim)
+   • Détecter si escalade nécessaire (nausées ≥ 4/5, perte > 2 kg/7 j, énergie ≤ 1/5 sur les 3 derniers check-ins)
+
+2) CHAQUE LUNDI 9 H (CRON — MESSAGE PROACTIF)
+   • Contacter PROACTIVEMENT chaque patient actif
+   • Analyser la tendance des 4 dernières semaines
+   • Envoyer un message de check-in hebdomadaire personnalisé
+   • Rappeler la dose si oubli ou irrégularité détectée (sans modifier la prescription)
+
+3) CHAQUE VENDREDI 8 H (CRON — RAPPORT IPS)
+   • Produire un rapport hebdomadaire structuré pour chaque patient actif
+   • Respecter EXACTEMENT le gabarit MedSim (voir ci-dessous)
+   • Recommandation : Maintenir dose / Envisager ajustement / Consultation requise
+
+4) SURVEILLANCE ESCALADES (CRON HORAIRE + POST CHECK-IN)
+   • Nausées ≥ 4/5 → escalade IPS immédiate
+   • Perte > 2 kg en 7 jours → escalade IPS
+   • Énergie ≤ 1/5 sur 3 check-ins consécutifs → escalade IPS
+   • En cas d'escalade : ton rassurant pour le patient + mention que l'IPS est avisée
+
+5) CONVERSATION LIBRE (CHAT)
+   • Répondre aux questions GLP-1, effets secondaires, mode de vie
+   • 3 à 5 phrases, factuel, bienveillant
+   • Terminer par une question ouverte
+
+═══ GABARIT RAPPORT IPS (VENDREDI) ═══
+${ANNE_RAPPORT_IPS_GABARIT}
+
+═══ LIMITES ABSOLUES ═══
+❌ Jamais de diagnostic médical
+❌ Jamais modifier, augmenter ou diminuer une dose — renvoyer vers l'IPS
+❌ Jamais prescrire ou recommander un médicament spécifique sans IPS
+✅ Urgence médicale → « Appelez le 811 immédiatement » ou le 911
+✅ Toujours rappeler que tu es une IA
+✅ Doute clinique → « Discutez-en avec votre IPS »
+
+═══ FORMAT MESSAGES PATIENT ═══
+3 à 5 phrases · 1-2 emojis maximum · français québécois · question ouverte en conclusion.`;
 
 export type CoachChatTurn = {
   role: "user" | "assistant";
@@ -205,6 +263,52 @@ async function appelerClaude(input: {
   return text.trim();
 }
 
+/** Réponse sans programme poids actif — pas de données biométriques. */
+export async function coachRepondreStreamSansProgramme(
+  prenom: string,
+  historique: CoachChatTurn[],
+  messagePatient: string,
+  onToken: (chunk: string) => void,
+): Promise<string> {
+  const client = getClient();
+  const contexte = [
+    `Prénom : ${prenom.trim() || "Patient"}`,
+    "Programme poids : non activé (paiement ou démarrage de traitement en attente).",
+    "Données de check-in : aucune — ne pas inventer de chiffres de poids.",
+    "Rôle : informer sur le GLP-1, les effets secondaires courants et le parcours MedSim.",
+  ].join("\n");
+
+  const { prior, consigne } = buildAnthropicMessages(historique, messagePatient);
+
+  const stream = client.messages.stream({
+    model: COACH_MODEL,
+    max_tokens: 768,
+    system: `${COACH_SYSTEM_PROMPT}\n\n--- Données patient ---\n${contexte}`,
+    messages: [
+      ...prior.map((m) => ({ role: m.role, content: m.content })),
+      { role: "user", content: consigne },
+    ],
+  });
+
+  let fullText = "";
+  for await (const event of stream) {
+    if (
+      event.type === "content_block_delta" &&
+      event.delta.type === "text_delta" &&
+      event.delta.text
+    ) {
+      fullText += event.delta.text;
+      onToken(event.delta.text);
+    }
+  }
+
+  const trimmed = fullText.trim();
+  if (!trimmed) {
+    throw new Error("Anthropic stream contained no text content");
+  }
+  return trimmed;
+}
+
 /** Réponse conversationnelle streamée — retourne le texte complet une fois terminé. */
 export async function coachRepondreStream(
   ctx: CoachContexte,
@@ -353,9 +457,7 @@ export async function analyserCheckIn(
   options?: { prenom?: string },
 ): Promise<{ messagePatient: string; rapportIps: string; escalade: boolean }> {
   const tendance = tendancePoids(historique);
-  const escalade =
-    (checkIn.nausee != null && checkIn.nausee >= 4) ||
-    (tendance.deltaDernierKg != null && tendance.deltaDernierKg < -2);
+  const escalade = detecterEscalade(checkIn, historique);
 
   const messagePatient = await messageProactifApresCheckIn(programme, checkIn, {
     ...options,
@@ -377,6 +479,7 @@ export async function genererRapportIps(
   checkIns: WeightCheckInPublic[],
   prenom?: string,
   dernierCheckIn?: WeightCheckInPublic,
+  options?: { historiqueChat?: CoachChatTurn[]; weekNumber?: number },
 ): Promise<string> {
   const contexte = construireContextePatient({
     prenom,
@@ -384,18 +487,60 @@ export async function genererRapportIps(
     checkInsRecents: checkIns,
   });
 
+  const nom = prenom?.trim() || "Patient";
+  const sem = options?.weekNumber ?? semaineProgramme(programme.startDate);
+
+  const extraits =
+    options?.historiqueChat
+      ?.filter((m) => m.content.trim())
+      .slice(-6)
+      .map((m) => `${m.role === "user" ? "Patient" : "Anne"} : ${m.content.slice(0, 120)}`)
+      .join("\n") ?? "Aucun extrait disponible.";
+
   return appelerClaude({
     contexte,
     messages: [],
     consigneUtilisateur: [
-      "Rédige un rapport hebdomadaire STRUCTURÉ pour l'IPS (infirmière praticienne).",
-      "Sections : Résumé | Tendances poids | Énergie/sommeil | Effets secondaires | Recommandations de suivi | Escalade oui/non.",
+      `Rédige le rapport hebdomadaire IPS pour ${nom}, semaine ${sem}.`,
+      "Respecte EXACTEMENT le gabarit MedSim (lignes ═══, sections 📊 📈 ⚠️ 💬 🔔, cases ☐).",
+      "Remplace [Nom] par le prénom du patient et [N] par le numéro de semaine.",
+      "Utilise les vraies données du contexte — n'invente pas de chiffres.",
       dernierCheckIn
-        ? `Dernier check-in : ${dernierCheckIn.weight} kg, nausée ${dernierCheckIn.nausee ?? "N/D"}/5.`
+        ? `Dernier check-in : ${dernierCheckIn.weight} kg, énergie ${dernierCheckIn.energie ?? "N/D"}/5, sommeil ${dernierCheckIn.sommeil ?? "N/D"} h, nausées ${dernierCheckIn.nausee ?? "N/D"}/5.`
         : null,
+      `Extraits de conversation récents :\n${extraits}`,
+      "Coche UNE seule case sous RECOMMANDATION selon l'analyse clinique (sans prescrire).",
     ]
       .filter(Boolean)
       .join("\n"),
-    maxTokens: 800,
+    maxTokens: 1200,
   });
+}
+
+/** Détecte si une escalade IPS est requise. */
+export function detecterEscalade(
+  checkIn: WeightCheckInPublic,
+  historique: WeightCheckInPublic[],
+): boolean {
+  if (checkIn.nausee != null && checkIn.nausee >= 4) return true;
+
+  const sorted = [...historique].sort(
+    (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime(),
+  );
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const inWeek = sorted.filter((c) => new Date(c.recordedAt).getTime() >= weekAgo);
+  if (inWeek.length >= 2) {
+    const delta = inWeek[inWeek.length - 1]!.weight - inWeek[0]!.weight;
+    if (delta < -2) return true;
+  }
+
+  const recent = sorted.slice(-3);
+  if (
+    recent.length >= 3 &&
+    recent.every((c) => c.energie != null && c.energie <= 1)
+  ) {
+    return true;
+  }
+
+  return false;
 }

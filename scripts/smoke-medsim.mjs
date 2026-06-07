@@ -62,7 +62,7 @@ async function main() {
   const reg = await fetchJar(jar, `${BASE}/api/auth/inscription`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prenom: "Smoke", email, password }),
+    body: JSON.stringify({ prenom: "Smoke", nom: "Test", email, password }),
   });
   if (reg.status === 201) {
     console.log("✓ Inscription patient (201)");

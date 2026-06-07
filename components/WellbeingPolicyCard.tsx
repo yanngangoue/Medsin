@@ -13,7 +13,7 @@ type WellbeingPolicyCardProps = {
 export function WellbeingPolicyCard({
   className = "",
   termsHref = "#conditions-utilisation",
-  privacyHref = "#politique-confidentialite",
+  privacyHref = "/confidentialite",
 }: WellbeingPolicyCardProps) {
   return (
     <article

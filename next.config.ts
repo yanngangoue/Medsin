@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       { source: "/onboarding/repas-sante", destination: "/onboarding/gestion-poids", permanent: true },
       { source: "/onboarding/repas-sante/:path*", destination: "/onboarding/gestion-poids", permanent: true },
       { source: "/nutrition", destination: "/onboarding/gestion-poids", permanent: true },
+      { source: "/politique-confidentialite", destination: "/confidentialite", permanent: true },
     ];
   },
 };
