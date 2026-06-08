@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -7,52 +6,6 @@ import { isDemoMode } from "@/lib/is-demo-mode";
 import { demoCreateUser, demoUserExists } from "@/lib/demo-store";
 import { writeAuditLog } from "@/lib/audit";
 import { resetLoginRateLimitForKey } from "@/lib/login-rate-limit";
-
-export const runtime = "nodejs";
-
-function inscriptionErrorMessage(error: unknown): { status: number; message: string } {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    if (error.code === "P2002") {
-      return { status: 409, message: "Cette adresse courriel est déjà utilisée." };
-    }
-    if (error.code === "P2021") {
-      return {
-        status: 503,
-        message:
-          "Base de données non initialisée. Contactez le support ou relancez la migration Prisma.",
-      };
-    }
-  }
-
-  if (error instanceof Prisma.PrismaClientInitializationError) {
-    return {
-      status: 503,
-      message:
-        "Connexion à la base de données impossible. Vérifiez DATABASE_URL (Neon) ou réessayez dans un instant.",
-    };
-  }
-
-  const msg = error instanceof Error ? error.message : String(error);
-  if (/DATABASE_URL|Can't reach database|ECONNREFUSED|connection/i.test(msg)) {
-    return {
-      status: 503,
-      message:
-        "Connexion à la base de données impossible. Vérifiez DATABASE_URL (Neon) ou réessayez dans un instant.",
-    };
-  }
-
-  if (process.env.NODE_ENV === "development") {
-    return {
-      status: 500,
-      message: `Erreur serveur (dev) : ${msg}`,
-    };
-  }
-
-  return {
-    status: 500,
-    message: "Impossible de créer le compte. Réessayez ou contactez le support.",
-  };
-}
 
 function clientIp(req: Request): string | null {
   const xf = req.headers.get("x-forwarded-for");
@@ -62,10 +15,7 @@ function clientIp(req: Request): string | null {
 
 const schema = z.object({
   prenom: z.string().min(1),
-  nom: z
-    .string()
-    .optional()
-    .transform((v) => (v?.trim() ? v.trim() : undefined)),
+  nom: z.string().min(1).optional(),
   email: z.string().email(),
   password: z.string().min(8),
 });
@@ -129,7 +79,9 @@ export async function POST(req: Request) {
   return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
   } catch (e) {
     console.error("[inscription]", e);
-    const { status, message } = inscriptionErrorMessage(e);
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json(
+      { error: "Impossible de créer le compte. Réessayez ou contactez le support." },
+      { status: 500 },
+    );
   }
 }

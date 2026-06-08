@@ -9,19 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async headers() {
-    return [
-      {
-        source: "/((?!_next/static|_next/image|favicon.ico|images/).*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=0, must-revalidate",
-          },
-        ],
-      },
-    ];
-  },
   async redirects() {
     return [
       { source: "/login", destination: "/connexion", permanent: false },
