@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { connexionSchema, type ConnexionFormValues } from "@/lib/schemas/connexion";
 import { defaultHomeForRole } from "@/lib/rbac";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
@@ -57,24 +56,26 @@ function ConnexionForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-[#F8FAFC] px-4 py-12">
-      <div className="mx-auto w-full max-w-md">
-        <Link href="/" className="mb-8 flex justify-center">
+    <div className="flex min-h-screen flex-col bg-white">
+      <header className="px-5 py-5 sm:px-8 sm:py-6">
+        <Link href="/" className="inline-block">
           <MedsimLogo />
         </Link>
-        <Card>
-          <h1 className="text-xl font-semibold text-slate-900">Connexion</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Connectez-vous avec votre <span className="font-medium">courriel</span> et votre mot de passe.
-          </p>
+      </header>
+
+      <main className="flex flex-1 flex-col justify-center px-5 pb-16 sm:px-8">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="mb-8 text-center text-2xl font-bold tracking-tight text-[#1A1A2E] sm:text-3xl">
+            Bienvenue à nouveau sur MedSim !
+          </h1>
 
           {searchParams.get("reset") === "ok" ? (
-            <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+            <p className="mb-6 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
               Mot de passe mis à jour. Vous pouvez vous connecter.
             </p>
           ) : null}
 
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
+          <form className="space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
             <div>
               <Label htmlFor="email">Courriel</Label>
               <Input
@@ -102,36 +103,22 @@ function ConnexionForm() {
               ) : null}
             </div>
             <FieldError message={error ?? undefined} />
-            <Button
-              type="submit"
-              disabled={!isValid || isSubmitting}
-              className="h-12 w-full bg-[#16a34a] hover:bg-green-700"
-            >
+            <Button type="submit" disabled={!isValid || isSubmitting} className="h-12 w-full">
               {isSubmitting ? "Connexion…" : "Se connecter"}
             </Button>
           </form>
 
-          <p className="mt-4 text-center text-sm">
+          <p className="mt-8 text-center text-sm text-slate-600">
+            Pas de compte ?{" "}
             <Link
-              href="/connexion/mot-de-passe-oublie"
-              className="font-medium text-[#16a34a] hover:underline"
+              href="/onboarding/inscription"
+              className="font-semibold text-[#1D4D3A] hover:underline"
             >
-              Mot de passe oublié ?
-            </Link>
-          </p>
-
-          <p className="mt-6 text-center text-sm text-slate-600">
-            <Link href="/" className="font-medium text-[#16a34a] hover:underline">
-              Voir les services sans compte
-            </Link>
-            <span className="mx-2 text-slate-300">·</span>
-            Pas encore de compte ?{" "}
-            <Link href="/auth/inscription" className="font-medium text-[#16a34a] hover:underline">
               S&apos;inscrire
             </Link>
           </p>
-        </Card>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
@@ -140,7 +127,7 @@ export default function AuthConnexionPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-slate-500">
+        <div className="flex min-h-screen items-center justify-center bg-white text-slate-500">
           Chargement…
         </div>
       }

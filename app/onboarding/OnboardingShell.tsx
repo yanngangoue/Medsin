@@ -19,10 +19,23 @@ function stepIndex(pathname: string): number {
 export function OnboardingShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const active = stepIndex(pathname);
-  const softMintBg = pathname.startsWith("/onboarding/inscription");
+  const isInscription = pathname.startsWith("/onboarding/inscription");
+
+  if (isInscription) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <header className="px-5 py-5 sm:px-8 sm:py-6">
+          <Link href="/" className="inline-block">
+            <MedsimLogo />
+          </Link>
+        </header>
+        <main className="flex flex-1 flex-col justify-center px-5 pb-16 sm:px-8">{children}</main>
+      </div>
+    );
+  }
 
   return (
-    <div className={`flex min-h-screen flex-col ${softMintBg ? "bg-[#F0FBF7]" : "bg-white"}`}>
+    <div className="flex min-h-screen flex-col bg-white">
       <header className="border-b border-slate-100 px-4 py-6 sm:px-6">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-6">
           <Link href="/" className="inline-flex">

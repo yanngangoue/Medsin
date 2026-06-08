@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Glp1ProductCards } from "@/components/patient/Glp1ProductCards";
+import { PatientGlp1CareProcess } from "@/components/patient/PatientGlp1CareProcess";
 import { ELIGIBILITY_QUESTIONNAIRE_PATH } from "@/lib/patient/promo-banner-assets";
 import { getServiceCtaHref, type PatientServiceSection } from "@/lib/patient/service-sections";
 
@@ -68,6 +69,15 @@ export function PatientServiceDetailSection({ section }: Props) {
           {section.title}
         </h2>
 
+        {showProductCards ? <PatientGlp1CareProcess /> : null}
+
+        {showProductCards ? (
+          <p className="mx-auto mt-6 max-w-2xl px-2 text-[15px] leading-relaxed text-white/90 sm:mt-8 sm:text-base">
+            Chez MedSim, votre santé passe avant tout. Chaque ordonnance est émise uniquement par une IPS
+            certifiée, après évaluation rigoureuse de votre dossier médical.
+          </p>
+        ) : null}
+
         {showProductCards ? (
           <Glp1ProductCards
             href={ELIGIBILITY_QUESTIONNAIRE_PATH}
@@ -91,18 +101,6 @@ export function PatientServiceDetailSection({ section }: Props) {
             ))}
           </ul>
         </div>
-
-        <p className="mx-auto mt-5 max-w-md text-xs leading-relaxed text-white/70 sm:text-sm">
-          Données chiffrées et hébergées au Canada. Conformité{" "}
-          <Link href="/conformite" className="font-medium text-white underline underline-offset-2">
-            Loi 25
-          </Link>{" "}
-          (Québec) et LPRPDE —{" "}
-          <Link href="/confidentialite" className="font-medium text-white underline underline-offset-2">
-            Politique de confidentialité
-          </Link>
-          .
-        </p>
 
         <Link
           href={ctaHref}

@@ -12,11 +12,9 @@ import {
   resolvePatientPostAuthPath,
 } from "@/lib/onboarding/post-auth-redirect";
 import { inscriptionSchema, type InscriptionFormValues } from "@/lib/schemas/inscription";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
-import { BackSection } from "@/components/navigation/BackSection";
 
 function AuthInscriptionForm() {
   const router = useRouter();
@@ -127,34 +125,29 @@ function AuthInscriptionForm() {
 
   if (status === "loading" || status === "authenticated") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-sm text-slate-500">
+      <div className="flex min-h-screen items-center justify-center bg-white text-sm text-slate-500">
         Redirection…
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-[#F8FAFC] px-4 py-12">
-      <div className="mx-auto w-full max-w-md">
-        <Link href="/" className="mb-8 flex justify-center">
+    <div className="flex min-h-screen flex-col bg-white">
+      <header className="px-5 py-5 sm:px-8 sm:py-6">
+        <Link href="/" className="inline-block">
           <MedsimLogo />
         </Link>
-        <div className="mb-4">
-          <BackSection
-            back={{ href: isGlp1 ? "/eligibilite/resultat" : "/", label: "Retour" }}
-            hint={
-              isGlp1
-                ? "Créez votre compte pour poursuivre le questionnaire médical."
-                : "Retour à l'accueil MedSim."
-            }
-          />
-        </div>
-        <Card>
-          <h1 className="text-xl font-semibold text-slate-900">Créer un compte</h1>
-          <p className="mt-1 text-sm text-slate-600">
+      </header>
+
+      <main className="flex flex-1 flex-col justify-center px-5 pb-16 sm:px-8">
+        <div className="mx-auto w-full max-w-md">
+          <h1 className="mb-2 text-center text-2xl font-bold tracking-tight text-[#1A1A2E] sm:text-3xl">
+            Créer un compte
+          </h1>
+          <p className="mb-8 text-center text-sm text-slate-600">
             {isGlp1 ? (
               <>
-                Dernière étape avant le questionnaire médical GLP-1 — vos réponses d&apos;éligibilité
+                Dernière étape avant le questionnaire médical GLP-1, vos réponses d&apos;éligibilité
                 seront conservées.
               </>
             ) : (
@@ -162,7 +155,7 @@ function AuthInscriptionForm() {
             )}
           </p>
 
-          <form className="mt-8 space-y-4" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
+          <form className="space-y-4" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="prenom">Prénom</Label>
@@ -242,14 +235,14 @@ function AuthInscriptionForm() {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-8 text-center text-sm text-slate-600">
             Déjà inscrit ?{" "}
-            <Link href="/connexion" className="font-medium text-[#16a34a] hover:underline">
+            <Link href="/connexion" className="font-semibold text-[#1D4D3A] hover:underline">
               Se connecter
             </Link>
           </p>
-        </Card>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
@@ -258,7 +251,9 @@ export default function AuthInscriptionPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center text-slate-500">Chargement…</div>
+        <div className="flex min-h-screen items-center justify-center bg-white text-slate-500">
+          Chargement…
+        </div>
       }
     >
       <AuthInscriptionForm />

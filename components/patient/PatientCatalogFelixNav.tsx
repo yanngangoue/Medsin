@@ -49,17 +49,6 @@ export function PatientCatalogFelixNav({
 }: Props) {
   const profileHref = isConnected ? GLP1_PATIENT_DASHBOARD_PATH : PUBLIC_HERO_CTAS.login.href;
 
-  const menus = showAuthLinks
-    ? CATALOG_FELIX_NAV_MENUS
-    : CATALOG_FELIX_NAV_MENUS.map((menu) =>
-        menu.id === "contact"
-          ? {
-              ...menu,
-              items: menu.items.filter((item) => item.href !== PUBLIC_HERO_CTAS.login.href),
-            }
-          : menu,
-      );
-
   const bar = (
       <div className="mx-auto flex w-full items-center gap-1.5 rounded-xl border border-white/70 bg-white/95 px-2.5 py-1 shadow-md shadow-black/10 backdrop-blur-md sm:gap-2 sm:px-3 sm:py-1.5">
         <Link
@@ -71,10 +60,10 @@ export function PatientCatalogFelixNav({
         </Link>
 
         <nav
-          className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2"
+          className="hidden min-w-0 items-center gap-0.5 sm:flex sm:ml-1 md:ml-2 md:gap-1"
           aria-label="Navigation catalogue"
         >
-          {menus.map((menu) => (
+          {CATALOG_FELIX_NAV_MENUS.map((menu) => (
             <PatientCatalogFelixNavDropdown key={menu.id} menu={menu} />
           ))}
         </nav>

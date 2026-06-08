@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
+import { PatientDashboardKpiSection } from "@/components/patient/PatientDashboardKpiSection";
 import { PatientCommentsSection } from "@/components/patient/PatientCommentsSection";
 import { PatientServiceDetailSection } from "@/components/patient/PatientServiceDetailSection";
 import { PatientHeroTicker } from "@/components/patient/PatientHeroTicker";
@@ -71,6 +72,8 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
         {PATIENT_SERVICE_SECTIONS.map((section) => (
           <PatientServiceDetailSection key={section.id} section={section} />
         ))}
+
+        <PatientDashboardKpiSection prenom={hasAccount ? prenom : undefined} />
 
         {hasAccount ? (
           <section className="mx-auto max-w-2xl rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-sm backdrop-blur-sm sm:mt-4 sm:p-8">

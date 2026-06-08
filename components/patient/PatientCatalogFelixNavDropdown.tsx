@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { CatalogFelixNavMenu } from "@/lib/patient/catalog-felix-nav";
 
 function ChevronDown({ open }: { open?: boolean }) {
@@ -23,22 +24,30 @@ type Props = {
 };
 
 export function PatientCatalogFelixNavDropdown({ menu }: Props) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="group relative">
+    <div className="relative" onMouseLeave={() => setOpen(false)}>
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-slate-600 transition-colors group-hover:bg-slate-100 group-hover:text-slate-900 group-focus-within:bg-slate-100 group-focus-within:text-slate-900 xl:px-2.5"
+        tabIndex={-1}
+        onMouseEnter={() => setOpen(true)}
+        className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm font-medium transition-colors sm:px-2.5 ${
+          open ? "bg-slate-100 text-slate-900" : "text-slate-700"
+        }`}
         aria-haspopup="true"
-        aria-expanded="false"
+        aria-expanded={open}
         aria-controls={`felix-nav-${menu.id}`}
       >
         {menu.label}
-        <ChevronDown />
+        <ChevronDown open={open} />
       </button>
 
       <div
         id={`felix-nav-${menu.id}`}
-        className="invisible absolute left-1/2 top-full z-50 w-[min(100vw-2rem,17rem)] -translate-x-1/2 pt-2 opacity-0 transition-[opacity,visibility] duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+        className={`absolute left-1/2 top-full z-50 w-[min(100vw-2rem,17rem)] -translate-x-1/2 pt-2 transition-[opacity,visibility] duration-150 ${
+          open ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
+        }`}
         role="menu"
         aria-label={menu.label}
       >

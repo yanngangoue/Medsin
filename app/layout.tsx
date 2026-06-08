@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "./providers";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-medsim-sans",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr-CA" className="scroll-smooth">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${montserrat.variable} font-sans antialiased`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

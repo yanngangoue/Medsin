@@ -5,11 +5,14 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
-import { PATIENT_SERVICE_CARDS } from "@/lib/patient/services";
-import { getServiceSectionHref } from "@/lib/patient/service-landing-paths";
 import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 import { PUBLIC_HERO_CTAS } from "@/lib/patient/patient-hub";
+
+const MENU_LINKS = [
+  { href: "/a-propos", label: "À propos de nous" },
+  { href: "/contact", label: "Contact" },
+] as const;
 
 type Props = {
   showAuthLinks?: boolean;
@@ -82,7 +85,7 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
           type="button"
           aria-expanded={open}
           aria-controls={panelId}
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu des services"}
+          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           onClick={() => setOpen((v) => !v)}
           className={`flex items-center justify-center rounded-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
             isLight
@@ -106,31 +109,19 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
                 className="text-sm font-semibold text-[#1D9E75] hover:text-[var(--teal-900)]"
               />
             </div>
-            <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-              Nos services
-            </p>
             <ul>
-              {PATIENT_SERVICE_CARDS.map((service) => (
-                <li key={service.id}>
+              {MENU_LINKS.map((item) => (
+                <li key={item.href}>
                   <Link
-                    href={getServiceSectionHref(service.id, PUBLIC_CATALOG_HOME)}
+                    href={item.href}
                     onClick={() => setOpen(false)}
                     className="block px-4 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-50"
                   >
-                    {service.title}
+                    {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <div className="mt-1 border-t border-slate-100 pt-1">
-              <Link
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="block px-4 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-50"
-              >
-                Contact
-              </Link>
-            </div>
             {status === "authenticated" && isPatient ? (
               <div className="mt-1 border-t border-slate-100 pt-1">
                 <Link
