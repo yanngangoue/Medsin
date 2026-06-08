@@ -14,8 +14,8 @@ for (const file of FILES) {
   const input = join(DIR, file);
   const before = readFileSync(input).length;
   const buffer = await sharp(input)
-    .resize(800, 800, { fit: "cover", position: "centre" })
-    .webp({ quality: 82 })
+    .resize(1200, 1200, { fit: "cover", position: "centre" })
+    .webp({ quality: 85 })
     .toBuffer();
   const out = join(DIR, file.replace(/\.png$/i, ".webp"));
   writeFileSync(out, buffer);

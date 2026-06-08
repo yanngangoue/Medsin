@@ -69,7 +69,11 @@ export function PatientServiceDetailSection({ section }: Props) {
           {section.title}
         </h2>
 
-        {showProductCards ? <PatientGlp1CareProcess /> : null}
+        {showProductCards ? (
+          <div className="relative left-1/2 mt-6 w-screen max-w-[100vw] -translate-x-1/2 px-3 sm:mt-8 sm:px-6">
+            <PatientGlp1CareProcess />
+          </div>
+        ) : null}
 
         {showProductCards ? (
           <p className="mx-auto mt-6 max-w-2xl px-2 text-[15px] leading-relaxed text-white/90 sm:mt-8 sm:text-base">

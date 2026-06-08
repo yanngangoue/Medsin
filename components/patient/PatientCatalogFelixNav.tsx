@@ -6,18 +6,8 @@ import { PatientCatalogFelixNavDropdown } from "@/components/patient/PatientCata
 import { PatientHubNavMenu } from "@/components/patient/PatientHubNavMenu";
 import { CATALOG_FELIX_NAV_MENUS } from "@/lib/patient/catalog-felix-nav";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
-import { ELIGIBILITY_QUESTIONNAIRE_PATH } from "@/lib/patient/promo-banner-assets";
 import { PUBLIC_CATALOG_HOME } from "@/lib/public-catalog";
 import { PUBLIC_HERO_CTAS } from "@/lib/patient/patient-hub";
-
-function SearchIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-      <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function UserIcon() {
   return (
@@ -74,14 +64,6 @@ export function PatientCatalogFelixNav({
               Bonjour, {prenom}
             </span>
           ) : null}
-
-          <Link
-            href={ELIGIBILITY_QUESTIONNAIRE_PATH}
-            className="hidden items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500 transition-colors hover:bg-slate-200/80 hover:text-slate-700 lg:inline-flex"
-          >
-            <SearchIcon />
-            Recherche
-          </Link>
 
           <Link
             href={profileHref}
