@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 
 const DEMO_KPIS = [
@@ -67,15 +66,15 @@ function InclusionCard({
   return (
     <li className="overflow-hidden rounded-[20px] bg-[#F5F4F0] shadow-sm ring-1 ring-black/5 sm:rounded-[24px]">
       <div className="flex min-h-[9.5rem] flex-col sm:min-h-[10.5rem] sm:flex-row">
-        <div className="relative h-36 w-full shrink-0 sm:h-auto sm:w-[38%] sm:min-h-[10.5rem]">
-          <Image
+        <div className="relative h-36 w-full shrink-0 overflow-hidden sm:h-auto sm:w-[38%] sm:min-h-[10.5rem]">
+          <img
             src={image}
             alt={imageAlt}
-            fill
-            className="object-cover object-center"
-            sizes="(max-width: 640px) 100vw, 280px"
-            quality={80}
-            loading="lazy"
+            width={800}
+            height={800}
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </div>
         <div className="flex flex-1 flex-col justify-center px-5 py-4 text-left sm:px-6 sm:py-5">

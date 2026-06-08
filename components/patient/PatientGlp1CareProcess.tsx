@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 const STEPS = [
   {
     image: "/images/glp1-process-en-ligne.webp",
@@ -38,18 +36,22 @@ export function PatientGlp1CareProcess({ className = "" }: Props) {
         {STEPS.map((step) => (
           <article
             key={step.title}
-            className={`relative aspect-square min-w-0 overflow-hidden rounded-xl text-left shadow-md ring-1 ring-white/20 transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-2xl ${
+            className={`relative aspect-square min-h-[9rem] min-w-0 overflow-hidden rounded-xl text-left shadow-md ring-1 ring-white/20 transition hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[10rem] sm:rounded-2xl ${
               "highlighted" in step && step.highlighted ? "ring-2 ring-[#3EBD93]" : ""
             }`}
           >
-            <Image
+            {/* img statique WebP (~45 Ko) : chargement fiable sur mobile, sans lazy ni optimiseur Next */}
+            <img
               src={step.image}
               alt={"alt" in step ? step.alt : ""}
-              fill
-              quality={80}
-              className={"imageClassName" in step ? step.imageClassName : "object-cover"}
-              sizes="(max-width: 767px) 46vw, 240px"
-              loading="lazy"
+              width={800}
+              height={800}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className={`absolute inset-0 h-full w-full ${
+                "imageClassName" in step ? step.imageClassName : "object-cover"
+              }`}
             />
             <div
               className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"
