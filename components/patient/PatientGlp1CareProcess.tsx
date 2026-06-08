@@ -2,22 +2,22 @@ import Image from "next/image";
 
 const STEPS = [
   {
-    image: "/images/glp1-process-en-ligne.png",
+    image: "/images/glp1-process-en-ligne.webp",
     title: "100 % en ligne",
     alt: "Personne consulte MedSim sur tablette depuis chez elle",
   },
   {
-    image: "/images/glp1-process-traitement-perso.png",
+    image: "/images/glp1-process-traitement-perso.webp",
     title: "Traitement personnalisé",
     alt: "Stylos injectables GLP-1 pour un traitement personnalisé",
   },
   {
-    image: "/images/glp1-process-livraison.png",
+    image: "/images/glp1-process-livraison.webp",
     title: "Livraison",
     alt: "Livreur tenant un colis discret pour livraison à domicile",
   },
   {
-    image: "/images/glp1-process-suivi-anne.png",
+    image: "/images/glp1-process-suivi-anne.webp",
     title: "Suivi hebdomadaire",
     alt: "Clavardage sur cellulaire avec Anne, assistante IA MedSim",
     imageClassName: "object-cover object-center",
@@ -46,10 +46,10 @@ export function PatientGlp1CareProcess({ className = "" }: Props) {
               src={step.image}
               alt={"alt" in step ? step.alt : ""}
               fill
-              quality={100}
+              quality={80}
               className={"imageClassName" in step ? step.imageClassName : "object-cover"}
-              sizes="(max-width: 767px) 45vw, 25vw"
-              unoptimized={step.image.startsWith("/")}
+              sizes="(max-width: 767px) 46vw, 240px"
+              loading="lazy"
             />
             <div
               className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"
