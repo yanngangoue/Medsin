@@ -18,7 +18,7 @@ const CHART_MAX_LB = 208;
 
 const INCLUSIONS = [
   {
-    image: "/images/glp1-process-traitement-perso.png",
+    image: "/images/glp1-process-traitement-perso.webp",
     imageAlt: "Stylos injectables GLP-1 pour un traitement personnalisé",
     title: (
       <>
@@ -28,7 +28,7 @@ const INCLUSIONS = [
     body: "Prescrit par un professionnel de santé selon votre profil — Ozempic, Wegovy ou générique.",
   },
   {
-    image: "/images/glp1-process-suivi-anne.png",
+    image: "/images/glp1-process-suivi-anne.webp",
     imageAlt: "Clavardage avec Anne, coach santé IA MedSim",
     title: (
       <>
@@ -38,7 +38,7 @@ const INCLUSIONS = [
     body: "Anne, votre coach IA, vous contacte chaque semaine. Notre équipe est là quand vous en avez besoin.",
   },
   {
-    image: "/images/glp1-process-en-ligne.png",
+    image: "/images/glp1-process-en-ligne.webp",
     imageAlt: "Tableau de bord MedSim sur tablette",
     title: (
       <>
@@ -74,7 +74,8 @@ function InclusionCard({
             fill
             className="object-cover object-center"
             sizes="(max-width: 640px) 100vw, 280px"
-            unoptimized
+            quality={80}
+            loading="lazy"
           />
         </div>
         <div className="flex flex-1 flex-col justify-center px-5 py-4 text-left sm:px-6 sm:py-5">
