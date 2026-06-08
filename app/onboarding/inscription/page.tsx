@@ -7,7 +7,7 @@ import { getCsrfToken, signIn } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { inscriptionSchema, type InscriptionFormValues } from "@/lib/schemas/inscription";
+import { onboardingInscriptionSchema, type OnboardingInscriptionFormValues } from "@/lib/schemas/inscription";
 
 const WELCOME_AVATAR =
   "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=240&q=90";
@@ -97,8 +97,8 @@ export default function InscriptionPage() {
     control,
     formState: { errors },
     clearErrors,
-  } = useForm<InscriptionFormValues>({
-    resolver: zodResolver(inscriptionSchema),
+  } = useForm<OnboardingInscriptionFormValues>({
+    resolver: zodResolver(onboardingInscriptionSchema),
     mode: "onChange",
     defaultValues: {
       prenom: "",
@@ -128,7 +128,7 @@ export default function InscriptionPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function onValid(data: InscriptionFormValues) {
+  async function onValid(data: OnboardingInscriptionFormValues) {
     setGenericApiError(null);
     setApiEmailError(null);
     setIsSubmitting(true);
@@ -138,6 +138,7 @@ export default function InscriptionPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prenom: data.prenom.trim(),
+          nom: data.prenom.trim(),
           email: data.email.trim().toLowerCase(),
           password: data.password,
         }),
