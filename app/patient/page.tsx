@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { signOutMedSim } from "@/lib/client-sign-out";
 import { objectifLabel } from "@/lib/questionnaire-labels";
 import { parseQuestionnaireResponse, type QuestionnaireApiPayload } from "@/lib/questionnaire-api";
@@ -62,8 +63,8 @@ export default function PatientDashboardPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <header className="border-b border-slate-200/80 bg-white px-4 py-4">
         <div className="mx-auto flex max-w-[680px] items-center justify-between">
-          <Link href="/" className="text-lg font-semibold text-slate-900">
-            Medsim
+          <Link href="/" aria-label="MedSim">
+            <MedsimLogo />
           </Link>
           <div className="flex items-center gap-4">
             <span className="hidden text-xs font-medium text-slate-500 sm:inline">Espace patient</span>

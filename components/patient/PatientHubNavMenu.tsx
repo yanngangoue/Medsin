@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 import { PartNavAccueilLink } from "@/components/patient/PartNavAccueilLink";
@@ -36,6 +36,7 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
   const isPatient = session?.user?.role === "PATIENT";
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -47,6 +48,18 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
   }, [open]);
 
   useEffect(() => {
+    if (!open) return;
+
+    const closeIfOutside = (event: PointerEvent) => {
+      if (menuRef.current?.contains(event.target as Node)) return;
+      setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeIfOutside, true);
+    return () => document.removeEventListener("pointerdown", closeIfOutside, true);
+  }, [open]);
+
+  useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -54,30 +67,33 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
   }, [open]);
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={panelId}
-        aria-label={open ? "Fermer le menu" : "Ouvrir le menu des services"}
-        onClick={() => setOpen((v) => !v)}
-        className={`flex h-10 w-10 items-center justify-center rounded-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-          isLight
-            ? "text-slate-800 hover:bg-slate-100 focus-visible:outline-[var(--teal)]"
-            : "text-white hover:bg-white/10 focus-visible:outline-white"
-        }`}
-      >
-        <MenuIcon />
-      </button>
-
+    <>
       {open ? (
-        <>
-          <button
-            type="button"
-            aria-label="Fermer le menu"
-            className="fixed inset-0 z-[70] bg-black/20"
-            onClick={() => setOpen(false)}
-          />
+        <button
+          type="button"
+          aria-label="Fermer le menu"
+          className="fixed inset-0 z-[70] touch-manipulation bg-black/20"
+          onPointerDown={() => setOpen(false)}
+        />
+      ) : null}
+
+      <div ref={menuRef} className="relative z-[80]">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          aria-label={open ? "Fermer le menu" : "Ouvrir le menu des services"}
+          onClick={() => setOpen((v) => !v)}
+          className={`flex items-center justify-center rounded-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+            isLight
+              ? "h-7 w-7 text-slate-800 hover:bg-slate-100 focus-visible:outline-[var(--teal)]"
+              : "h-10 w-10 text-white hover:bg-white/10 focus-visible:outline-white"
+          }`}
+        >
+          <MenuIcon />
+        </button>
+
+        {open ? (
           <nav
             id={panelId}
             className={`absolute right-0 top-full z-[80] mt-2 w-56 overflow-hidden rounded-xl border bg-white py-1 shadow-xl ring-1 ring-black/5 ${
@@ -152,8 +168,8 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
               </div>
             ) : null}
           </nav>
-        </>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </>
   );
 }

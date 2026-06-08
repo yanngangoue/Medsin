@@ -17,7 +17,8 @@ function IconAssistant({ className }: { className?: string }) {
   return (
     <svg className={className} width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
-        d="M12 3a7 7 0 0 1 7 7v2a3 3 0 0 1-3 3h-1l-2 3-2-3h-1a3 3 0 0 1-3-3v-2a7 7 0 0 1 7-7Z"
+
+d="M12 3a7 7 0 0 1 7 7v2a3 3 0 0 1-3 3h-1l-2 3-2-3h-1a3 3 0 0 1-3-3v-2a7 7 0 0 1 7-7Z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"

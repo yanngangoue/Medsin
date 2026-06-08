@@ -27,7 +27,7 @@ export function PatientCatalogFelixNavDropdown({ menu }: Props) {
     <div className="group relative">
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-sm text-slate-600 transition-colors group-hover:bg-slate-100 group-hover:text-slate-900 group-focus-within:bg-slate-100 group-focus-within:text-slate-900 xl:px-3"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-slate-600 transition-colors group-hover:bg-slate-100 group-hover:text-slate-900 group-focus-within:bg-slate-100 group-focus-within:text-slate-900 xl:px-2.5"
         aria-haspopup="true"
         aria-expanded="false"
         aria-controls={`felix-nav-${menu.id}`}

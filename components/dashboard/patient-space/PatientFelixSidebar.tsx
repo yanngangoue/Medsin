@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 import { useUnreadChatCount } from "@/lib/patient/use-unread-chat";
 import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
@@ -50,11 +51,8 @@ export function PatientFelixSidebar({ prenom = "", anneHasNewMessage = false, on
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-slate-200/80 px-5 py-5">
-        <Link href="/" className="inline-flex items-center gap-2" onClick={onNavigate}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1D4D3A] text-sm font-black text-white">
-            M
-          </span>
-          <span className="text-lg font-black tracking-tight text-slate-900">MedSim</span>
+        <Link href="/" className="inline-flex items-center" onClick={onNavigate} aria-label="MedSim">
+          <MedsimLogo />
         </Link>
       </div>
 

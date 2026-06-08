@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 
 export default async function MedecinDashboardPage() {
@@ -14,8 +15,8 @@ export default async function MedecinDashboardPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <header className="border-b border-slate-200/80 bg-white px-4 py-4">
         <div className="mx-auto flex max-w-3xl items-center justify-between">
-          <Link href="/" className="text-lg font-semibold text-slate-900">
-            Medsim
+          <Link href="/" aria-label="MedSim">
+            <MedsimLogo />
           </Link>
           <span className="text-xs font-medium text-slate-500">Espace médecin</span>
           <SignOutButton />

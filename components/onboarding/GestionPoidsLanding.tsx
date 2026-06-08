@@ -18,7 +18,7 @@ export function GestionPoidsLanding() {
       <header className="border-b border-[#E8E0D8]/80 bg-[#F5F0EB]/95 px-4 py-3 backdrop-blur-sm sm:px-8">
         <div className="mx-auto flex max-w-6xl items-center gap-4 sm:gap-8">
           <Link href={PUBLIC_CATALOG_HOME} className="shrink-0" aria-label="MedSim — accueil">
-            <MedsimLogo className="text-xl" />
+            <MedsimLogo />
           </Link>
           <PartNavAccueilLink className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-[#1D9E75] hover:text-[var(--teal-900)] sm:hidden" />
           <nav
@@ -41,7 +41,9 @@ export function GestionPoidsLanding() {
 
       <section id="galerie" className="relative overflow-hidden bg-[#F5F0EB] px-4 py-8 sm:px-8 sm:py-10">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">MedSim</p>
+          <div className="flex justify-center">
+            <MedsimLogo className="h-7 sm:h-8" />
+          </div>
           <h1 className="mt-2 text-2xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-3xl">
             Gestion du poids avec GLP-1
           </h1>

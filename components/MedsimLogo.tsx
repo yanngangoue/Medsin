@@ -1,24 +1,25 @@
+import Image from "next/image";
+import { MEDSIM_BRAND } from "@/lib/brand/medsim-logo";
+
 type MedsimLogoProps = {
   className?: string;
+  /** Vert sur fond clair ; blanc sur fond sombre. */
   variant?: "default" | "onDark";
 };
 
 export function MedsimLogo({ className = "", variant = "default" }: MedsimLogoProps) {
-  const isDark = variant === "onDark";
+  const src =
+    variant === "onDark" ? MEDSIM_BRAND.logo.onDark : MEDSIM_BRAND.logo.default;
+
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[15px] font-bold ${
-          isDark ? "bg-[var(--teal)] text-white" : "bg-[var(--teal)] text-white"
-        }`}
-      >
-        M
-      </span>
-      <span
-        className={`text-lg font-bold tracking-tight ${isDark ? "text-white" : "text-[var(--gray-900)]"}`}
-      >
-        Medsim
-      </span>
-    </div>
+    <Image
+      src={src}
+      alt={MEDSIM_BRAND.name}
+      width={112}
+      height={28}
+      unoptimized
+      className={`h-5 w-auto shrink-0 sm:h-6 ${className}`}
+      priority
+    />
   );
 }

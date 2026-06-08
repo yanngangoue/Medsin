@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { MedsimLogo } from "@/components/MedsimLogo";
+
 type Props = {
   prenom: string;
   role: string;
@@ -14,7 +17,9 @@ export function AdminHeader({ prenom, role, title }: Props) {
           {title ? (
             <h1 className="text-lg font-semibold text-slate-900 md:hidden">{title}</h1>
           ) : (
-            <p className="text-lg font-bold text-[#16a34a] md:hidden">MedSim</p>
+            <Link href="/admin/dashboard" className="md:hidden" aria-label="MedSim">
+              <MedsimLogo />
+            </Link>
           )}
           <p className="hidden text-sm text-slate-500 md:block">
             Bonjour, <span className="font-semibold text-slate-900">{prenom}</span>

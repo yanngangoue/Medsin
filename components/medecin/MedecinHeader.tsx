@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { MedsimLogo } from "@/components/MedsimLogo";
+
 type Props = {
   prenom: string;
   urgentCount?: number;
@@ -8,7 +11,9 @@ export function MedecinHeader({ prenom, urgentCount = 0 }: Props) {
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-lg font-bold text-[#16a34a] md:hidden">MedSim</p>
+          <Link href="/medecin/file" className="md:hidden" aria-label="MedSim">
+            <MedsimLogo />
+          </Link>
           <p className="hidden text-sm text-slate-600 md:block">
             Dr. <span className="font-semibold text-slate-900">{prenom}</span>
           </p>

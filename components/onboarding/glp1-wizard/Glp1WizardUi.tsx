@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import {
   Glp1FlowHeader,
   type Glp1FlowNavAction,
@@ -169,7 +170,9 @@ export function Glp1IntroHero() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#2A9D8F]/80 via-transparent to-transparent" />
-        <p className="absolute bottom-4 left-4 text-3xl font-bold tracking-tight text-white/90">MedSim</p>
+        <div className="absolute bottom-4 left-4">
+          <MedsimLogo variant="onDark" className="h-8 sm:h-9" />
+        </div>
       </div>
     </div>
   );

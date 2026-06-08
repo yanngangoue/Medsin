@@ -160,83 +160,140 @@ body {
   }
 }
 
-/* Bandeau GLP-1 — stylos sur les côtés, défilement vertical */
-@keyframes promo-banner-vertical-scroll {
+/* Bandeau GLP-1 — un stylo à la fois par côté, chute libre continue */
+@keyframes promo-banner-fall {
   from {
-    transform: translateY(0);
+    transform: translateY(-50%);
   }
   to {
-    transform: translateY(-50%);
+    transform: translateY(0);
   }
 }
 
-@keyframes promo-banner-vertical-scroll-up {
+@keyframes promo-banner-pen-drift {
   from {
-    transform: translateY(-50%);
+    rotate: -5deg;
   }
   to {
-    transform: translateY(0);
+    rotate: 5deg;
   }
 }
 
 .promo-banner-side-mask {
   mask-image: linear-gradient(
     to bottom,
-    transparent,
-    black 8%,
-    black 92%,
-    transparent
+    transparent 0%,
+    black 6%,
+    black 78%,
+    transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
-    transparent,
-    black 8%,
-    black 92%,
-    transparent
+    transparent 0%,
+    black 6%,
+    black 78%,
+    transparent 100%
   );
 }
 
 .promo-banner-side-mask--left {
   mask-image:
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to right, transparent, black 18%, black 100%);
+    linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to right, transparent, black 6%, black 100%);
   -webkit-mask-image:
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to right, transparent, black 18%, black 100%);
+    linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to right, transparent, black 6%, black 100%);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
 }
 
 .promo-banner-side-mask--right {
   mask-image:
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to left, transparent, black 18%, black 100%);
+    linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to left, transparent, black 6%, black 100%);
   -webkit-mask-image:
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to left, transparent, black 18%, black 100%);
+    linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to left, transparent, black 6%, black 100%);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
 }
 
+/* Taille visible des stylos — largeur (pas hauteur) pour éviter le clipping du bandeau */
+.promo-banner-pen-wrap {
+  transform: scale(1.65);
+  animation: promo-banner-pen-drift 2.6s ease-in-out infinite alternate;
+}
+
+.promo-banner-pen-visual {
+  width: min(7.5rem, 36vw);
+  height: auto;
+  max-height: none;
+}
+
+@media (min-width: 640px) {
+  .promo-banner-pen-wrap {
+    transform: scale(1.85);
+  }
+
+  .promo-banner-pen-visual {
+    width: min(9.5rem, 22vw);
+  }
+}
+
+@media (min-width: 1024px) {
+  .promo-banner-pen-wrap {
+    transform: scale(2);
+  }
+
+  .promo-banner-pen-visual {
+    width: min(11rem, 16vw);
+  }
+}
+
+.promo-banner-root {
+  --promo-banner-slot: clamp(260px, 44vh, 380px);
+  min-height: min(58vh, 540px);
+}
+
+.promo-banner-watermark {
+  font-size: clamp(3.75rem, 26vw, 12rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: #041a12;
+  opacity: 0.13;
+  user-select: none;
+}
+
+.promo-banner-pen-slot {
+  display: flex;
+  height: var(--promo-banner-slot);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
 .promo-banner-vertical-track {
-  animation: promo-banner-vertical-scroll 38s linear infinite;
-  animation-play-state: running;
+  animation: promo-banner-fall 15s linear infinite;
   will-change: transform;
 }
 
-.promo-banner-vertical-track--up {
-  animation-name: promo-banner-vertical-scroll-up;
-  animation-play-state: running;
+/* Décalage d’une demi-chute : jamais synchronisé gauche / droite */
+.promo-banner-vertical-track--fall-alt {
+  animation-delay: -7.5s;
 }
 
-.promo-banner-root:hover .promo-banner-vertical-track,
-.promo-banner-root:hover .promo-banner-vertical-track--up {
+.promo-banner-root:hover .promo-banner-vertical-track {
   animation-play-state: running;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .promo-banner-vertical-track,
-  .promo-banner-vertical-track--up {
+  .promo-banner-vertical-track {
+    animation: none;
+  }
+
+  .promo-banner-pen-wrap {
+    transform: scale(1.35);
     animation: none;
   }
 }
@@ -321,6 +378,54 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse-dot,
   .marketing-progress-bar {
+    animation: none;
+  }
+}
+
+/* Bande défilante pleine largeur — sur le fond du site */
+.promo-hero-ticker {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+  margin-top: -0.5rem;
+  padding: 0.35rem 0 1rem;
+  background: transparent;
+}
+
+.promo-hero-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: promo-hero-ticker-marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.promo-hero-ticker-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0 3rem;
+  color: #000000;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+@keyframes promo-hero-ticker-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-hero-ticker-track {
     animation: none;
   }
 }

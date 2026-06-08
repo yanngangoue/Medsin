@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { HoverZoomImage } from "@/components/ui/HoverZoomImage";
 import { Glp1PromoBanner } from "@/components/patient/Glp1PromoBanner";
 import type { buildPatientHubActions } from "@/lib/patient/patient-hub";
@@ -13,6 +14,8 @@ type Props = {
   mode: "public" | "connected";
   /** Accueil : cartes → sections détaillées (#gestion-poids, etc.) */
   useSectionAnchors?: boolean;
+  /** Nav blanche intégrée au bandeau hero */
+  heroTopNav?: ReactNode;
 };
 
 function ArrowIcon() {
@@ -29,11 +32,16 @@ function ArrowIcon() {
   );
 }
 
-export function PatientHubServicesGrid({ services, mode, useSectionAnchors = false }: Props) {
+export function PatientHubServicesGrid({
+  services,
+  mode,
+  useSectionAnchors = false,
+  heroTopNav,
+}: Props) {
   if (services.length === 1 && useSectionAnchors) {
     return (
-      <div className="relative z-10 mx-auto mt-5 max-w-5xl sm:mt-6">
-        <Glp1PromoBanner href={ELIGIBILITY_QUESTIONNAIRE_PATH} />
+      <div className="relative z-10 w-full px-3 pt-2 sm:px-5 sm:pt-3 md:px-6">
+        <Glp1PromoBanner href={ELIGIBILITY_QUESTIONNAIRE_PATH} topNav={heroTopNav} />
       </div>
     );
   }

@@ -54,7 +54,7 @@ export function Glp1FlowHeader({ back, forward, subtitle }: Props) {
               className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--teal)]"
               aria-label="MedSim — catalogue des services"
             >
-              <MedsimLogo className="text-lg sm:text-xl" />
+              <MedsimLogo />
             </Link>
             <PartNavAccueilLink className="text-[10px] font-semibold uppercase tracking-wide text-[#1D9E75] hover:text-[var(--teal-900)]" />
           </div>

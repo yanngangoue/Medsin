@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { PatientCommentsSection } from "@/components/patient/PatientCommentsSection";
 import { PatientServiceDetailSection } from "@/components/patient/PatientServiceDetailSection";
+import { PatientHeroTicker } from "@/components/patient/PatientHeroTicker";
 import { PatientServicesHub } from "@/components/patient/PatientServicesHub";
 import { PatientStickyScrollHeader } from "@/components/patient/PatientStickyScrollHeader";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
@@ -57,7 +58,14 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
         showAuthLinks={!hasAccount}
         useSectionAnchors
       />
-      <PatientStickyScrollHeader showAuthLinks={!hasAccount} showPatientSpaceLink={hasAccount} />
+
+      <PatientHeroTicker />
+
+      <PatientStickyScrollHeader
+        showAuthLinks={!hasAccount}
+        isConnected={hasAccount}
+        prenom={hasAccount ? prenom : undefined}
+      />
 
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-0 sm:px-6">
         {PATIENT_SERVICE_SECTIONS.map((section) => (

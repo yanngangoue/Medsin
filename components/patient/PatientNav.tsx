@@ -92,10 +92,7 @@ export function PatientNav({
           className="shrink-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--teal)]"
           aria-label="MedSim — accueil"
         >
-          <MedsimLogo
-            variant={isDark ? "onDark" : "default"}
-            className="text-lg sm:text-xl"
-          />
+          <MedsimLogo variant={isDark ? "onDark" : "default"} />
         </Link>
       ) : (
         <span className="w-8 shrink-0 sm:w-24" aria-hidden />

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { OrderTrackingLive } from "@/components/patient/OrderTrackingLive";
 import { PatientFelixSidebar } from "@/components/dashboard/patient-space/PatientFelixSidebar";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
@@ -139,7 +141,9 @@ function PatientOrdonnanceViewInner({ prenom, fulfillmentId }: Props) {
           >
             ☰
           </button>
-          <span className="text-lg font-black text-slate-900">MedSim</span>
+          <Link href="/" aria-label="MedSim">
+            <MedsimLogo />
+          </Link>
         </header>
 
         <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6 sm:px-6 sm:py-8">

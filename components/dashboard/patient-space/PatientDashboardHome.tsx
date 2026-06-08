@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { WeightProgressChart } from "@/components/dashboard/patient-space/WeightProgressChart";
 import { OrderTrackingCompact } from "@/components/dashboard/patient-space/OrderTrackingCompact";
 import { PatientFelixSidebar } from "@/components/dashboard/patient-space/PatientFelixSidebar";
@@ -253,7 +254,9 @@ function PatientDashboardHomeInner({ prenom }: Props) {
           >
             ☰
           </button>
-          <span className="text-lg font-black text-slate-900">MedSim</span>
+          <Link href="/" aria-label="MedSim">
+            <MedsimLogo />
+          </Link>
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-6 sm:px-6 sm:py-8">

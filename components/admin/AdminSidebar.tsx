@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 
 const NAV = [
@@ -50,8 +51,8 @@ export function AdminSidebar() {
     <>
       <aside className="hidden w-56 shrink-0 flex-col border-r border-slate-200 bg-white md:flex">
         <div className="border-b border-slate-100 px-4 py-5">
-          <Link href="/admin/dashboard" className="text-lg font-bold text-[#16a34a]">
-            MedSim
+          <Link href="/admin/dashboard" aria-label="MedSim — administration">
+            <MedsimLogo />
           </Link>
           <p className="mt-0.5 text-xs text-slate-500">Back-office clinique</p>
         </div>

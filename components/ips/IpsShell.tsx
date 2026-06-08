@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Suspense, useState } from "react";
+import { MedsimLogo } from "@/components/MedsimLogo";
 import { IpsSidebar } from "@/components/ips/IpsSidebar";
 
 type Stats = {
@@ -51,7 +53,9 @@ export function IpsShell({ children, stats }: Props) {
           >
             ☰
           </button>
-          <span className="text-sm font-bold text-slate-900">MedSim IPS</span>
+          <Link href="/dashboard/ips" aria-label="MedSim">
+            <MedsimLogo />
+          </Link>
         </header>
         <main className="flex-1">{children}</main>
       </div>
