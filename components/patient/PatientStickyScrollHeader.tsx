@@ -61,7 +61,7 @@ export function PatientStickyScrollHeader({
   return (
     <header
       aria-hidden={!visible}
-      className={`fixed inset-x-0 top-0 z-[60] px-3 pt-2 transition-transform duration-300 ease-out sm:px-5 md:px-6 ${
+      className={`fixed inset-x-0 top-0 z-[60] overflow-visible px-3 pt-2 transition-transform duration-300 ease-out sm:px-5 md:px-6 ${
         visible ? "translate-y-0" : "pointer-events-none -translate-y-full"
       }`}
     >

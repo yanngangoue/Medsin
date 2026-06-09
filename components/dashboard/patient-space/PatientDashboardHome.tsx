@@ -11,6 +11,8 @@ import { PatientFelixSidebar } from "@/components/dashboard/patient-space/Patien
 import { PatientOnboardingWelcome } from "@/components/dashboard/patient-space/PatientOnboardingWelcome";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
 import type { WeightCheckInPublic, WeightProgramPublic } from "@/lib/patient/weight-program";
+import { FetchErrorAlert } from "@/components/ui/FetchErrorAlert";
+import { FETCH_ERROR_FALLBACK, userFacingErrorMessage } from "@/lib/client/fetch-json";
 import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
 
 type DashboardBanner = "PENDING_PAYMENT" | "IPS_REVIEW" | "ACTIVE" | "DELIVERED";
@@ -153,17 +155,28 @@ function PatientDashboardHomeInner({ prenom }: Props) {
   const showOnboarding = searchParams.get("paid") === "1";
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [data, setData] = useState<DashboardPayload | null>(null);
   const [anneReadIds, setAnneReadIds] = useState<Set<string>>(() => new Set());
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/patient/dashboard");
-    if (res.ok) {
-      setData((await res.json()) as DashboardPayload);
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const res = await fetch("/api/patient/dashboard");
+      const body = (await res.json().catch(() => ({}))) as DashboardPayload & { error?: string };
+      if (!res.ok) {
+        throw new Error(body.error ?? FETCH_ERROR_FALLBACK);
+      }
+      setData(body);
+      setAnneReadIds(readAnneIds());
+    } catch (err) {
+      console.error("[PatientDashboardHome] load", err);
+      setLoadError(userFacingErrorMessage(err));
+    } finally {
+      setLoading(false);
     }
-    setAnneReadIds(readAnneIds());
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -260,6 +273,10 @@ function PatientDashboardHomeInner({ prenom }: Props) {
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+          {loadError ? (
+            <FetchErrorAlert message={loadError} onRetry={() => void load()} />
+          ) : null}
+
           {showOnboarding && !loading && data ? (
             <PatientOnboardingWelcome
               questionnaireStatus={
@@ -314,7 +331,7 @@ function PatientDashboardHomeInner({ prenom }: Props) {
                   </p>
                   {nextReminder ? (
                     <p className="mt-1 text-sm text-emerald-900/90">
-                      Prochain check-in :{" "}
+                      Prochain bilan hebdomadaire :{" "}
                       {nextReminder.toLocaleDateString("fr-CA", {
                         weekday: "long",
                         day: "numeric",
@@ -410,7 +427,7 @@ function PatientDashboardHomeInner({ prenom }: Props) {
                             hour: "2-digit",
                             minute: "2-digit",
                           })} · dans ${daysUntil(nextReminder)} jour${daysUntil(nextReminder) > 1 ? "s" : ""}`
-                        : "Check-in hebdomadaire"
+                        : "Bilan hebdomadaire"
                     }
                   />
 

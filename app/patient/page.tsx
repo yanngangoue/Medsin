@@ -119,7 +119,7 @@ export default function PatientDashboardPage() {
               </li>
             </ol>
           </div>
-          <p className="mt-6 text-sm text-slate-600">Votre médecin vous contactera dans les 24h.</p>
+          <p className="mt-6 text-sm text-slate-600">Votre médecin vous contactera dans les 24 h.</p>
         </section>
 
         <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">

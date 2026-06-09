@@ -18,7 +18,7 @@ type StreamEvent =
 const QUICK_CHIPS = [
   "Je me sens bien 😊",
   "J'ai des nausées",
-  "Je veux faire un check-in",
+  "Je veux faire mon bilan hebdomadaire",
   "Question sur ma dose",
   "Parler à mon IPS",
 ] as const;
@@ -109,7 +109,7 @@ function SidebarContent({
         <div>
           <p className="font-bold text-slate-900">Anne</p>
           <p className="text-xs text-emerald-600">En ligne</p>
-          <p className="text-xs text-slate-500">Coach IA MedSim · 24h/24</p>
+          <p className="text-xs text-slate-500">Coach IA MedSim · 24 h/24</p>
         </div>
       </div>
 
@@ -161,7 +161,7 @@ function SidebarContent({
         disabled={!program}
         className="mt-4 w-full rounded-xl bg-[#1D4D3A] py-2.5 text-sm font-semibold text-white transition hover:bg-[#163d2e] disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Faire mon check-in
+        Faire mon bilan hebdomadaire
       </button>
 
       <hr className="my-5 border-gray-100" />
@@ -173,7 +173,7 @@ function SidebarContent({
         <ul className="mt-3 space-y-2 text-sm text-slate-700">
           <li className="flex gap-2">
             <span className="text-[#3EBD93]">✓</span>
-            Analyse vos check-ins (poids, énergie, sommeil, nausées)
+            Analyse vos bilans hebdomadaires (poids, énergie, sommeil, nausées)
           </li>
           <li className="flex gap-2">
             <span className="text-[#3EBD93]">✓</span>
@@ -223,6 +223,7 @@ type Props = {
 };
 
 export function AnneCoachChat({ prenom }: Props) {
+  void prenom;
   const [messages, setMessages] = useState<AiCoachMessagePublic[]>([]);
   const [program, setProgram] = useState<WeightProgramPublic | null>(null);
   const [checkIns, setCheckIns] = useState<WeightCheckInPublic[]>([]);
@@ -346,7 +347,7 @@ export function AnneCoachChat({ prenom }: Props) {
   }
 
   function handleChip(label: string) {
-    if (label === "Je veux faire un check-in") {
+    if (label === "Je veux faire mon bilan hebdomadaire") {
       setCheckInOpen(true);
       return;
     }
@@ -376,7 +377,7 @@ export function AnneCoachChat({ prenom }: Props) {
     !streaming;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white">
+    <div className="flex h-[100dvh] max-h-[100dvh] overflow-hidden bg-white">
       {/* Sidebar desktop */}
       <aside className="hidden w-80 shrink-0 flex-col border-r border-gray-100 bg-[#F7F9F8] p-5 lg:flex">
         <SidebarContent
@@ -510,7 +511,7 @@ export function AnneCoachChat({ prenom }: Props) {
           <div ref={bottomRef} />
         </div>
 
-        <footer className="shrink-0 border-t border-gray-100 bg-white p-4">
+        <footer className="shrink-0 border-t border-gray-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {error ? <p className="mb-2 text-center text-xs text-red-600">{error}</p> : null}
           <form
             onSubmit={(e) => {

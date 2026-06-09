@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Suspense, useState } from "react";
 import { MedsimLogo } from "@/components/MedsimLogo";
 import { IpsSidebar } from "@/components/ips/IpsSidebar";
+import { SectionErrorBoundary } from "@/components/ui/SectionErrorBoundary";
 
 type Stats = {
   queuePending: number;
@@ -57,7 +58,11 @@ export function IpsShell({ children, stats }: Props) {
             <MedsimLogo />
           </Link>
         </header>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <SectionErrorBoundary title="Impossible d'afficher cette section de l'espace IPS.">
+            {children}
+          </SectionErrorBoundary>
+        </main>
       </div>
     </div>
   );

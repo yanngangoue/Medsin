@@ -80,7 +80,7 @@ export function MetabolicHealthSection() {
             jour.
           </p>
           <p className="mt-5 text-left text-[14px] leading-relaxed text-neutral-700 sm:text-center sm:text-[15px]">
-            Medsim propose un accompagnement global : santé métabolique, sommeil, énergie, assistant IA et bien-être
+            MedSim propose un accompagnement global : santé métabolique, sommeil, énergie, assistant IA et bien-être
             comportemental — articulés autour de votre dossier médical et des décisions de votre professionnel de santé.
             Chaque axe est intégré dans un parcours sobre, mesurable et réaliste.
           </p>
@@ -105,7 +105,7 @@ export function MetabolicHealthSection() {
           <Link
             href="/onboarding/inscription"
             aria-label="Explorer notre approche santé complète — commencer l’évaluation"
-            className="inline-flex items-center justify-center rounded-[10px] border border-[var(--teal)] bg-white px-6 py-3 text-[14px] font-semibold text-[var(--teal)] shadow-sm transition hover:bg-[var(--teal-light)] hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99]"
+            className="inline-flex max-w-full items-center justify-center rounded-[10px] border border-[var(--teal)] bg-white px-5 py-3 text-center text-[14px] font-semibold leading-snug text-[var(--teal)] shadow-sm transition hover:bg-[var(--teal-light)] hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99] sm:px-6"
           >
             Explorer notre approche santé complète
           </Link>

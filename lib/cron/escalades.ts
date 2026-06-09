@@ -87,7 +87,7 @@ export async function runEscalades(): Promise<EscaladesResult> {
     }
     const recent3 = sorted.slice(-3);
     if (recent3.length >= 3 && recent3.every((c) => c.energie != null && c.energie <= 1)) {
-      motifParts.push("Énergie ≤ 1/5 sur 3 check-ins");
+      motifParts.push("Énergie ≤ 1/5 sur 3 bilans hebdomadaires");
     }
     const motif = motifParts.join(" · ") || "Critères d'escalade atteints";
 

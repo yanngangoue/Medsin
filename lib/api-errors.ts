@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
+import { API_ERROR_CODES, apiError } from "@/lib/api/api-error";
 
 export function unauthorized() {
-  return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  return apiError(401, API_ERROR_CODES.UNAUTHORIZED, "Non authentifié");
 }
 
 export function forbidden() {
-  return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+  return apiError(403, API_ERROR_CODES.FORBIDDEN, "Accès refusé");
 }
 
 export function badRequest(message = "Données invalides") {
-  return NextResponse.json({ error: message }, { status: 400 });
+  return apiError(400, API_ERROR_CODES.VALIDATION_ERROR, message);
 }

@@ -39,7 +39,7 @@ export function WeightProgramStats({ program, checkIns }: Props) {
       hint:
         tendance.moyenneSommeil != null && tendance.moyenneEnergie != null
           ? `Sommeil ~${tendance.moyenneSommeil} h`
-          : "Moyennes sur les check-ins récents",
+          : "Moyennes sur les bilans hebdomadaires récents",
     },
   ];
 

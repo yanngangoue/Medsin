@@ -4,7 +4,7 @@ const INCLUSIONS = [
   "Consultation IPS certifiée Québec",
   "Ordonnance GLP-1 personnalisée",
   "Livraison discrète à domicile",
-  "Coach Anne illimitée (24h/24)",
+  "Coach Anne illimitée (24 h/24)",
   "Rappels hebdomadaires proactifs",
   "Rapport IPS mensuel automatique",
   "Clavardage sécurisé avec votre IPS",

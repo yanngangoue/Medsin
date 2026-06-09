@@ -30,13 +30,13 @@ export function Glp1FlowHeader({ back, forward, subtitle }: Props) {
   return (
     <header className="border-b border-slate-100/90 bg-white px-4 py-4 sm:px-6">
       <div className="mx-auto w-full max-w-lg">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <div className="justify-self-start">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+          <div className="min-w-0 justify-self-start">
             {back.onClick ? (
               <button
                 type="button"
                 onClick={back.onClick}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-200/90 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex max-w-full min-w-0 items-center gap-1 rounded-full border border-slate-200/90 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 sm:px-3 sm:text-sm"
               >
                 <span className="text-[#1D9E75]" aria-hidden>
                   ‹
@@ -59,7 +59,7 @@ export function Glp1FlowHeader({ back, forward, subtitle }: Props) {
             <PartNavAccueilLink className="text-[10px] font-semibold uppercase tracking-wide text-[#1D9E75] hover:text-[var(--teal-900)]" />
           </div>
 
-          <div className="justify-self-end">
+          <div className="min-w-0 justify-self-end">
             {forward ? (
               forward.onClick ? (
                 <ForwardButton

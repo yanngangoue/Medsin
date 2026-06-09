@@ -91,7 +91,7 @@ export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: P
                   {done ? "✓" : i + 1}
                 </span>
                 <span
-                  className={`mt-1.5 line-clamp-2 text-[9px] font-medium leading-tight sm:text-[10px] ${
+                  className={`mt-1.5 line-clamp-2 text-[10px] font-medium leading-snug sm:text-xs ${
                     done ? "text-[#1D9E75]" : active ? "text-slate-900" : "text-slate-400"
                   }`}
                 >

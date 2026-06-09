@@ -99,11 +99,18 @@ export function OrderTrackingLive({ fulfillmentId, showPdfButton = false }: Prop
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    const res = await fetch(`/api/pharmacy/tracking/${fulfillmentId}`);
-    if (res.ok) {
-      setData((await res.json()) as TrackingData);
+    try {
+      const res = await fetch(`/api/pharmacy/tracking/${fulfillmentId}`);
+      if (res.ok) {
+        setData((await res.json()) as TrackingData);
+      } else {
+        console.error("[OrderTrackingLive] load", res.status);
+      }
+    } catch (err) {
+      console.error("[OrderTrackingLive] load", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [fulfillmentId]);
 
   useEffect(() => {

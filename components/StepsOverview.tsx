@@ -63,13 +63,13 @@ const STEPS = [
     num: "03",
     title: "Prescription si éligible",
     Icon: IconRx,
-    desc: "Si approuvé, votre ordonnance est émise et transmise à la pharmacie partenaire sous 24h.",
+    desc: "Si approuvé, votre ordonnance est émise et transmise à la pharmacie partenaire sous 24 h.",
   },
   {
     num: "04",
     title: "Livraison + suivi",
     Icon: IconBox,
-    desc: "Médicament livré en 48h. Suivi médical continu via portail patient sécurisé + support 24/7.",
+    desc: "Médicament livré en 48 h. Suivi médical continu via portail patient sécurisé et assistance 24 h/24.",
   },
 ] as const;
 

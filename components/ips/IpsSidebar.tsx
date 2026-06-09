@@ -44,7 +44,8 @@ export function IpsSidebar({ stats, onNavigate }: Props) {
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { stats?: Stats } | null) => {
         if (data?.stats) setLocalStats(data.stats);
-      });
+      })
+      .catch(() => undefined);
   }, [stats]);
 
   return (

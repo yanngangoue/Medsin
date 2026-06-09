@@ -140,7 +140,7 @@ export function PoidsProgrammePanel({
       </section>
 
       <form onSubmit={submitCheckIn} className={poidsCard}>
-        <h2 className={poidsTitle}>Nouveau check-in</h2>
+        <h2 className={poidsTitle}>Nouveau bilan hebdomadaire</h2>
         <p className={`mt-1 ${poidsMeta}`}>
           Anne vous enverra un message personnalisé après chaque pesée.
         </p>
@@ -190,7 +190,7 @@ export function PoidsProgrammePanel({
           </label>
         </div>
         <button type="submit" disabled={saving} className={`mt-4 h-10 ${poidsBtnPrimary}`}>
-          {saving ? "Enregistrement…" : "Enregistrer le check-in"}
+          {saving ? "Enregistrement…" : "Enregistrer le bilan"}
         </button>
       </form>
     </div>

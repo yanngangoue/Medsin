@@ -118,7 +118,7 @@ export function Glp1PromoBanner({
   return (
     <div
       id="patient-hero-banner"
-      className={`promo-banner-root group relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5c45] via-[#1D4D3A] to-[#7fd4b0] shadow-lg shadow-black/10 ${className}`.trim()}
+      className={`promo-banner-root group relative w-full overflow-x-hidden overflow-y-visible rounded-2xl bg-gradient-to-br from-[#1a5c45] via-[#1D4D3A] to-[#7fd4b0] shadow-lg shadow-black/10 ${className}`.trim()}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
@@ -134,14 +134,14 @@ export function Glp1PromoBanner({
       <VerticalPenColumn side="right" hovered={hovered} offset={offset} />
 
       {topNav ? (
-        <div className="relative z-20 px-3 pb-1.5 pt-2 sm:px-4 sm:pb-2 sm:pt-2.5">{topNav}</div>
+        <div className="relative z-20 overflow-visible px-3 pb-1.5 pt-2 sm:px-4 sm:pb-2 sm:pt-2.5">{topNav}</div>
       ) : null}
 
       <div className="pointer-events-none relative z-10 flex min-h-[min(40vh,300px)] flex-col items-center justify-center px-5 py-6 text-center sm:min-h-[min(44vh,340px)] sm:px-8 sm:py-7 md:min-h-[min(46vh,360px)] md:px-10 lg:min-h-[min(48vh,380px)]">
         <p className="max-w-lg text-base font-medium text-white/90 sm:max-w-xl sm:text-lg md:text-xl">
-          Reprends le contrôle de ton poids, pour de bon avec MedSim
+          Reprenez le contrôle de votre poids, pour de bon avec MedSim
         </p>
-        <h2 className="mt-4 max-w-lg text-2xl font-bold leading-snug tracking-tight text-white drop-shadow-md sm:max-w-xl sm:text-3xl md:max-w-2xl md:text-4xl lg:text-5xl">
+        <h2 className="mt-4 max-w-lg text-balance px-1 text-2xl font-bold leading-snug tracking-tight text-white drop-shadow-md sm:max-w-xl sm:px-0 sm:text-3xl md:max-w-2xl md:text-4xl lg:text-[2.75rem] lg:leading-tight">
           Une nouvelle façon de vivre les soins de perte de poids.
         </h2>
         <Link

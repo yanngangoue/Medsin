@@ -31,7 +31,7 @@ function IpsCard({ profile }: { profile: IpsShowcaseProfile }) {
               {profile.years} ans d&apos;expérience
             </span>
           </div>
-          <blockquote className="mt-3 text-sm leading-relaxed text-slate-700">
+          <blockquote className="mt-3 break-words text-sm leading-relaxed text-slate-700">
             &ldquo;{profile.quote}&rdquo;
           </blockquote>
           <footer className="mt-4 text-[13px] text-slate-600">

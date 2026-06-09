@@ -104,7 +104,7 @@ function ForgotPasswordForm() {
         <Card>
           <h1 className="text-xl font-semibold text-slate-900">Mot de passe oublié</h1>
           <p className="mt-1 text-sm text-slate-600">
-            Saisissez le courriel de votre compte Medsim (NextAuth). Nous vous indiquerons la suite.
+            Saisissez le courriel associé à votre compte MedSim. Nous vous indiquerons la suite.
           </p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>

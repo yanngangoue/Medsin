@@ -6,6 +6,8 @@ import { AnneCoachCheckInModal } from "@/components/dashboard/patient-space/Anne
 import { WeightProgressChart } from "@/components/dashboard/patient-space/WeightProgressChart";
 import { PatientDashboardPageShell } from "@/components/dashboard/patient-space/PatientDashboardPageShell";
 import { DashboardSpinner } from "@/components/ui/DashboardSpinner";
+import { FetchErrorAlert } from "@/components/ui/FetchErrorAlert";
+import { FETCH_ERROR_FALLBACK, userFacingErrorMessage } from "@/lib/client/fetch-json";
 import { PATIENT_DASHBOARD_ROUTES } from "@/lib/patient/dashboard-routes";
 import { poidsBtnPrimary, poidsCard, poidsMeta } from "@/lib/patient/poids-design";
 import {
@@ -115,7 +117,7 @@ function CheckInHistoryTable({ checkIns }: { checkIns: WeightCheckInPublic[] }) 
   if (sorted.length === 0) {
     return (
       <p className={`py-8 text-center ${poidsMeta}`}>
-        Aucun check-in pour le moment. Commencez dès aujourd&apos;hui !
+        Aucun bilan hebdomadaire pour le moment. Commencez dès aujourd&apos;hui !
       </p>
     );
   }
@@ -172,23 +174,40 @@ function PoidsSuiviContent() {
   const [program, setProgram] = useState<WeightProgramPublic | null>(null);
   const [checkIns, setCheckIns] = useState<WeightCheckInPublic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
-    const [progRes, checkRes] = await Promise.all([
-      fetch("/api/patient/weight-program"),
-      fetch("/api/patient/weight-program/check-ins"),
-    ]);
-    if (progRes.ok) {
-      const data = (await progRes.json()) as { program?: WeightProgramPublic | null };
-      setProgram(data.program ?? null);
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const [progRes, checkRes] = await Promise.all([
+        fetch("/api/patient/weight-program"),
+        fetch("/api/patient/weight-program/check-ins"),
+      ]);
+      const progBody = (await progRes.json().catch(() => ({}))) as {
+        program?: WeightProgramPublic | null;
+        error?: string;
+      };
+      const checkBody = (await checkRes.json().catch(() => ({}))) as {
+        checkIns?: WeightCheckInPublic[];
+        error?: string;
+      };
+      if (!progRes.ok) {
+        throw new Error(progBody.error ?? FETCH_ERROR_FALLBACK);
+      }
+      if (!checkRes.ok) {
+        throw new Error(checkBody.error ?? FETCH_ERROR_FALLBACK);
+      }
+      setProgram(progBody.program ?? null);
+      setCheckIns(checkBody.checkIns ?? []);
+    } catch (err) {
+      console.error("[PoidsSuiviContent] loadData", err);
+      setLoadError(userFacingErrorMessage(err));
+    } finally {
+      setLoading(false);
     }
-    if (checkRes.ok) {
-      const data = (await checkRes.json()) as { checkIns?: WeightCheckInPublic[] };
-      setCheckIns(data.checkIns ?? []);
-    }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -211,7 +230,7 @@ function PoidsSuiviContent() {
   ) {
     if (updatedProgram) setProgram(updatedProgram);
     void loadData();
-    setToast("Anne a analysé votre check-in ✓");
+    setToast("Anne a analysé votre bilan hebdomadaire ✓");
     window.dispatchEvent(new CustomEvent("medsim:check-in-complete"));
   }
 
@@ -219,12 +238,20 @@ function PoidsSuiviContent() {
     return <DashboardSpinner />;
   }
 
+  if (loadError) {
+    return (
+      <div className={poidsCard}>
+        <FetchErrorAlert message={loadError} onRetry={() => void loadData()} />
+      </div>
+    );
+  }
+
   if (!program) {
     return (
       <div className={`${poidsCard} text-center`}>
         <p className={poidsMeta}>
           Votre programme de suivi n&apos;est pas encore activé. Une fois votre parcours GLP-1
-          démarré, vous pourrez enregistrer vos check-ins hebdomadaires ici.
+          démarré, vous pourrez enregistrer vos bilans hebdomadaires ici.
         </p>
         <Link href={PATIENT_DASHBOARD_ROUTES.hub} className={`mt-6 h-11 ${poidsBtnPrimary}`}>
           Retour à mon espace
@@ -237,7 +264,7 @@ function PoidsSuiviContent() {
     <>
       {checkInPending ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          ⚠️ Check-in en attente — Anne vous attend pour votre pesée hebdomadaire.
+          ⚠️ Bilan hebdomadaire en attente — Anne vous attend pour votre pesée de la semaine.
         </div>
       ) : null}
 
@@ -256,13 +283,13 @@ function PoidsSuiviContent() {
 
       <section className={poidsCard}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-slate-900">Historique des check-ins</h2>
+          <h2 className="text-base font-semibold text-slate-900">Historique des bilans hebdomadaires</h2>
           <button
             type="button"
             onClick={() => setCheckInOpen(true)}
             className={`h-10 shrink-0 px-4 ${poidsBtnPrimary}`}
           >
-            Faire mon check-in
+            Faire mon bilan hebdomadaire
           </button>
         </div>
         <div className="mt-4">
@@ -295,7 +322,7 @@ export default function PatientPoidsPage() {
     <PatientDashboardPageShell
       eyebrow="Suivi poids MedSim"
       title="Mon suivi poids"
-      description="Check-ins hebdomadaires, courbe de progression et rapports automatiques pour votre IPS via Anne."
+      description="Bilans hebdomadaires, courbe de progression et rapports automatiques pour votre IPS via Anne."
       maxWidth="4xl"
     >
       <Suspense fallback={<DashboardSpinner />}>

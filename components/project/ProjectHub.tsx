@@ -6,12 +6,12 @@ export function ProjectHub() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <header className="border-b border-slate-200 bg-white px-4 py-6 sm:px-8">
         <div className="mx-auto max-w-5xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#1D9E75]">Medsim — mode développement</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#1D9E75]">MedSim — mode développement</p>
           <h1 className="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">Carte du projet</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-600">
-            Toutes les pages et modules du MVP. Clique pour ouvrir. Pour la landing marketing seule, définis{" "}
+            Toutes les pages et modules du MVP. Cliquez pour ouvrir. Pour la landing marketing seule, définissez{" "}
             <code className="rounded bg-slate-100 px-1">MEDSIM_SHOW_PROJECT_HUB=false</code> dans{" "}
-            <code className="rounded bg-slate-100 px-1">.env</code> puis redémarre le serveur.
+            <code className="rounded bg-slate-100 px-1">.env</code> puis redémarrez le serveur.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link

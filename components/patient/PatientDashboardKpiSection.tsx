@@ -208,7 +208,7 @@ export function PatientDashboardKpiSection({ prenom }: Props) {
                 />
               </svg>
             </div>
-            <div className="mt-2 flex justify-between text-[9px] text-slate-400 sm:text-[10px]">
+            <div className="mt-2 flex justify-between text-[10px] text-slate-400 sm:text-xs">
               <span>Sem. 1</span>
               <span>Sem. 6</span>
               <span>Sem. 12</span>

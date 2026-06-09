@@ -181,7 +181,7 @@ export function PatientNav({
                       <span className="text-xs font-medium text-amber-700">Visio ouverte</span>
                     ) : null}
                     {item.id === "poids" && checkInPending ? (
-                      <span className="text-xs font-medium text-amber-700">Check-in en attente</span>
+                      <span className="text-xs font-medium text-amber-700">Bilan hebdomadaire en attente</span>
                     ) : null}
                   </span>
                 </Link>

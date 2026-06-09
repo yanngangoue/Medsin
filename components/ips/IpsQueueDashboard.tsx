@@ -12,6 +12,8 @@ import {
   type QueueFilter,
   type QueueQuestionnaire,
 } from "@/lib/ips/queue-utils";
+import { FetchErrorAlert } from "@/components/ui/FetchErrorAlert";
+import { FETCH_ERROR_FALLBACK, userFacingErrorMessage } from "@/lib/client/fetch-json";
 
 type DashboardData = {
   practitionerName: string;
@@ -37,14 +39,25 @@ function Skeleton({ className = "" }: { className?: string }) {
 export function IpsQueueDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [filter, setFilter] = useState<QueueFilter>("all");
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/ips/dashboard");
-    if (res.ok) {
-      setData((await res.json()) as DashboardData);
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const res = await fetch("/api/ips/dashboard");
+      const body = (await res.json().catch(() => ({}))) as DashboardData & { error?: string };
+      if (!res.ok) {
+        throw new Error(body.error ?? FETCH_ERROR_FALLBACK);
+      }
+      setData(body);
+    } catch (err) {
+      console.error("[IpsQueueDashboard] load", err);
+      setLoadError(userFacingErrorMessage(err));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -58,6 +71,10 @@ export function IpsQueueDashboard() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+      {loadError ? (
+        <FetchErrorAlert message={loadError} onRetry={() => void load()} />
+      ) : null}
+
       {loading ? (
         <>
           <Skeleton className="h-10 w-72" />

@@ -1,8 +1,8 @@
 const ITEMS = [
   "IPS certifiées Québec",
   "Livraison discrète",
-  "Coach IA 24h/24",
-  "Ordonnance en < 48 h",
+  "Coach IA 24 h/24",
+  "Ordonnance en moins de 48 h",
   "Semaglutide générique disponible",
   "Sans médecin de famille requis",
   "Loi 25 — données protégées",

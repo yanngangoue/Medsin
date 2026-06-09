@@ -19,7 +19,7 @@ const TEAM: Practitioner[] = [
     name: "Anne — Coach IA MedSim",
     title: "Intelligence artificielle",
     specialty: "Analyse · Rappels · Rapports IPS",
-    tags: ["Proactive", "GLP-1", "24h/24"],
+    tags: ["Proactif", "GLP-1", "24 h/24"],
     isAi: true,
   },
   {
@@ -64,7 +64,7 @@ function Card({ person }: { person: Practitioner }) {
           <div className="relative flex h-full flex-col items-center justify-center bg-gradient-to-br from-[#1D4D3A] to-[#3EBD93]">
             <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white">
               <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse-dot" />
-              IA Active 24/7
+              IA active 24 h/24
             </span>
             <span className="text-7xl font-black text-white">A</span>
           </div>

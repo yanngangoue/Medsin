@@ -97,7 +97,7 @@ export function WeightProgressChart({
           📈
         </p>
         <p className="mt-2 text-sm font-medium text-[#1D4D3A]">
-          Encore un check-in et votre courbe apparaît !
+          Encore un bilan hebdomadaire et votre courbe apparaît !
         </p>
         <p className="mt-1 text-xs text-slate-500">
           Anne analysera automatiquement votre progression dès le 2e enregistrement.

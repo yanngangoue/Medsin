@@ -18,8 +18,9 @@ export default function MedecinOrdonnancesPage() {
 
   useEffect(() => {
     void fetch("/api/medecin/ordonnances")
-      .then((r) => r.json())
-      .then((d: { ordonnances: Ordonnance[] }) => setRows(d.ordonnances ?? []));
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { ordonnances?: Ordonnance[] } | null) => setRows(d?.ordonnances ?? []))
+      .catch(() => setRows([]));
   }, []);
 
   return (

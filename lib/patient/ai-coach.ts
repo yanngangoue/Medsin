@@ -124,7 +124,7 @@ export function buildCoachNoProgramMessage(prenom: string): string {
 
 Je suis Anne, votre coach santé IA chez MedSim.
 
-Votre programme de suivi n'est pas encore activé — une fois votre parcours GLP-1 démarré, je pourrai analyser vos check-ins et vous écrire en premier chaque semaine.
+Votre programme de suivi n'est pas encore activé — une fois votre parcours GLP-1 démarré, je pourrai analyser vos bilans hebdomadaires et vous écrire en premier chaque semaine.
 
 En attendant, posez-moi vos questions sur le GLP-1, les effets secondaires ou votre parcours. Comment vous sentez-vous aujourd'hui ?`;
 }
@@ -189,8 +189,8 @@ export async function enregistrerMessageProactifApresCheckIn(input: {
         : null;
     content =
       delta != null && delta < 0
-        ? `Beau travail — ${Math.abs(delta).toFixed(1)} kg de moins depuis votre dernier check-in. Gardez cette régularité cette semaine.`
-        : `Check-in enregistré à ${input.dernierCheckIn.weight.toFixed(1)} kg. Continuez vos pesées régulières — c'est ce qui fait la différence avec votre parcours GLP-1.`;
+        ? `Beau travail — ${Math.abs(delta).toFixed(1)} kg de moins depuis votre dernier bilan hebdomadaire. Gardez cette régularité cette semaine.`
+        : `Bilan hebdomadaire enregistré à ${input.dernierCheckIn.weight.toFixed(1)} kg. Continuez vos pesées régulières — c'est ce qui fait la différence avec votre parcours GLP-1.`;
   }
 
   await prisma.weightCheckIn.update({
@@ -227,8 +227,8 @@ export async function enregistrerMessageProactifApresCheckIn(input: {
         template: "ips_escalation",
         entityKey: `escalation:checkin:${input.dernierCheckIn.id}`,
         userId: ipsId,
-        html: `<p>Escalade détectée après check-in. Consultez le rapport Anne dans MedSim.</p>`,
-        text: "Escalade détectée après check-in.",
+        html: `<p>Escalade détectée après bilan hebdomadaire. Consultez le rapport Anne dans MedSim.</p>`,
+        text: "Escalade détectée après bilan hebdomadaire.",
       });
     }
 
@@ -237,7 +237,7 @@ export async function enregistrerMessageProactifApresCheckIn(input: {
         userId: ipsId,
         type: "ESCALADE",
         title: "Escalade patient — Anne",
-        body: `${input.prenom || "Un patient"} nécessite un suivi renforcé (check-in récent).`,
+        body: `${input.prenom || "Un patient"} nécessite un suivi renforcé (bilan hebdomadaire récent).`,
       },
     });
   }

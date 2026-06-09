@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr-CA" className="scroll-smooth">
-      <body className={`${montserrat.variable} font-sans antialiased`}>
+      <body className={`${montserrat.variable} overflow-x-hidden font-sans antialiased`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

@@ -36,11 +36,11 @@ export function tendancePoids(checkIns: WeightCheckInPublic[]): {
   let libelle = "Pas assez de données pour une tendance.";
   if (deltaDernierKg != null) {
     if (deltaDernierKg < -0.1) {
-      libelle = `Tendance à la baisse (${deltaDernierKg} kg depuis le dernier check-in).`;
+      libelle = `Tendance à la baisse (${deltaDernierKg} kg depuis le dernier bilan hebdomadaire).`;
     } else if (deltaDernierKg > 0.1) {
-      libelle = `Légère hausse (+${deltaDernierKg} kg depuis le dernier check-in).`;
+      libelle = `Légère hausse (+${deltaDernierKg} kg depuis le dernier bilan hebdomadaire).`;
     } else {
-      libelle = "Poids stable depuis le dernier check-in.";
+      libelle = "Poids stable depuis le dernier bilan hebdomadaire.";
     }
   }
 

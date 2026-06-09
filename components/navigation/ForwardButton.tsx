@@ -33,7 +33,7 @@ export function ForwardButton({
   href,
   onClick,
   disabled = false,
-  className = "inline-flex items-center gap-1 rounded-full border border-slate-200/90 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-45",
+  className = "inline-flex max-w-full min-w-0 items-center gap-1 rounded-full border border-slate-200/90 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:text-sm",
   children = "Suivant",
 }: Props) {
   const router = useRouter();
@@ -49,7 +49,7 @@ export function ForwardButton({
 
   return (
     <button type="button" onClick={handleClick} disabled={disabled} className={className}>
-      <span>{children}</span>
+      <span className="truncate">{children}</span>
       <ChevronRightIcon className="shrink-0 text-[#1D9E75]" />
     </button>
   );

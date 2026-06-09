@@ -1,7 +1,7 @@
 const STATS = [
   { value: "-14,1 kg", label: "En moyenne après 1 an (PubMed 2025)" },
   { value: "< 48 h", label: "Pour recevoir votre ordonnance" },
-  { value: "24/7", label: "Anne disponible, sans exception" },
+  { value: "24 h/24", label: "Anne disponible, sans exception" },
 ];
 
 const PROGRESS = [

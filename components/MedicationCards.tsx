@@ -37,7 +37,7 @@ export function MedicationCards() {
                 <span className="text-[var(--teal-400)]">✓</span> Livraison incluse
               </li>
               <li className="flex gap-2">
-                <span className="text-[var(--teal-400)]">✓</span> Support 24/7
+                <span className="text-[var(--teal-400)]">✓</span> Assistance 24 h/24
               </li>
             </ul>
             <Link
@@ -71,7 +71,7 @@ export function MedicationCards() {
                 <span className="text-[var(--teal-400)]">✓</span> Portail patient complet
               </li>
               <li className="flex gap-2">
-                <span className="text-[var(--teal-400)]">✓</span> Support 24/7
+                <span className="text-[var(--teal-400)]">✓</span> Assistance 24 h/24
               </li>
             </ul>
             <Link

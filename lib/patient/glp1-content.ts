@@ -75,7 +75,7 @@ export const GLP1_BENEFITS = [
   },
   {
     title: "Accompagnement global",
-    text: "Assistant IA, objectifs et assistance 24/7 au même endroit sur MedSim.",
+    text: "Assistant IA, objectifs et assistance 24 h/24 au même endroit sur MedSim.",
   },
 ] as const;
 

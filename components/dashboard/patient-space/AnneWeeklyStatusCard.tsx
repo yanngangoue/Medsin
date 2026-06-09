@@ -11,9 +11,14 @@ export function AnneWeeklyStatusCard() {
   const load = useCallback(async () => {
     try {
       const res = await fetch("/api/patient/coach-ia/weekly-status");
-      if (res.ok) {
-        setStatus((await res.json()) as AnneWeeklyStatus);
+      const body = (await res.json().catch(() => ({}))) as AnneWeeklyStatus & { error?: string };
+      if (!res.ok) {
+        console.error("[AnneWeeklyStatusCard] load", body.error ?? res.status);
+        return;
       }
+      setStatus(body);
+    } catch (err) {
+      console.error("[AnneWeeklyStatusCard] load", err);
     } finally {
       setLoading(false);
     }
@@ -45,7 +50,7 @@ export function AnneWeeklyStatusCard() {
           <span className={status.mondayCheckInSent ? "text-emerald-600" : "text-slate-400"}>
             {status.mondayCheckInSent ? "✓" : "○"}
           </span>
-          Check-in {status.mondayCheckInSent ? "envoyé" : "prévu"} lundi
+          Bilan hebdomadaire {status.mondayCheckInSent ? "envoyé" : "prévu"} lundi
         </li>
         <li className="flex items-center gap-2">
           <span className={status.fridayReportSent ? "text-emerald-600" : "text-slate-400"}>
@@ -67,7 +72,7 @@ export function AnneWeeklyStatusCard() {
         </Link>
       ) : (
         <p className="mt-3 text-xs text-slate-500">
-          Vos rapports IPS apparaîtront après vos premiers check-ins.
+          Vos rapports IPS apparaîtront après vos premiers bilans hebdomadaires.
         </p>
       )}
     </div>

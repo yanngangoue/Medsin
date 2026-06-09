@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DashboardSpinner } from "@/components/ui/DashboardSpinner";
 import { poidsBtnPrimary, poidsCard, poidsMeta, poidsTitle } from "@/lib/patient/poids-design";
-import { poidsTabHref } from "@/lib/patient/dashboard-routes";
 import type { AiCoachMessagePublic } from "@/lib/patient/ai-coach";
 
 type Props = {

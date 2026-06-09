@@ -24,7 +24,7 @@ export function MedecinHeader({ prenom, urgentCount = 0 }: Props) {
               🔔
             </span>
             {urgentCount > 0 ? (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-0.5 text-[8px] font-bold leading-none text-white">
                 {urgentCount > 9 ? "9+" : urgentCount}
               </span>
             ) : null}

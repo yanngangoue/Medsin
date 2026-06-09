@@ -17,4 +17,4 @@ export function isIpsBusinessHours(now = new Date()): boolean {
 export const IPS_AWAY_MESSAGE =
   "Votre IPS répond généralement en moins de 24 h. Nous sommes actuellement hors des heures ouvrables (lun–ven, 8 h–17 h). En cas d'urgence médicale, composez le 811 ou le 911.";
 
-export const IPS_RESPONSE_SLA = "Répond généralement en < 24 h";
+export const IPS_RESPONSE_SLA = "Répond généralement en moins de 24 h";

@@ -42,7 +42,7 @@ export const HOW_IT_WORKS_STEPS = [
   {
     number: 3,
     icon: "3️⃣",
-    title: "Ordonnance IPS (< 48 h)",
+    title: "Ordonnance IPS (moins de 48 h)",
     description: "Une infirmière praticienne spécialisée examine votre dossier et prescrit si approprié.",
     exclusive: false,
   },
@@ -58,7 +58,7 @@ export const HOW_IT_WORKS_STEPS = [
 
 export const AI_COACH_BENEFITS = [
   "Analyse vos tendances poids, énergie, sommeil",
-  "Messages proactifs après chaque check-in",
+  "Messages proactifs après chaque bilan hebdomadaire",
   "Disponible 24 h/24 entre vos rendez-vous médicaux",
   "Alertes intelligentes si quelque chose sort de la normale",
   "Parle français canadien, comprend votre contexte",
@@ -83,8 +83,8 @@ export const AI_COACH_CHAT = [
 
 export const RESULT_STATS = [
   { value: "−15 %", label: "Poids moyen à 6 mois" },
-  { value: "< 48 h", label: "Délai ordonnance IPS" },
-  { value: "24/7", label: `${COACH_NAME} disponible` },
+  { value: "Moins de 48 h", label: "Délai ordonnance IPS" },
+  { value: "24 h/24", label: `${COACH_NAME} disponible` },
 ] as const;
 
 export const TESTIMONIALS = [
@@ -166,7 +166,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: `Qui est ${COACH_NAME} ?`,
-    a: `${COACH_NAME} est votre coach santé IA. Elle analyse vos check-ins (poids, énergie, sommeil) et vous contacte de façon proactive. Elle motive et informe — sans jamais remplacer votre IPS.`,
+    a: `${COACH_NAME} est votre coach santé IA. Elle analyse vos bilans hebdomadaires (poids, énergie, sommeil) et vous contacte de façon proactive. Elle motive et informe — sans jamais remplacer votre IPS.`,
   },
   {
     q: "Est-ce couvert par mon assurance ?",

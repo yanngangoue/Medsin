@@ -40,7 +40,7 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
     imageAlt: "Patiente souriante, accompagnée dans son parcours santé",
     variant: "lifestyle",
     title: "Suivi MedSim",
-    description: "Nutrition, objectifs et assistance 24/7.",
+    description: "Nutrition, objectifs et assistance 24 h/24.",
   },
   {
     id: "mounjaro",

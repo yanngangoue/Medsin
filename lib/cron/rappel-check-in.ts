@@ -49,7 +49,7 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
     }
 
     const prenom = program.user.prenom || program.user.name || "Patient";
-    let messageCoach = `Bonjour ${prenom}, c'est ${COACH_NAME} — l'heure de votre check-in hebdomadaire sur MedSim. Comment vous sentez-vous cette semaine ?`;
+    let messageCoach = `Bonjour ${prenom}, c'est ${COACH_NAME} — l'heure de votre bilan hebdomadaire sur MedSim. Comment vous sentez-vous cette semaine ?`;
 
     try {
       const dernierPublic = publicProgram.recentCheckIns[0];
@@ -74,7 +74,7 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
       data: {
         userId: program.userId,
         type: "check_in_reminder",
-        title: "Check-in hebdomadaire",
+        title: "Bilan hebdomadaire",
         body: messageCoach.slice(0, 500),
       },
     });
@@ -89,8 +89,8 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
       template: "weekly_checkin_reminder",
       entityKey: `weekly_checkin:${program.userId}:${weekKey}`,
       userId: program.userId,
-      html: `<p>Bonjour ${prenom},</p><p>${preview}</p><p><a href="${poidsLink}">Faire mon check-in →</a></p>`,
-      text: `${preview}\n\nFaire mon check-in : ${poidsLink}`,
+      html: `<p>Bonjour ${prenom},</p><p>${preview}</p><p><a href="${poidsLink}">Faire mon bilan hebdomadaire →</a></p>`,
+      text: `${preview}\n\nFaire mon bilan hebdomadaire : ${poidsLink}`,
     });
 
     patientsContacted += 1;

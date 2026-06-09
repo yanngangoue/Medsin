@@ -9,7 +9,7 @@ const HERO_IMAGE =
 const CHECKS = [
   "Questionnaire santé en 5 minutes",
   "Révision par un professionnel de santé licencié",
-  "Ordonnance + livraison à domicile en 48h",
+  "Ordonnance + livraison à domicile en 48 h",
   "Suivi médical continu inclus",
 ] as const;
 

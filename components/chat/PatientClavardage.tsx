@@ -128,7 +128,7 @@ export function PatientClavardage() {
   const ipsName = ipsThread?.professionalName ?? "votre IPS";
 
   return (
-    <div className="flex h-[calc(100dvh-10rem)] min-h-[520px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex h-[min(720px,calc(100dvh-10rem))] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="shrink-0 border-b border-red-300 bg-red-600 px-4 py-2.5 text-center text-sm font-semibold text-white">
         🚨 Urgence médicale ? Composez le{" "}
         <a href="tel:811" className="underline">

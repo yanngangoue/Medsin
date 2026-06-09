@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { catchRouteError } from "@/lib/api/catch-route-error";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
 
 /** Dernière ordonnance / fulfillment du patient connecté. */
 export async function GET() {
+  return catchRouteError("patient/fulfillment", async () => {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "PATIENT") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé", code: "UNAUTHORIZED" }, { status: 401 });
   }
 
   if (isDemoMode()) {
@@ -33,4 +35,5 @@ export async function GET() {
   });
 
   return NextResponse.json({ fulfillment });
+  });
 }

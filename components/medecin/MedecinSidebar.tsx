@@ -6,11 +6,11 @@ import { MedsimLogo } from "@/components/MedsimLogo";
 import { SignOutButton } from "@/components/role-portal/SignOutButton";
 
 const NAV = [
-  { href: "/medecin/file", label: "File de travail", icon: "📋" },
-  { href: "/medecin/patients", label: "Mes patients", icon: "👥" },
-  { href: "/medecin/messages", label: "Messagerie", icon: "💬" },
-  { href: "/medecin/agenda", label: "Rendez-vous", icon: "📅" },
-  { href: "/medecin/ordonnances", label: "Ordonnances", icon: "📄" },
+  { href: "/medecin/file", label: "File de travail", short: "File", icon: "📋" },
+  { href: "/medecin/patients", label: "Mes patients", short: "Patients", icon: "👥" },
+  { href: "/medecin/messages", label: "Messagerie", short: "Messages", icon: "💬" },
+  { href: "/medecin/agenda", label: "Rendez-vous", short: "Agenda", icon: "📅" },
+  { href: "/medecin/ordonnances", label: "Ordonnances", short: "Ordonn.", icon: "📄" },
 ] as const;
 
 export function MedecinSidebar({ urgentCount = 0 }: { urgentCount?: number }) {
@@ -55,17 +55,17 @@ export function MedecinSidebar({ urgentCount = 0 }: { urgentCount?: number }) {
         </div>
       </aside>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t border-slate-200 bg-white py-2 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t border-slate-200 bg-white px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 md:hidden">
         {NAV.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-col items-center px-2 text-[10px] ${
+            className={`flex min-w-0 flex-1 flex-col items-center px-1 text-[10px] leading-tight ${
               pathname.startsWith(item.href) ? "text-[#16a34a]" : "text-slate-600"
             }`}
           >
             <span className="text-lg">{item.icon}</span>
-            {item.label.split(" ")[0]}
+            <span className="mt-0.5 max-w-full truncate text-center">{item.short}</span>
           </Link>
         ))}
       </nav>

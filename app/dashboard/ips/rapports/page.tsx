@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { requireIpsSession } from "@/lib/ips/auth";
 import { patientDisplayName } from "@/lib/ips/queue-utils";
 import { isDemoMode } from "@/lib/is-demo-mode";
@@ -30,7 +29,7 @@ export default async function IpsRapportsAnnePage() {
       <header>
         <h1 className="text-2xl font-black text-slate-900">Rapports Anne</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Synthèses générées par le coach IA après chaque check-in et chaque vendredi à 8 h.
+          Synthèses générées par le coach IA après chaque bilan hebdomadaire et chaque vendredi à 8 h.
           Triés par date, filtrables par patient.
         </p>
       </header>

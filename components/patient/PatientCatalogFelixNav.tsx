@@ -40,7 +40,7 @@ export function PatientCatalogFelixNav({
   const profileHref = isConnected ? GLP1_PATIENT_DASHBOARD_PATH : PUBLIC_HERO_CTAS.login.href;
 
   const bar = (
-      <div className="mx-auto flex w-full items-center gap-1.5 rounded-xl border border-white/70 bg-white/95 px-2.5 py-1 shadow-md shadow-black/10 backdrop-blur-md sm:gap-2 sm:px-3 sm:py-1.5">
+      <div className="mx-auto flex w-full items-center gap-1.5 overflow-visible rounded-xl border border-white/70 bg-white/95 px-2.5 py-1 shadow-md shadow-black/10 backdrop-blur-md sm:gap-2 sm:px-3 sm:py-1.5">
         <Link
           href={PUBLIC_CATALOG_HOME}
           className="shrink-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4D3A]"

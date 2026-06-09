@@ -7,6 +7,7 @@ import { demoCreatePasswordResetToken } from "@/lib/demo-password-reset";
 import { hashPasswordResetToken } from "@/lib/password-reset-token";
 import { checkForgotPasswordRateLimit } from "@/lib/forgot-password-rate-limit";
 import { writeAuditLog } from "@/lib/audit";
+import { catchRouteError } from "@/lib/api/catch-route-error";
 import { forgotPasswordRequestSchema } from "@/lib/schemas/forgot-password";
 
 function clientIp(req: Request): string | null {
@@ -27,6 +28,7 @@ const GENERIC_MSG =
   "Si un compte est associé à ce courriel, un lien de réinitialisation a été préparé. Vérifiez votre boîte de réception ou, en environnement de développement, la console du serveur.";
 
 export async function POST(req: Request) {
+  return catchRouteError("auth/forgot-password", async () => {
   const ip = clientIp(req) ?? "unknown";
   if (!checkForgotPasswordRateLimit(`forgot:${ip}`)) {
     return NextResponse.json({ ok: true, message: GENERIC_MSG });
@@ -35,7 +37,7 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const parsed = forgotPasswordRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Courriel invalide" }, { status: 400 });
+    return NextResponse.json({ error: "Courriel invalide", code: "VALIDATION_ERROR" }, { status: 400 });
   }
 
   const email = parsed.data.email.trim().toLowerCase();
@@ -91,4 +93,5 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json(payload);
+  });
 }

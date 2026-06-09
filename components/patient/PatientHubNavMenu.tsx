@@ -99,7 +99,7 @@ export function PatientHubNavMenu({ showAuthLinks = false, variant = "onDark" }:
         {open ? (
           <nav
             id={panelId}
-            className={`absolute right-0 top-full z-[80] mt-2 w-56 overflow-hidden rounded-xl border bg-white py-1 shadow-xl ring-1 ring-black/5 ${
+            className={`absolute right-0 top-full z-[80] mt-2 w-56 max-w-[min(100vw-1rem,14rem)] overflow-hidden rounded-xl border bg-white py-1 shadow-xl ring-1 ring-black/5 ${
               isLight ? "border-slate-200" : "border-white/10"
             }`}
           >

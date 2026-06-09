@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { catchRouteError } from "@/lib/api/catch-route-error";
 import { countUnreadMessages } from "@/lib/chat/service";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { listCoachMessages } from "@/lib/patient/ai-coach";
@@ -10,12 +11,13 @@ import {
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
+  return catchRouteError("patient/dashboard", async () => {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé", code: "UNAUTHORIZED" }, { status: 401 });
   }
   if (session.user.role !== "PATIENT") {
-    return NextResponse.json({ error: "Accès réservé aux patients" }, { status: 403 });
+    return NextResponse.json({ error: "Accès réservé aux patients", code: "FORBIDDEN" }, { status: 403 });
   }
 
   if (isDemoMode()) {
@@ -92,5 +94,6 @@ export async function GET() {
     checkIns,
     coachMessages,
     unreadIps,
+  });
   });
 }

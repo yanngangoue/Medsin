@@ -38,7 +38,7 @@ function ConnexionForm() {
         redirect: false,
       });
       if (result?.error) {
-        setError("Email ou mot de passe incorrect.");
+        setError("Courriel ou mot de passe incorrect.");
         return;
       }
       const session = await getSession();

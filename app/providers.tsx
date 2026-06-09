@@ -26,7 +26,9 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, BoundaryState
           <p className="max-w-md text-base font-semibold text-slate-900">
             Une erreur empêche l’affichage de la page.
           </p>
-          <p className="max-w-lg font-mono text-xs text-red-700">{this.state.error.message}</p>
+          <p className="max-w-lg text-sm text-slate-600">
+            Réessayez dans quelques instants. Si le problème persiste, rechargez la page.
+          </p>
           <button
             type="button"
             className="rounded-xl bg-[#1D9E75] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#188763]"

@@ -8,7 +8,7 @@ export function CTASection() {
           Prêt à commencer votre transformation ?
         </h2>
         <p className="mt-3 text-[16px] text-white/90 sm:text-[17px]">
-          Évaluation gratuite · Résultat en 24h · Annulation possible
+          Évaluation gratuite · Résultat en 24 h · Annulation possible
         </p>
         <Link
           href="/onboarding/inscription"

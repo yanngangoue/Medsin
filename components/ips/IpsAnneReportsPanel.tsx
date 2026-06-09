@@ -8,7 +8,7 @@ type Props = {
 };
 
 function kindLabel(kind: AnneReportPublic["kind"]): string {
-  return kind === "WEEKLY" ? "Hebdomadaire" : "Check-in";
+  return kind === "WEEKLY" ? "Hebdomadaire" : "Bilan hebdomadaire";
 }
 
 export function IpsAnneReportsPanel({ patients }: Props) {
@@ -72,7 +72,7 @@ export function IpsAnneReportsPanel({ patients }: Props) {
 
       {sorted.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Aucun rapport Anne pour le moment. Les rapports apparaîtront après les check-ins et
+          Aucun rapport Anne pour le moment. Les rapports apparaîtront après les bilans hebdomadaires et
           chaque vendredi à 8 h.
         </p>
       ) : (

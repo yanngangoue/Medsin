@@ -68,7 +68,7 @@ function buildSteps(
     },
     {
       id: "6",
-      label: "Premier check-in avec Anne",
+      label: "Premier bilan hebdomadaire avec Anne",
       done: hasCheckIn,
       pending: shipped && !hasCheckIn,
       eta: "Dès réception",

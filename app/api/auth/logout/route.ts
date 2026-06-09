@@ -1,5 +1,6 @@
 import { logoutUser } from "@/controllers/authController";
+import { catchRouteError } from "@/lib/api/catch-route-error";
 
 export async function POST() {
-  return logoutUser();
+  return catchRouteError("auth/logout", () => logoutUser());
 }

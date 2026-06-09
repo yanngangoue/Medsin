@@ -1,3 +1,4 @@
+import { catchRouteError } from "@/lib/api/catch-route-error";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -10,14 +11,16 @@ type Params = { params: Promise<{ id: string }> };
  * GET /api/chat/threads/[id]/messages — cette route n'est plus utilisée.
  */
 export async function GET(_req: Request, { params }: Params) {
-  const { id } = await params;
-  return NextResponse.json(
-    {
-      deprecated: true,
-      threadId: id,
-      message:
-        "Utilisez GET /api/chat/threads/[id]/messages avec un intervalle de 5 secondes côté client.",
-    },
-    { status: 410 },
-  );
+  return catchRouteError("chat/threads/[id]/stream/GET", async () => {
+    const { id } = await params;
+      return NextResponse.json(
+        {
+          deprecated: true,
+          threadId: id,
+          message:
+            "Utilisez GET /api/chat/threads/[id]/messages avec un intervalle de 5 secondes côté client.",
+        },
+        { status: 410 },
+      );
+  });
 }

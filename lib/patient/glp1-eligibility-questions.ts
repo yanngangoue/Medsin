@@ -100,7 +100,7 @@ export const GLP1_HEALTH_3 = [
       "Rétinopathie diabétique, lésions du nerf optique ou cécité liée au diabète",
   },
   { id: "warfarin", label: "Utilisation de l'anticoagulant warfarine (Coumadin)" },
-  { id: "pancreatitis", label: "Antécédents ou pancréatite actuelle" },
+  { id: "pancreatitis", label: "Antécédents de pancréatite ou pancréatite actuelle" },
   {
     id: "thyroid_cancer_history",
     label:

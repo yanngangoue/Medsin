@@ -17,7 +17,7 @@ type ThreadRow = {
 };
 
 const QUICK_TEMPLATES = [
-  "Je prends note, je vous réponds sous 24h",
+  "Je prends note, je vous réponds sous 24 h",
   "Veuillez appeler le 811 pour ce symptôme",
   "Votre dose sera ajustée au prochain renouvellement",
   "Rapport Anne reçu — tout semble normal",
@@ -135,7 +135,7 @@ export function IpsClavardage() {
   const active = threads.find((t) => t.id === activeId);
 
   return (
-    <div className="flex h-[calc(100dvh-8rem)] min-h-[560px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex h-[min(760px,calc(100dvh-8rem))] min-h-[480px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <aside className="flex w-80 shrink-0 flex-col border-r border-slate-200">
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <p className="text-sm font-bold text-slate-900">Patients</p>

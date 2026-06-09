@@ -42,13 +42,13 @@ export default async function PatientAnneReportsPage() {
         </Link>
         <h1 className="mt-3 text-2xl font-black text-slate-900">Historique des rapports</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Rapports transmis à votre IPS par Anne après vos check-ins et chaque semaine.
+          Rapports transmis à votre IPS par Anne après vos bilans hebdomadaires et chaque semaine.
         </p>
       </header>
 
       {reports.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Aucun rapport pour le moment. Faites votre premier check-in avec Anne pour démarrer le
+          Aucun rapport pour le moment. Faites votre premier bilan hebdomadaire avec Anne pour démarrer le
           suivi.
         </p>
       ) : (
@@ -60,7 +60,7 @@ export default async function PatientAnneReportsPage() {
             >
               <div className="flex items-center gap-2 text-xs text-slate-500">
                 <span className="font-semibold text-[#1D4D3A]">
-                  {r.kind === "WEEKLY" ? "Rapport hebdomadaire" : "Après check-in"}
+                  {r.kind === "WEEKLY" ? "Rapport hebdomadaire" : "Après bilan hebdomadaire"}
                 </span>
                 · {new Date(r.createdAt).toLocaleDateString("fr-CA")}
                 {r.isEscalation ? (

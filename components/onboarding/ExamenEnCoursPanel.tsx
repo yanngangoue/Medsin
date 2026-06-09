@@ -39,16 +39,22 @@ export function ExamenEnCoursPanel() {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/patient/dashboard");
-    if (!res.ok) {
-      setError("Impossible de charger le statut de votre dossier.");
+    try {
+      const res = await fetch("/api/patient/dashboard");
+      const payload = (await res.json().catch(() => ({}))) as DashboardPayload & {
+        error?: string;
+      };
+      if (!res.ok) {
+        setError(payload.error ?? "Impossible de charger le statut de votre dossier.");
+        return;
+      }
+      setData(payload);
+      setError(null);
+    } catch {
+      setError("Impossible de charger le statut de votre dossier. Vérifiez votre connexion.");
+    } finally {
       setLoading(false);
-      return;
     }
-    const payload = (await res.json()) as DashboardPayload;
-    setData(payload);
-    setError(null);
-    setLoading(false);
   }, []);
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
   const prenom = connectedPatient?.prenom ?? "";
 
   return (
-    <div className={`min-h-screen ${PATIENT_HOMEPAGE_GRADIENT}`}>
+    <div className={`min-h-screen overflow-x-hidden ${PATIENT_HOMEPAGE_GRADIENT}`}>
       {hasAccount ? (
         <div className="border-b border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-sm sm:px-6">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 text-sm">

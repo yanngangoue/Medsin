@@ -2,7 +2,7 @@ const STATS = [
   { value: "+12 000", label: "Patients accompagnés" },
   { value: "1–2 lbs", label: "Perte par semaine en moyenne" },
   { value: "98%", label: "Taux de satisfaction" },
-  { value: "24h", label: "Délai de réponse médecin" },
+  { value: "24 h", label: "Délai de réponse médecin" },
 ] as const;
 
 export function StatsBar() {

@@ -217,7 +217,7 @@ export default function DevInteropTestClient({ userId, role, prenom }: Props) {
       <section>
         <h2 className="mb-2 text-sm font-semibold text-slate-800">Journal des réponses</h2>
         <pre className="max-h-[480px] overflow-auto rounded-lg border border-slate-200 bg-slate-950 p-3 text-xs text-emerald-100">
-          {log || "Clique sur un bouton pour voir la réponse JSON ici."}
+          {log || "Cliquez sur un bouton pour voir la réponse JSON ici."}
         </pre>
       </section>
     </div>

@@ -6,6 +6,7 @@ import { demoConsumePasswordResetToken } from "@/lib/demo-password-reset";
 import { demoUpdateUserPasswordHash, demoFindUserById } from "@/lib/demo-store";
 import { hashPasswordResetToken } from "@/lib/password-reset-token";
 import { resetPasswordSchema } from "@/lib/schemas/forgot-password";
+import { catchRouteError } from "@/lib/api/catch-route-error";
 import { writeAuditLog } from "@/lib/audit";
 
 function clientIp(req: Request): string | null {
@@ -15,6 +16,7 @@ function clientIp(req: Request): string | null {
 }
 
 export async function POST(req: Request) {
+  return catchRouteError("auth/reset-password", async () => {
   const ip = clientIp(req);
   const body = await req.json().catch(() => null);
   const parsed = resetPasswordSchema.safeParse(body);
@@ -27,7 +29,7 @@ export async function POST(req: Request) {
   if (isDemoMode()) {
     const userId = demoConsumePasswordResetToken(token);
     if (!userId || !demoFindUserById(userId)) {
-      return NextResponse.json({ error: "Lien invalide ou expiré." }, { status: 400 });
+      return NextResponse.json({ error: "Lien invalide ou expiré.", code: "VALIDATION_ERROR" }, { status: 400 });
     }
     const hash = await hashPassword(password);
     demoUpdateUserPasswordHash(userId, hash);
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
 
   if (!row || row.expiresAt < new Date() || !row.user?.id) {
     if (row) await prisma.passwordResetToken.delete({ where: { id: row.id } }).catch(() => undefined);
-    return NextResponse.json({ error: "Lien invalide ou expiré." }, { status: 400 });
+    return NextResponse.json({ error: "Lien invalide ou expiré.", code: "VALIDATION_ERROR" }, { status: 400 });
   }
 
   const newHash = await hashPassword(password);
@@ -68,4 +70,5 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({ ok: true });
+  });
 }

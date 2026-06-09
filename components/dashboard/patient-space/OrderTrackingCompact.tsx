@@ -38,11 +38,19 @@ export function OrderTrackingCompact({ fulfillmentId }: Props) {
     let cancelled = false;
 
     async function load() {
-      const res = await fetch(`/api/pharmacy/tracking/${fulfillmentId}`);
-      if (!cancelled && res.ok) {
-        setData((await res.json()) as TrackingData);
+      try {
+        const res = await fetch(`/api/pharmacy/tracking/${fulfillmentId}`);
+        if (cancelled) return;
+        if (res.ok) {
+          setData((await res.json()) as TrackingData);
+        } else {
+          console.error("[OrderTrackingCompact] load", res.status);
+        }
+      } catch (err) {
+        if (!cancelled) console.error("[OrderTrackingCompact] load", err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      if (!cancelled) setLoading(false);
     }
 
     void load();

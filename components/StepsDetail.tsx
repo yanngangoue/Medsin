@@ -14,7 +14,7 @@ const DETAILS = [
   {
     num: "02",
     title: "Révision médicale",
-    badge: "Sous 24h",
+    badge: "Sous 24 h",
     intro: "Un professionnel licencié au Canada examine votre dossier.",
     points: [
       "Médecins certifiés au Canada",
@@ -38,13 +38,13 @@ const DETAILS = [
   {
     num: "04",
     title: "Livraison + suivi",
-    badge: "48h",
+    badge: "48 h",
     intro: "Livraison discrète. Suivi via portail sécurisé.",
     points: [
       "Livraison discrète, kit complet",
       "Portail patient avec historique",
       "Ajustement de dose si nécessaire",
-      "Support médical 24/7 par messagerie",
+      "Assistance médicale 24 h/24 par messagerie",
     ],
   },
 ] as const;

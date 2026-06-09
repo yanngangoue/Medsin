@@ -258,8 +258,8 @@ export default function InscriptionPage() {
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">
             3 minutes suffisent pour démarrer votre suivi GLP-1 personnalisé.
           </p>
-          <div className="mt-6 rounded-full border border-[#C8E6D9] bg-white/90 px-4 py-2 text-xs font-medium text-[#0D1F1A]/85 shadow-sm shadow-teal-900/[0.04] backdrop-blur-sm">
-            Confidentiel, Données médicales sécurisées
+          <div className="mt-6 max-w-xs rounded-full border border-[#C8E6D9] bg-white/90 px-4 py-2 text-center text-xs font-medium leading-snug text-[#0D1F1A]/85 shadow-sm shadow-teal-900/[0.04] backdrop-blur-sm">
+            Données confidentielles et médicales sécurisées
           </div>
           <button
             type="button"

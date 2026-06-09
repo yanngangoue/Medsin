@@ -41,7 +41,7 @@ export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
     bullets: [
       "Prescription pour un GLP-1 rapide et efficace",
       "Suivi médical individuel",
-      "Assistant IA Claude — suivi proactif au quotidien",
+      "Anne, coach santé IA — suivi proactif au quotidien",
       "Assistance 24 h/24 et 7 j/7",
     ],
     productImage: "/images/glp1-ozempic-box.png",

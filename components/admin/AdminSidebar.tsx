@@ -54,7 +54,7 @@ export function AdminSidebar() {
           <Link href="/admin/dashboard" aria-label="MedSim — administration">
             <MedsimLogo />
           </Link>
-          <p className="mt-0.5 text-xs text-slate-500">Back-office clinique</p>
+          <p className="mt-0.5 text-xs text-slate-500">Espace d&apos;administration clinique</p>
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-3">
           {NAV.map((item) => (
@@ -69,7 +69,7 @@ export function AdminSidebar() {
         </div>
       </aside>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t border-slate-200 bg-white px-2 py-2 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t border-slate-200 bg-white px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 md:hidden">
         {NAV.map((item) => (
           <NavLink key={item.href} {...item} mobile />
         ))}

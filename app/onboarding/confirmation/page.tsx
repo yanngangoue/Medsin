@@ -95,7 +95,8 @@ function LegacyConfirmationFallback({
         if (!q) return;
         setObjectif(q.objectif ?? "—");
         setImc(String(q.imc ?? "—"));
-      });
+      })
+      .catch(() => undefined);
   }, [status]);
 
   if (status === "loading" || status === "unauthenticated") {

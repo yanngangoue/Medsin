@@ -48,9 +48,9 @@ export function PoidsProgressionPanel({ program, checkIns, loading }: Props) {
       </section>
 
       <section className={poidsCard}>
-        <h2 className={poidsTitle}>Historique des check-ins</h2>
+        <h2 className={poidsTitle}>Historique des bilans hebdomadaires</h2>
         {displayCheckIns.length === 0 ? (
-          <p className={`mt-4 ${poidsMeta}`}>Aucun check-in pour le moment.</p>
+          <p className={`mt-4 ${poidsMeta}`}>Aucun bilan hebdomadaire pour le moment.</p>
         ) : (
           <ul className="mt-4 space-y-3 text-sm">
             {displayCheckIns.map((c) => (

@@ -70,8 +70,8 @@ export function PatientServiceDetailSection({ section }: Props) {
         </h2>
 
         {showProductCards ? (
-          <div className="relative left-1/2 mt-6 w-screen max-w-[100vw] -translate-x-1/2 px-3 sm:mt-8 sm:px-6">
-            <PatientGlp1CareProcess />
+          <div className="mx-auto mt-6 w-full max-w-6xl px-2 sm:mt-8 sm:px-0">
+            <PatientGlp1CareProcess className="!mt-0" />
           </div>
         ) : null}
 

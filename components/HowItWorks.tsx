@@ -58,7 +58,7 @@ const STEPS = [
     n: 3,
     title: "Livraison à domicile",
     Icon: IconDelivery,
-    desc: "Votre ordonnance est envoyée à une pharmacie partenaire. Livraison discrète en 48h. Kit complet inclus.",
+    desc: "Votre ordonnance est envoyée à une pharmacie partenaire. Livraison discrète en 48 h. Kit complet inclus.",
   },
 ] as const;
 
@@ -71,7 +71,7 @@ export function HowItWorks() {
             3 étapes vers vos résultats
           </h2>
           <p className="mt-3 text-[16px] text-neutral-600 sm:text-[17px]">
-            Simple, rapide, 100% en ligne
+            Simple, rapide, 100 % en ligne
           </p>
         </div>
 

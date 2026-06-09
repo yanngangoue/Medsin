@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
 import { MedecinSidebar } from "@/components/medecin/MedecinSidebar";
 import { MedecinHeader } from "@/components/medecin/MedecinHeader";
 import { dossierGlp1Client } from "@/lib/medecin/prisma-dossier";
+import { PortalSectionBoundary } from "@/components/layout/PortalSectionBoundary";
 
 export default async function MedecinLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -39,9 +39,13 @@ export default async function MedecinLayout({ children }: { children: React.Reac
   return (
     <div className="min-h-screen bg-white md:flex">
       <MedecinSidebar urgentCount={urgentCount} />
-      <div className="flex min-h-screen flex-1 flex-col pb-20 md:pb-0">
+      <div className="flex min-h-screen flex-1 flex-col pb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))] md:pb-0">
         <MedecinHeader prenom={prenom} urgentCount={urgentCount} />
-        <main className="flex-1 bg-[#F8FAFC]">{children}</main>
+        <main className="flex-1 bg-[#F8FAFC]">
+          <PortalSectionBoundary title="Impossible d'afficher cette section du portail médecin.">
+            {children}
+          </PortalSectionBoundary>
+        </main>
       </div>
     </div>
   );

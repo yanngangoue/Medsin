@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PortalSectionBoundary } from "@/components/layout/PortalSectionBoundary";
 
 export const metadata: Metadata = {
   title: "Mon espace patient — MedSim",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function PatientDashboardLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <PortalSectionBoundary title="Impossible d'afficher cette section de votre espace patient.">
+      {children}
+    </PortalSectionBoundary>
+  );
 }

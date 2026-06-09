@@ -45,7 +45,7 @@ export function PatientCatalogFelixNavDropdown({ menu }: Props) {
 
       <div
         id={`felix-nav-${menu.id}`}
-        className={`absolute left-1/2 top-full z-50 w-[min(100vw-2rem,17rem)] -translate-x-1/2 pt-2 transition-[opacity,visibility] duration-150 ${
+        className={`absolute left-1/2 top-full z-[65] w-[min(100vw-2rem,17rem)] -translate-x-1/2 pt-2 transition-[opacity,visibility] duration-150 ${
           open ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
         }`}
         role="menu"

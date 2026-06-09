@@ -34,7 +34,7 @@ export const PATIENT_DASHBOARD_SECTIONS = [
     id: "programme" as const,
     href: poidsTabHref("programme"),
     title: "Mon programme",
-    description: "Objectifs, check-ins et configuration",
+    description: "Objectifs, bilans hebdomadaires et configuration",
     icon: "◎",
   },
   {

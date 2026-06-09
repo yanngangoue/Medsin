@@ -17,13 +17,13 @@ export function Footer() {
             <MedsimLogo variant="onDark" />
           </Link>
           <p className="text-[13px] text-white/80 md:border-l md:border-white/20 md:pl-4">
-            © 2025 Medsim · Médecins certifiés · 100% en ligne
+            © 2025 MedSim · Médecins certifiés · 100 % en ligne
           </p>
         </div>
 
         <nav
           aria-label="Liens du pied de page"
-          className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2 text-[13px] text-white/70"
+          className="flex flex-wrap items-center justify-center gap-x-1 gap-y-3 px-2 text-center text-[13px] leading-snug text-white/70"
         >
           {FOOTER_LINKS.map((link, index) => (
             <span key={link.href} className="inline-flex items-center">

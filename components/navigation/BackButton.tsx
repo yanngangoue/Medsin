@@ -30,7 +30,7 @@ function ChevronLeftIcon({ className }: { className?: string }) {
 /** Retour explicite vers `href` (parcours guidés — pas d’historique navigateur). */
 export function BackButton({
   href,
-  className = "inline-flex items-center gap-1 rounded-full border border-slate-200/90 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900",
+  className = "inline-flex max-w-full min-w-0 items-center gap-1 rounded-full border border-slate-200/90 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 sm:px-3 sm:text-sm",
   children = "Retour",
 }: Props) {
   const router = useRouter();
@@ -38,7 +38,7 @@ export function BackButton({
   return (
     <button type="button" onClick={() => router.push(href)} className={className}>
       <ChevronLeftIcon className="shrink-0 text-[#1D9E75]" />
-      <span>{children}</span>
+      <span className="truncate">{children}</span>
     </button>
   );
 }

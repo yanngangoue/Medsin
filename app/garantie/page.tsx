@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
