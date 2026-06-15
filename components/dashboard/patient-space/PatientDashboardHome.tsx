@@ -5,7 +5,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { MedsimLogo } from "@/components/MedsimLogo";
-import { WeightProgressChart } from "@/components/dashboard/patient-space/WeightProgressChart";
+import { WeightProgressChartLazy } from "@/components/dashboard/patient-space/WeightProgressChartLazy";
 import { OrderTrackingCompact } from "@/components/dashboard/patient-space/OrderTrackingCompact";
 import { PatientFelixSidebar } from "@/components/dashboard/patient-space/PatientFelixSidebar";
 import { PatientOnboardingWelcome } from "@/components/dashboard/patient-space/PatientOnboardingWelcome";
@@ -473,8 +473,19 @@ function PatientDashboardHomeInner({ prenom }: Props) {
           </section>
 
           {/* Graphique */}
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="text-lg font-bold text-slate-900">Mon évolution</h2>
+          <section
+            id="mon-evolution"
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-bold text-slate-900">Mon évolution</h2>
+              <Link
+                href={`${PATIENT_DASHBOARD_ROUTES.poids}?tab=progression`}
+                className="text-sm font-semibold text-[#1D4D3A] hover:underline"
+              >
+                Voir tout →
+              </Link>
+            </div>
             {loading ? (
               <Skeleton className="mt-4 h-48" />
             ) : chartCheckIns.length < 2 ? (
@@ -490,8 +501,8 @@ function PatientDashboardHomeInner({ prenom }: Props) {
                 </Link>
               </div>
             ) : (
-              <div className="mt-4">
-                <WeightProgressChart
+              <div className="mt-4 min-w-0">
+                <WeightProgressChartLazy
                   checkIns={chartCheckIns}
                   targetWeight={program?.targetWeight}
                   startWeight={program?.startWeight}

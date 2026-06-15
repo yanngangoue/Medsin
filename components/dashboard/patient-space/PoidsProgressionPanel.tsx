@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { DashboardSpinner } from "@/components/ui/DashboardSpinner";
-import { WeightProgressChart } from "@/components/dashboard/patient-space/WeightProgressChart";
+import { WeightProgressChartLazy } from "@/components/dashboard/patient-space/WeightProgressChartLazy";
 import { WeightProgramStats } from "@/components/dashboard/patient-space/WeightProgramStats";
 import { poidsBtnPrimary, poidsCard, poidsMeta, poidsTitle } from "@/lib/patient/poids-design";
 import { poidsTabHref } from "@/lib/patient/dashboard-routes";
@@ -38,8 +38,8 @@ export function PoidsProgressionPanel({ program, checkIns, loading }: Props) {
 
       <section className={poidsCard}>
         <h2 className={poidsTitle}>Courbe de poids</h2>
-        <div className="mt-4">
-          <WeightProgressChart
+        <div className="mt-4 min-w-0">
+          <WeightProgressChartLazy
             checkIns={displayCheckIns}
             startWeight={program.startWeight}
             targetWeight={program.targetWeight}

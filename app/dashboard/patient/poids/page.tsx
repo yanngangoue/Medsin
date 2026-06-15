@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnneCoachCheckInModal } from "@/components/dashboard/patient-space/AnneCoachCheckInModal";
-import { WeightProgressChart } from "@/components/dashboard/patient-space/WeightProgressChart";
+import { WeightProgressChartLazy } from "@/components/dashboard/patient-space/WeightProgressChartLazy";
 import { PatientDashboardPageShell } from "@/components/dashboard/patient-space/PatientDashboardPageShell";
 import { DashboardSpinner } from "@/components/ui/DashboardSpinner";
 import { FetchErrorAlert } from "@/components/ui/FetchErrorAlert";
@@ -171,6 +172,10 @@ function CheckInHistoryTable({ checkIns }: { checkIns: WeightCheckInPublic[] }) 
 }
 
 function PoidsSuiviContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab");
+
   const [program, setProgram] = useState<WeightProgramPublic | null>(null);
   const [checkIns, setCheckIns] = useState<WeightCheckInPublic[]>([]);
   const [loading, setLoading] = useState(true);
@@ -219,6 +224,16 @@ function PoidsSuiviContent() {
     const id = window.setTimeout(() => setToast(null), 4000);
     return () => window.clearTimeout(id);
   }, [toast]);
+
+  useEffect(() => {
+    if (tab === "coach") {
+      router.replace("/dashboard/patient/coach-ia");
+      return;
+    }
+    if (tab === "progression" && !loading) {
+      document.getElementById("evolution-poids")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [tab, loading, router]);
 
   const displayCheckIns = checkIns.length > 0 ? checkIns : (program?.recentCheckIns ?? []);
   const stats = program ? computeWeightTrackingStats(program, displayCheckIns) : null;
@@ -270,10 +285,10 @@ function PoidsSuiviContent() {
 
       {stats ? <QuickStatsGrid program={program} stats={stats} /> : null}
 
-      <section className={poidsCard}>
+      <section id="evolution-poids" className={`${poidsCard} scroll-mt-24`}>
         <h2 className="text-base font-semibold text-slate-900">Évolution du poids</h2>
-        <div className="mt-4">
-          <WeightProgressChart
+        <div className="mt-4 min-w-0">
+          <WeightProgressChartLazy
             checkIns={displayCheckIns}
             startWeight={program.startWeight}
             targetWeight={program.targetWeight}

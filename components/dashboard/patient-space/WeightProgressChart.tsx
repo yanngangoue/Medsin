@@ -111,8 +111,8 @@ export function WeightProgressChart({
   const yMax = Math.ceil(Math.max(...weights, targetWeight ?? weights[0]!) + 2);
 
   return (
-    <div className={className}>
-      <ResponsiveContainer width="100%" height={280}>
+    <div className={`w-full min-w-0 ${className}`} style={{ height: 280 }}>
+      <ResponsiveContainer width="100%" height="100%" debounce={50}>
         <LineChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
           <XAxis
@@ -149,27 +149,14 @@ export function WeightProgressChart({
             dataKey="weight"
             stroke={POIDS_BRAND.primary}
             strokeWidth={2.5}
-            dot={(props) => {
-              const { cx, cy, payload } = props as {
-                cx?: number;
-                cy?: number;
-                payload?: ChartPoint;
-              };
-              if (cx == null || cy == null) return null;
-              const isLatest = payload?.isLatest;
-              return (
-                <circle
-                  key={payload?.id}
-                  cx={cx}
-                  cy={cy}
-                  r={isLatest ? 6 : 4}
-                  fill={isLatest ? POIDS_BRAND.primary : "#fff"}
-                  stroke={POIDS_BRAND.primary}
-                  strokeWidth={2}
-                />
-              );
+            isAnimationActive={false}
+            dot={{
+              r: 4,
+              fill: "#fff",
+              stroke: POIDS_BRAND.primary,
+              strokeWidth: 2,
             }}
-            activeDot={{ r: 7 }}
+            activeDot={{ r: 7, fill: POIDS_BRAND.primary }}
           />
         </LineChart>
       </ResponsiveContainer>

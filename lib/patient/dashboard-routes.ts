@@ -46,7 +46,7 @@ export const PATIENT_DASHBOARD_SECTIONS = [
   },
   {
     id: "coach" as const,
-    href: poidsTabHref("coach"),
+    href: "/dashboard/patient/coach-ia",
     title: "Anne",
     description: "Votre coach santé IA — accompagnement proactif",
     icon: "✦",
