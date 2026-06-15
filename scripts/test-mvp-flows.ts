@@ -84,7 +84,8 @@ async function login(email: string, password: string): Promise<Map<string, strin
     }),
   });
 
-  if (!jar.has("authjs.session-token")) {
+  const hasSession = [...jar.keys()].some((k) => k.includes("session-token"));
+  if (!hasSession) {
     throw new Error(`Connexion échouée pour ${email}`);
   }
   return jar;

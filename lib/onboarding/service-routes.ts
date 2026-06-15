@@ -13,3 +13,14 @@ export function serviceLandingPath(service: OnboardingServiceId): string {
 export function serviceInscriptionPath(service: OnboardingServiceId): string {
   return `/auth/inscription?service=${service}`;
 }
+
+export function serviceConnexionPath(
+  service?: OnboardingServiceId,
+  callbackUrl?: string,
+): string {
+  const params = new URLSearchParams();
+  if (service) params.set("service", service);
+  if (callbackUrl) params.set("callbackUrl", callbackUrl);
+  const q = params.toString();
+  return `/auth/connexion${q ? `?${q}` : ""}`;
+}

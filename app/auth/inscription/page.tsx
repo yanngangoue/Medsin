@@ -12,6 +12,10 @@ import {
   resolvePatientPostAuthPath,
 } from "@/lib/onboarding/post-auth-redirect";
 import { inscriptionSchema, type InscriptionFormValues } from "@/lib/schemas/inscription";
+import {
+  ONBOARDING_SERVICES,
+  serviceConnexionPath,
+} from "@/lib/onboarding/service-routes";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
@@ -82,7 +86,7 @@ function AuthInscriptionForm() {
       });
 
       if (res.status === 409) {
-        setApiError("Cette adresse courriel est déjà utilisée.");
+        setApiError("Cette adresse courriel est déjà utilisée. Connectez-vous avec ce compte.");
         return;
       }
       if (!res.ok) {
@@ -237,7 +241,13 @@ function AuthInscriptionForm() {
 
           <p className="mt-8 text-center text-sm text-slate-600">
             Déjà inscrit ?{" "}
-            <Link href="/connexion" className="font-semibold text-[#1D4D3A] hover:underline">
+            <Link
+              href={serviceConnexionPath(
+                isGlp1 ? ONBOARDING_SERVICES.GLP1 : undefined,
+                safeCallback ?? undefined,
+              )}
+              className="font-semibold text-[#1D4D3A] hover:underline"
+            >
               Se connecter
             </Link>
           </p>

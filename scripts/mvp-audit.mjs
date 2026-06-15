@@ -99,7 +99,8 @@ async function login(jar, { email, password }) {
     const nextUrl = loc.startsWith("http") ? loc : `${BASE}${loc}`;
     await fetchJar(jar, nextUrl);
   }
-  if (!jar.has("authjs.session-token")) throw new Error(`No session cookie for ${email}`);
+  const hasSession = [...jar.keys()].some((k) => k.includes("session-token"));
+  if (!hasSession) throw new Error(`No session cookie for ${email}`);
   const sessionRes = await fetchJar(jar, `${BASE}/api/auth/session`);
   const session = await sessionRes.json();
   return session?.user ?? null;

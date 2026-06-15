@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { connexionSchema, type ConnexionFormValues } from "@/lib/schemas/connexion";
 import { defaultHomeForRole } from "@/lib/rbac";
+import { resolvePatientPostAuthPath } from "@/lib/onboarding/post-auth-redirect";
 import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
@@ -42,13 +43,19 @@ function ConnexionForm() {
         return;
       }
       const session = await getSession();
-      const home = session?.user?.role
-        ? defaultHomeForRole(session.user.role)
-        : "/dashboard/patient";
       const raw = searchParams.get("callbackUrl");
       const callbackUrl =
         raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : null;
-      router.push(callbackUrl ?? home);
+      const serviceGestionPoids = searchParams.get("service") === "gestion-poids";
+
+      const destination =
+        session?.user?.role === "PATIENT"
+          ? resolvePatientPostAuthPath({ callbackUrl, serviceGestionPoids })
+          : session?.user?.role
+            ? defaultHomeForRole(session.user.role)
+            : callbackUrl ?? "/dashboard/patient";
+
+      router.push(destination);
       router.refresh();
     } finally {
       setIsSubmitting(false);
