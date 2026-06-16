@@ -41,6 +41,7 @@ export function PatientGlp1CareProcess({ className = "" }: Props) {
             }`}
           >
             {/* img statique WebP (~45 Ko) : chargement fiable sur mobile, sans lazy ni optimiseur Next */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={step.image}
               alt={"alt" in step ? step.alt : ""}

@@ -78,6 +78,7 @@ export function simulateGlp1Eligibility(input: EligibilityInput): {
 export function explainGlp1SimulationStatus(
   status: EligibilityStatus,
   bmi: number,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _medicalHistory: string,
 ): string {
   if (status === "NOT_ELIGIBLE") {

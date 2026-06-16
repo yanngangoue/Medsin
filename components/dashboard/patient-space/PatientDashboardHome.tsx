@@ -184,8 +184,8 @@ function PatientDashboardHomeInner({ prenom }: Props) {
   }, [load]);
 
   const program = data?.program ?? null;
-  const checkIns = data?.checkIns ?? [];
-  const coachMessages = data?.coachMessages ?? [];
+  const checkIns = useMemo(() => data?.checkIns ?? [], [data]);
+  const coachMessages = useMemo(() => data?.coachMessages ?? [], [data]);
   const fulfillment = data?.fulfillment ?? null;
   const tracking = data?.tracking ?? null;
   const questionnaire = data?.questionnaire ?? null;

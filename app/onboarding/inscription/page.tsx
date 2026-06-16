@@ -165,11 +165,7 @@ export default function InscriptionPage() {
         redirect: false,
       });
       if (signInResult?.error) {
-        setGenericApiError(
-          signInResult.error === "CredentialsSignin"
-            ? "Compte créé, mais la connexion a échoué. Vérifiez le mot de passe ou connectez-vous depuis la page Connexion."
-            : `Compte créé, mais la connexion automatique a échoué (${signInResult.error}). Connectez-vous manuellement.`,
-        );
+        router.push(`/connexion?email=${encodeURIComponent(emailNorm)}&created=1`);
         return;
       }
       router.push("/onboarding/questionnaire");

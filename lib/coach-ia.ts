@@ -456,7 +456,6 @@ export async function analyserCheckIn(
   programme: WeightProgramPublic,
   options?: { prenom?: string },
 ): Promise<{ messagePatient: string; rapportIps: string; escalade: boolean }> {
-  const tendance = tendancePoids(historique);
   const escalade = detecterEscalade(checkIn, historique);
 
   const messagePatient = await messageProactifApresCheckIn(programme, checkIn, {

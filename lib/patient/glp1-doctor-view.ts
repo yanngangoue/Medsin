@@ -5,7 +5,6 @@ import {
   GLP1_HEALTH_3,
   GLP1_HEALTH_NONE_IDS,
   GLP1_HEART_RATE_OPTIONS,
-  type Glp1EligibilityAnswers,
   type Glp1YesNo,
 } from "@/lib/patient/glp1-eligibility-questions";
 import { GLP1_WEIGHT_GOAL_OPTIONS } from "@/lib/patient/glp1-weight-goal";

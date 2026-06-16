@@ -1,7 +1,7 @@
 import { detecterEscalade } from "@/lib/coach-ia";
 import { saveAnneIpsReport } from "@/lib/anne/reports";
 import { sendEmail } from "@/lib/email/send-email";
-import { listCheckIns, toCheckInPublic } from "@/lib/patient/weight-program";
+import { toCheckInPublic } from "@/lib/patient/weight-program";
 import { prisma } from "@/lib/prisma";
 import { isDemoMode } from "@/lib/is-demo-mode";
 

@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/login", destination: "/connexion", permanent: false },
       { source: "/register", destination: "/onboarding/inscription", permanent: false },
+      { source: "/onboarding/questionnaire", destination: "/questionnaire", permanent: true },
       { source: "/onboarding/nutri-plus", destination: "/onboarding/gestion-poids", permanent: true },
       { source: "/onboarding/nutri-plus/:path*", destination: "/onboarding/gestion-poids", permanent: true },
       { source: "/onboarding/repas-sante", destination: "/onboarding/gestion-poids", permanent: true },

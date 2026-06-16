@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { isDemoMode } from "@/lib/is-demo-mode";
@@ -16,7 +15,6 @@ function clientIpFromRequest(request: Request | undefined): string | null {
 }
 
 export const { handlers, signIn, signOut } = NextAuth({
-  ...(isDemoMode() ? {} : { adapter: PrismaAdapter(prisma) }),
   ...shared,
   providers: [
     Credentials({
@@ -67,12 +65,30 @@ export const { handlers, signIn, signOut } = NextAuth({
           };
         }
 
-        const user = await prisma.user.findFirst({
-          where: { email: { equals: email, mode: "insensitive" } },
-        });
-        if (!user?.passwordHash) return null;
+        let user;
+        try {
+          user = await prisma.user.findFirst({
+            where: { email: { equals: email, mode: "insensitive" } },
+          });
+        } catch (e) {
+          console.error("[authorize] DB error during findFirst:", e);
+          return null;
+        }
+
+        if (!user) {
+          console.warn("[authorize] user not found:", email);
+          return null;
+        }
+        if (!user.passwordHash) {
+          console.warn("[authorize] user has no password hash:", email);
+          return null;
+        }
+
         const valid = await bcrypt.compare(password, user.passwordHash);
-        if (!valid) return null;
+        if (!valid) {
+          console.warn("[authorize] invalid password for:", email);
+          return null;
+        }
 
         await writeAuditLog({
           userId: user.id,
