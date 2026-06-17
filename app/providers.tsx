@@ -1,10 +1,7 @@
 "use client";
 
-import { ClerkProvider } from "@clerk/clerk-react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
-
-const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
 
 type BoundaryState = { error: Error | null };
 
@@ -43,17 +40,11 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, BoundaryState
   }
 }
 
-/** Client requis : `SessionProvider` / Clerk ne peuvent pas vivre dans le layout serveur. */
+/** Client requis : `SessionProvider` ne peut pas vivre dans le layout serveur. */
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const inner = (
+  return (
     <RootErrorBoundary>
       <NextAuthSessionProvider refetchOnWindowFocus={false}>{children}</NextAuthSessionProvider>
     </RootErrorBoundary>
   );
-
-  if (!clerkPublishableKey) {
-    return inner;
-  }
-
-  return <ClerkProvider publishableKey={clerkPublishableKey}>{inner}</ClerkProvider>;
 }
