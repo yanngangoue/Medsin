@@ -3,18 +3,30 @@ import { PublicPatientCatalog } from "@/components/patient/PublicPatientCatalog"
 import { loadPatientHubContext } from "@/lib/patient/load-patient-hub-context";
 
 export default async function HomePage() {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch (e) {
+    console.error("[HomePage] auth() failed:", e);
+  }
 
   if (session?.user?.role === "PATIENT" && session.user.id) {
-    const hubContext = await loadPatientHubContext(session.user.id);
-    return (
-      <PublicPatientCatalog
-        connectedPatient={{
-          prenom: session.user.prenom ?? session.user.name ?? "",
-          hubContext,
-        }}
-      />
-    );
+    let hubContext = null;
+    try {
+      hubContext = await loadPatientHubContext(session.user.id);
+    } catch (e) {
+      console.error("[HomePage] loadPatientHubContext failed:", e);
+    }
+    if (hubContext) {
+      return (
+        <PublicPatientCatalog
+          connectedPatient={{
+            prenom: session.user.prenom ?? session.user.name ?? "",
+            hubContext,
+          }}
+        />
+      );
+    }
   }
 
   return <PublicPatientCatalog />;
