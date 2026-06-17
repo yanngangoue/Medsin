@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { href: "/dashboard/patient/coach-ia", label: "Anne (coach IA)", icon: "💬", badge: "anne" },
   { href: PATIENT_DASHBOARD_ROUTES.ordonnance, label: "Mon ordonnance", icon: "💊" },
   { href: PATIENT_DASHBOARD_ROUTES.clavardage, label: "Mon IPS", icon: "🗨️", badge: "ips" },
+  { href: PATIENT_DASHBOARD_ROUTES.nutrition, label: "Guide nutrition", icon: "🥗" },
   { href: PATIENT_DASHBOARD_ROUTES.confidentialite, label: "Confidentialité", icon: "🔒" },
 ];
 
@@ -92,11 +93,12 @@ export function PatientFelixSidebar({ prenom = "", anneHasNewMessage = false, on
 
       <div className="border-t border-slate-200/80 px-4 py-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1D4D3A]/10 text-sm font-bold text-[#1D4D3A]">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1D4D3A] to-[#3EBD93] text-sm font-bold text-white shadow-sm">
             {initial}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">{prenom || "Patient"}</p>
+            <p className="text-[11px] text-slate-400">Patient MedSim</p>
             <SignOutButton />
           </div>
         </div>
@@ -105,9 +107,12 @@ export function PatientFelixSidebar({ prenom = "", anneHasNewMessage = false, on
       <div className="border-t border-slate-200/80 p-4">
         <a
           href="tel:811"
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-red-700"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:from-red-700 hover:to-red-600"
         >
-          🚨 Urgence : 811
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+          </svg>
+          Urgence : 811
         </a>
       </div>
     </div>

@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "./providers";
 
 const montserrat = Montserrat({
   subsets: ["latin", "latin-ext"],
   variable: "--font-medsim-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-medsim-display",
+  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr-CA" className="scroll-smooth">
-      <body className={`${montserrat.variable} overflow-x-hidden font-sans antialiased`}>
+      <body className={`${montserrat.variable} ${jakarta.variable} overflow-x-hidden font-sans antialiased`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

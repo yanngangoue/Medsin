@@ -20,7 +20,7 @@ export default function EligibilitePage() {
         Répondez à 5 questions pour obtenir une première indication. Ce n&apos;est pas un avis
         médical — un professionnel confirmera votre admissibilité.
       </p>
-      <div className="mt-10">
+      <div className="mx-auto mt-10 max-w-xl">
         <EligibilityWizard />
       </div>
     </div>

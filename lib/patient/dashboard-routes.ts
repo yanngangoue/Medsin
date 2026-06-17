@@ -10,6 +10,7 @@ export const PATIENT_DASHBOARD_ROUTES = {
   clavardage: "/dashboard/patient/clavardage",
   confidentialite: "/dashboard/patient/confidentialite",
   dossier: "/dashboard/patient/dossier",
+  nutrition: "/dashboard/patient/nutrition",
 } as const;
 
 export type PoidsTab = "programme" | "progression" | "coach";

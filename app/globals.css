@@ -40,11 +40,48 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-medsim-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-medsim-display), var(--font-medsim-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Titres principaux — Plus Jakarta Sans */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+/* Labels uppercase — espacement généreux */
+.label-caps {
+  font-family: var(--font-medsim-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Valeur numérique grande */
+.value-xl {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* Texte de sous-titre léger */
+.subtitle {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 @keyframes patient-space-enter {
@@ -60,6 +97,92 @@ body {
 
 .patient-space-enter {
   animation: patient-space-enter 0.45s ease-out forwards;
+}
+
+@keyframes dash-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dash-enter {
+  opacity: 0;
+  animation: dash-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.dash-count {
+  animation: count-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes progress-fill {
+  from { width: 0; }
+}
+
+.dash-progress-bar {
+  animation: progress-fill 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-enter, .dash-count, .dash-progress-bar {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    width: var(--progress-width, 0%);
+  }
+}
+
+/* ── Questionnaire Typeform-style ─────────────────── */
+@keyframes q-slide-in-right {
+  from { opacity: 0; transform: translateX(48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes q-slide-in-left {
+  from { opacity: 0; transform: translateX(-48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes q-slide-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-48px); }
+}
+@keyframes q-slide-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(48px); }
+}
+
+.q-enter-forward  { animation: q-slide-in-right  0.32s cubic-bezier(0.22,1,0.36,1) both; }
+.q-enter-backward { animation: q-slide-in-left   0.32s cubic-bezier(0.22,1,0.36,1) both; }
+.q-exit-forward   { animation: q-slide-out-left  0.24s cubic-bezier(0.55,0,1,0.45) both; }
+.q-exit-backward  { animation: q-slide-out-right 0.24s cubic-bezier(0.55,0,1,0.45) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .q-enter-forward, .q-enter-backward,
+  .q-exit-forward,  .q-exit-backward {
+    animation: none; opacity: 1; transform: none;
+  }
+}
+
+@keyframes q-typewriter-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.q-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: #3EBD93;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: q-typewriter-cursor 0.8s step-end infinite;
 }
 
 @keyframes medsim-circle-draw {
