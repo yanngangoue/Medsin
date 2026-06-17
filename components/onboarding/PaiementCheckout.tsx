@@ -18,6 +18,58 @@ function formatAmount(cents: number): string {
   return `${(cents / 100).toFixed(0)} $`;
 }
 
+/* ── Succès paiement ─────────────────────────────────────────── */
+function SuccessPanel() {
+  return (
+    <div className="q-enter-forward mx-auto max-w-md py-4">
+      {/* Carte succès */}
+      <div className="overflow-hidden rounded-3xl border border-[#3EBD93]/30 bg-white shadow-xl">
+        <div className="bg-gradient-to-br from-[#1D4D3A] to-[#0f2919] px-8 py-8 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
+            <svg viewBox="0 0 48 48" fill="none" className="h-10 w-10">
+              <circle cx="24" cy="24" r="22" stroke="#3EBD93" strokeWidth="2.5" className="medsim-check-circle" />
+              <path d="M14 24l7 7 13-14" stroke="#3EBD93" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="medsim-check-mark" />
+            </svg>
+          </div>
+          <h1 className="mt-4 font-display text-2xl font-bold text-white">Paiement confirmé !</h1>
+          <p className="mt-1 text-sm text-white/70">Bienvenue dans le programme MedSim GLP-1</p>
+        </div>
+
+        <div className="px-8 py-7">
+          {/* Prochaines étapes */}
+          <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Ce qui se passe maintenant</p>
+          <div className="space-y-3">
+            {[
+              { icon: "💊", title: "Pharmacie notifiée", body: "Votre médicament est en cours de préparation" },
+              { icon: "📦", title: "Livraison sous 1–3 jours", body: "Suivi de colis disponible dans votre espace patient" },
+              { icon: "🤖", title: "Anne vous contacte", body: "Votre coach IA démarre votre suivi hebdomadaire" },
+            ].map((step) => (
+              <div key={step.title} className="flex items-start gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+                <span className="text-lg">{step.icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">{step.title}</p>
+                  <p className="text-xs text-slate-500">{step.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/dashboard/patient"
+            className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-xl"
+          >
+            Accéder à mon espace patient
+            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+              <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Checkout principal ─────────────────────────────────────── */
 export function PaiementCheckout() {
   const searchParams = useSearchParams();
   const fulfillmentParam = searchParams.get("fulfillment");
@@ -35,208 +87,188 @@ export function PaiementCheckout() {
     setError(null);
 
     let id = fulfillmentParam;
-
     if (!id) {
       const listRes = await fetch("/api/patient/fulfillment");
       if (listRes.ok) {
-        const list = (await listRes.json()) as {
-          fulfillment?: { id: string; paymentStatus: string } | null;
-        };
-        if (list.fulfillment?.paymentStatus === "PENDING") {
-          id = list.fulfillment.id;
-        }
+        const list = (await listRes.json()) as { fulfillment?: { id: string; paymentStatus: string } | null };
+        if (list.fulfillment?.paymentStatus === "PENDING") id = list.fulfillment.id;
       }
     }
 
-    if (!id) {
-      setFetching(false);
-      setError("Aucune ordonnance en attente de paiement. Vérifiez le lien reçu par courriel.");
-      return;
-    }
-
+    if (!id) { setFetching(false); setError("Aucune ordonnance en attente. Vérifiez le lien reçu par courriel."); return; }
     setResolvedId(id);
 
     const res = await fetch(`/api/patient/fulfillment/${id}`);
-    if (!res.ok) {
-      setFetching(false);
-      setError("Impossible de charger votre ordonnance.");
-      return;
-    }
+    if (!res.ok) { setFetching(false); setError("Impossible de charger votre ordonnance."); return; }
 
     const data = (await res.json()) as FulfillmentSummary;
     setFulfillment(data);
     setFetching(false);
+  }, [fulfillmentParam]);
 
-    if (data.paymentStatus === "PAID" && !paid) {
-      setError(null);
-    }
-  }, [fulfillmentParam, paid]);
-
-  useEffect(() => {
-    void loadFulfillment();
-  }, [loadFulfillment]);
+  useEffect(() => { void loadFulfillment(); }, [loadFulfillment]);
 
   async function payer() {
     setLoading(true);
     setError(null);
-
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(resolvedId ? { fulfillmentId: resolvedId } : {}),
     });
-
     const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
     setLoading(false);
-
-    if (!res.ok || !data.url) {
-      setError(data.error ?? "Impossible de démarrer le paiement");
-      return;
-    }
-
+    if (!res.ok || !data.url) { setError(data.error ?? "Impossible de démarrer le paiement. Réessayez."); return; }
     window.location.href = data.url;
   }
 
-  if (paid) {
-    return (
-      <div className="mx-auto max-w-lg py-8 text-center">
-        <div className="rounded-2xl border border-[#3EBD93]/30 bg-[#3EBD93]/10 p-8">
-          <p className="text-3xl" aria-hidden>
-            ✅
-          </p>
-          <h1 className="mt-4 text-2xl font-bold text-slate-900">Paiement confirmé !</h1>
-          <p className="mt-3 text-sm leading-relaxed text-slate-700">
-            Votre médicament est en cours de préparation.
-            <br />
-            Anne vous contacte sous peu.
-          </p>
-          <Link
-            href="/dashboard/patient?paid=1"
-            className="mt-6 inline-flex h-12 items-center justify-center rounded-xl bg-[#1D4D3A] px-6 text-sm font-semibold text-white hover:bg-[#163d2e]"
-          >
-            Accéder à mon espace →
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (paid) return <SuccessPanel />;
 
   if (fetching) {
     return (
-      <p className="py-16 text-center text-sm text-slate-500">Chargement de votre ordonnance…</p>
+      <div className="mx-auto max-w-lg space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate-100" />
+        ))}
+      </div>
     );
   }
 
   const amountLabel = fulfillment ? formatAmount(fulfillment.amountCents) : "—";
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-      {/* Gauche — résumé */}
-      <div className="space-y-6">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#3EBD93]">Étape finale</p>
-          <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">Résumé de commande</h1>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          {fulfillment ? (
-            <>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Médicament prescrit
-                  </p>
-                  <p className="mt-1 text-lg font-bold text-slate-900">{fulfillment.medication}</p>
-                  <p className="text-slate-600">Dose : {fulfillment.dosage}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    IPS prescriptrice
-                  </p>
-                  <p className="mt-1 font-medium text-slate-800">{fulfillment.ipsName}</p>
-                </div>
-                <div className="border-t border-slate-100 pt-4">
-                  <p className="font-semibold text-slate-900">Programme MedSim — Abonnement mensuel</p>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <span className="text-slate-600">Prix médicament</span>
-                  <span className="font-semibold text-slate-900">{amountLabel}/mois</span>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <span className="text-slate-600">Suivi Anne inclus</span>
-                  <span className="font-semibold text-[#10B981]">Gratuit ✓</span>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <span className="text-slate-600">Livraison</span>
-                  <span className="font-semibold text-[#10B981]">Gratuite ✓</span>
-                </div>
-              </div>
-              <div className="mt-6 border-t border-slate-200 pt-4">
-                <div className="flex justify-between text-base font-bold text-slate-900">
-                  <span>Total</span>
-                  <span>{amountLabel}/mois</span>
-                </div>
-                <p className="mt-2 text-xs text-slate-500">Annulable en tout temps</p>
-              </div>
-            </>
-          ) : (
-            <p className="text-sm text-slate-500">{error}</p>
-          )}
-        </div>
-
-        <ul className="space-y-2 text-sm text-slate-600">
-          <li>🔒 Paiement sécurisé Stripe</li>
-          <li>🔒 Données chiffrées Loi 25</li>
-          <li>↩️ Remboursement si non éligible</li>
-        </ul>
+    <div className="mx-auto max-w-2xl">
+      {/* En-tête */}
+      <div className="mb-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#3EBD93]">Dernière étape</p>
+        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-slate-900">Finaliser mon abonnement</h1>
+        <p className="mt-2 text-sm text-slate-500">Votre traitement sera expédié dans les 24 h suivant le paiement.</p>
       </div>
 
-      {/* Droite — paiement */}
-      <div className="flex flex-col justify-center">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          {cancelled ? (
-            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <p className="text-sm font-semibold text-amber-900">Paiement annulé — réessayer ?</p>
-              <p className="mt-1 text-sm text-amber-800">
-                Aucun montant n&apos;a été débité sur votre carte.
-              </p>
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+        {/* Résumé commande */}
+        <div className="space-y-4">
+          {cancelled && (
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+              <span className="text-lg">⚠️</span>
+              <div>
+                <p className="text-sm font-semibold text-amber-900">Paiement annulé</p>
+                <p className="text-xs text-amber-800">Aucun montant n&apos;a été débité. Vous pouvez réessayer.</p>
+              </div>
             </div>
-          ) : null}
+          )}
 
-          <h2 className="text-xl font-bold text-slate-900">Finaliser mon abonnement</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Vous serez redirigé·e vers Stripe pour un paiement sécurisé par carte.
-          </p>
+          {/* Ordonnance */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Votre ordonnance</p>
+            {fulfillment ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 rounded-xl bg-[#F0F7F4] px-4 py-3">
+                  <span className="text-2xl">💊</span>
+                  <div>
+                    <p className="font-display text-lg font-bold text-[#1D4D3A]">{fulfillment.medication}</p>
+                    <p className="text-sm text-slate-600">Dose : {fulfillment.dosage}</p>
+                  </div>
+                </div>
+                <div className="text-sm text-slate-600">
+                  <span className="font-medium text-slate-800">Prescrit par </span>{fulfillment.ipsName}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">{error}</p>
+            )}
+          </div>
 
-          <button
-            type="button"
-            disabled={loading || !fulfillment || fulfillment.paymentStatus === "PAID"}
-            onClick={() => void payer()}
-            className="mt-8 flex h-14 w-full items-center justify-center rounded-xl bg-[#3EBD93] text-base font-bold text-white transition-colors hover:bg-[#35a882] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading
-              ? "Redirection vers Stripe…"
-              : cancelled
-                ? `Réessayer — ${amountLabel}/mois →`
-                : `Payer ${amountLabel}/mois →`}
-          </button>
+          {/* Détail prix */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Détail de l&apos;abonnement</p>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-600">Médicament GLP-1</span>
+                <span className="font-semibold text-slate-900">{amountLabel}/mois</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-600">Suivi Anne (coach IA)</span>
+                <span className="font-semibold text-emerald-600">Inclus ✓</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-600">Livraison discrète</span>
+                <span className="font-semibold text-emerald-600">Incluse ✓</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-600">Consultations IPS de suivi</span>
+                <span className="font-semibold text-emerald-600">Incluses ✓</span>
+              </div>
+              <div className="border-t border-slate-100 pt-3 flex justify-between text-base font-bold text-slate-900">
+                <span>Total mensuel</span>
+                <span>{amountLabel}/mois</span>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-400">Abonnement mensuel · Annulable en tout temps · Sans frais d&apos;annulation</p>
+          </div>
 
-          {fulfillment?.paymentStatus === "PAID" ? (
-            <p className="mt-4 text-sm font-medium text-[#10B981]">
-              Cette ordonnance est déjà payée.{" "}
-              <Link href="/dashboard/patient" className="underline">
-                Mon espace
+          {/* Garanties */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: "🔒", label: "Stripe sécurisé" },
+              { icon: "🍁", label: "Conforme Loi 25" },
+              { icon: "↩️", label: "Remboursé si refusé" },
+            ].map((g) => (
+              <div key={g.label} className="rounded-xl bg-slate-50 px-3 py-3 text-center">
+                <span className="text-xl">{g.icon}</span>
+                <p className="mt-1 text-[10px] font-semibold leading-tight text-slate-600">{g.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA paiement — sticky */}
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-lg">
+            <div className="mb-4 flex items-end justify-between">
+              <span className="text-sm text-slate-500">Montant</span>
+              <span className="font-display text-3xl font-bold text-slate-900">{amountLabel}<span className="text-base font-medium text-slate-400">/mois</span></span>
+            </div>
+
+            <button
+              type="button"
+              disabled={loading || !fulfillment || fulfillment.paymentStatus === "PAID"}
+              onClick={() => void payer()}
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] text-base font-bold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? (
+                <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> Redirection…</>
+              ) : cancelled ? (
+                <>Réessayer le paiement <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" /></svg></>
+              ) : (
+                <>Payer maintenant <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" /></svg></>
+              )}
+            </button>
+
+            {fulfillment?.paymentStatus === "PAID" && (
+              <p className="mt-4 text-center text-sm font-medium text-emerald-600">
+                ✓ Cette ordonnance est déjà payée.{" "}
+                <Link href="/dashboard/patient" className="font-bold underline">Mon espace</Link>
+              </p>
+            )}
+
+            {error && (
+              <div className="mt-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
+            <div className="mt-5 flex items-center justify-center gap-2 text-xs text-slate-400">
+              <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3"><rect x="1" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M1 7h14" stroke="currentColor" strokeWidth="1.5"/></svg>
+              Paiement traité par Stripe
+            </div>
+
+            <p className="mt-4 text-center text-xs">
+              <Link href="/dashboard/patient" className="font-semibold text-slate-500 hover:text-[#1D4D3A] hover:underline">
+                ← Retourner à mon espace
               </Link>
             </p>
-          ) : null}
-
-          {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
-
-          <p className="mt-6 text-center text-xs text-slate-500">
-            <Link href="/dashboard/patient" className="font-semibold text-[#1D4D3A] hover:underline">
-              Retour à mon espace
-            </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>
