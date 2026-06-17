@@ -82,7 +82,12 @@ export function PatientAiCoachPanel({ compact = false, refreshToken = 0 }: Props
         const line = part.trim();
         if (!line.startsWith("data:")) continue;
 
-        const payload = JSON.parse(line.slice(5).trim()) as StreamEvent;
+        let payload: StreamEvent;
+        try {
+          payload = JSON.parse(line.slice(5).trim()) as StreamEvent;
+        } catch {
+          continue;
+        }
 
         if (payload.type === "user") {
           setMessages((prev) => [

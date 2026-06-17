@@ -76,17 +76,17 @@ export const { handlers, signIn, signOut } = NextAuth({
         }
 
         if (!user) {
-          console.warn("[authorize] user not found:", email);
+          console.warn("[authorize] user not found");
           return null;
         }
         if (!user.passwordHash) {
-          console.warn("[authorize] user has no password hash:", email);
+          console.warn("[authorize] user has no password hash");
           return null;
         }
 
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) {
-          console.warn("[authorize] invalid password for:", email);
+          console.warn("[authorize] invalid password");
           return null;
         }
 

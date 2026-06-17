@@ -103,7 +103,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       bundle.entry.push({ resource: enc });
     
       await logInteropAction({
-        userId: session!.user!.id,
+        userId: session?.user?.id ?? "unknown",
         action: "PatientEverythingRead",
         resourceType: "Patient",
         resourceId: id,

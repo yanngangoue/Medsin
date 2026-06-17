@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     
       const correlationId = interopCorrelationId(req);
       await logInteropAction({
-        userId: session!.user!.id,
+        userId: session?.user?.id ?? "unknown",
         action: "MedicationRequestValidated",
         resourceType: "MedicationRequest",
         resourceId: id,

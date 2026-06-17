@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     
       const traceId = randomUUID();
       await logInteropAction({
-        userId: session!.user!.id,
+        userId: session?.user?.id ?? "unknown",
         action: "PharmacySyncRequested",
         resourceType: "MedicationRequest",
         resourceId: parsed.data.prescriptionFhirId,

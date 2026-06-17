@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       };
     
       await logInteropAction({
-        userId: session!.user!.id,
+        userId: session?.user?.id ?? "unknown",
         action: "PatientCreated",
         resourceType: "Patient",
         resourceId: id,
