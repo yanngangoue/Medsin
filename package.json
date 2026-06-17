@@ -27,7 +27,6 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.102.0",
     "@auth/prisma-adapter": "^2.11.2",
-    "@clerk/clerk-react": "^5.61.6",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
