@@ -11,10 +11,16 @@ function buildContext(q: Input): string {
   const history = q.medicalHistory as Record<string, unknown>;
   const meds = JSON.stringify(q.currentMedications);
   const allergies = JSON.stringify(q.allergies);
+  const clinical = Array.isArray(history.clinicalSummary)
+    ? (history.clinicalSummary as string[]).join("; ")
+    : JSON.stringify([history.health1, history.health2, history.health3]);
   return [
     `Patient : ${q.user.prenom}, ${q.age ?? "?"} ans`,
+    `Sexe : ${String(history.gender ?? "—")}`,
     `IMC ${q.bmi.toFixed(1)}, poids ${q.weight} kg → objectif ${q.targetWeight} kg`,
-    `Maladies chroniques : ${JSON.stringify(history.chronicConditions ?? [])}`,
+    `Antécédents cliniques : ${clinical}`,
+    `Opioïdes récents : ${String(history.opioids3Months ?? "—")}, chirurgie bariatrique : ${String(history.bariatricSurgery ?? "—")}`,
+    `Tension : ${q.bloodPressure ?? "—"}, FC repos : ${String(history.restingHeartRate ?? "—")}`,
     `Médicaments : ${meds}`,
     `Allergies : ${allergies}`,
     `Motivation : ${q.motivations}`,

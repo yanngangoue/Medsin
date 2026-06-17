@@ -23,15 +23,8 @@ export default async function MedicalQuestionnairePage() {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-[#1A1A2E] sm:text-3xl">Questionnaire médical</h1>
-      <p className="mt-2 text-sm text-[#6B7280]">
-        Complétez votre dossier en 6 sections. Vos réponses sont sauvegardées automatiquement toutes
-        les 30 secondes.
-      </p>
-      <div className="mt-8">
-        <MedicalQuestionnaireWizard />
-      </div>
+    <div className="mt-4">
+      <MedicalQuestionnaireWizard />
     </div>
   );
 }

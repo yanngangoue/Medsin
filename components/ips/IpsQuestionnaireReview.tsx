@@ -28,6 +28,7 @@ type QuestionnaireDetail = {
     hasTried: boolean;
     previousAttempts: string | null;
     motivations: string;
+    bloodPressure: string | null;
     ipsNotes: string | null;
     user: { prenom: string; name?: string | null; email: string };
     medicationFulfillment: { id: string } | null;
@@ -47,6 +48,33 @@ const DOSES = ["0,25 mg", "0,5 mg", "1 mg", "1,7 mg", "2,4 mg"];
 const DURATIONS = [1, 2, 3, 6, 12];
 
 type Props = { questionnaireId: string };
+
+function yesNo(v: unknown): string {
+  if (v === "oui") return "Oui";
+  if (v === "non") return "Non";
+  return "—";
+}
+
+function formatMedications(meds: unknown): string {
+  if (!meds) return "Aucun déclaré";
+  if (typeof meds === "string") return meds || "Aucun déclaré";
+  if (Array.isArray(meds)) {
+    const lines = meds
+      .map((m) => {
+        if (typeof m === "object" && m && "name" in m) return String((m as { name: string }).name);
+        return null;
+      })
+      .filter(Boolean);
+    return lines.length ? lines.join("\n") : "Aucun déclaré";
+  }
+  return "Aucun déclaré";
+}
+
+function formatHealthSummary(value: unknown): string {
+  if (!Array.isArray(value) || value.length === 0) return "—";
+  if (value.some((id) => String(id).startsWith("none_health"))) return "Aucune déclarée";
+  return `${value.length} élément(s) coché(s)`;
+}
 
 function CollapsibleSection({
   title,
@@ -95,7 +123,13 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
     setLoading(true);
     const res = await fetch(`/api/ips/questionnaires/${questionnaireId}`);
     if (!res.ok) {
-      setError("Impossible de charger le dossier.");
+      const j = (await res.json().catch(() => ({}))) as { error?: string };
+      setError(
+        res.status === 403
+          ? (j.error ??
+              "Accès refusé — ce dossier est peut-être assigné à une autre IPS. Retournez à la file d'attente.")
+          : (j.error ?? "Impossible de charger le dossier."),
+      );
       setLoading(false);
       return;
     }
@@ -200,9 +234,9 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
 
           <div>
             <h3 className="text-xs font-semibold text-slate-500">Médicaments actuels</h3>
-            <pre className="mt-2 whitespace-pre-wrap font-sans text-xs text-slate-700">
-              {typeof meds === "string" ? meds : JSON.stringify(meds, null, 2) || "Aucun déclaré"}
-            </pre>
+            <p className="mt-2 whitespace-pre-wrap text-sm text-slate-800">
+              {formatMedications(meds)}
+            </p>
           </div>
 
           <div>
@@ -211,18 +245,13 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-slate-500">Antécédents</h3>
+            <h3 className="text-xs font-semibold text-slate-500">Antécédents cliniques</h3>
             <ul className="mt-2 space-y-1 text-sm text-slate-800">
-              <li>
-                Chroniques :{" "}
-                {Array.isArray(history.chronicConditions)
-                  ? (history.chronicConditions as string[]).join(", ") || "Aucune"
-                  : "—"}
-              </li>
-              <li>Chirurgies : {String(history.surgeries || "—")}</li>
-              <li>
-                Hospitalisation récente : {history.recentHospitalization ? "Oui" : "Non"}
-              </li>
+              <li>Conditions graves à dépister : {formatHealthSummary(history.health1)}</li>
+              <li>Antécédents (1/2) : {formatHealthSummary(history.health2)}</li>
+              <li>Antécédents (2/2) : {formatHealthSummary(history.health3)}</li>
+              <li>Opioïdes (3 mois) : {yesNo(history.opioids3Months)}</li>
+              <li>Chirurgie bariatrique : {yesNo(history.bariatricSurgery)}</li>
               <li>GLP-1 antérieur : {q.hasTried ? "Oui" : "Non"}</li>
             </ul>
           </div>
@@ -262,12 +291,7 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
           <div className="space-y-2">
             <h2 className="text-sm font-bold text-slate-900">Questionnaire médical</h2>
             <CollapsibleSection title="Biométrie & objectifs" defaultOpen>
-              <QuestionnaireSectionsView q={{
-                ...q,
-                medicalHistory: q.medicalHistory as import('@prisma/client').Prisma.JsonValue,
-                currentMedications: q.currentMedications as import('@prisma/client').Prisma.JsonValue,
-                allergies: q.allergies as import('@prisma/client').Prisma.JsonValue,
-              }} />
+              <QuestionnaireSectionsView q={q} />
             </CollapsibleSection>
             <CollapsibleSection title="Motivation & mode de vie">
               <p className="text-sm text-slate-700">{q.motivations}</p>

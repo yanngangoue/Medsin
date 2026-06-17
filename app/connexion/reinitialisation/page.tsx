@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/lib/schemas/forgot-password";
+import { useAntiAutofillGuard } from "@/lib/hooks/use-anti-autofill";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
@@ -17,6 +18,7 @@ function ResetPasswordForm() {
   const token = searchParams.get("token") ?? "";
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { unlocked, unlock } = useAntiAutofillGuard();
 
   const {
     register,
@@ -28,6 +30,9 @@ function ResetPasswordForm() {
     mode: "onChange",
     defaultValues: { token: "", password: "", confirmPassword: "" },
   });
+
+  const passwordField = register("password");
+  const confirmField = register("confirmPassword");
 
   useEffect(() => {
     setValue("token", token, { shouldValidate: !!token });
@@ -96,23 +101,40 @@ function ResetPasswordForm() {
           <h1 className="text-xl font-semibold text-slate-900">Nouveau mot de passe</h1>
           <p className="mt-1 text-sm text-slate-600">Choisissez un mot de passe d’au moins 8 caractères.</p>
 
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
+          <form
+            className="mt-8 space-y-5"
+            onSubmit={handleSubmit((d) => void onSubmit(d))}
+            noValidate
+            autoComplete="off"
+          >
             <input type="hidden" {...register("token")} />
             <div>
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input id="password" type="password" autoComplete="new-password" className="h-12" {...register("password")} />
+              <Label htmlFor="medsim-new-password">Mot de passe</Label>
+              <Input
+                id="medsim-new-password"
+                type="password"
+                autoComplete="off"
+                className="h-12"
+                readOnly={!unlocked}
+                {...passwordField}
+                name="medsim-new-password"
+                onFocus={unlock}
+              />
               {errors.password ? (
                 <p className="mt-1 text-[12px] text-red-600/90">{errors.password.message}</p>
               ) : null}
             </div>
             <div>
-              <Label htmlFor="confirmPassword">Confirmation</Label>
+              <Label htmlFor="medsim-confirm-password">Confirmation</Label>
               <Input
-                id="confirmPassword"
+                id="medsim-confirm-password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="off"
                 className="h-12"
-                {...register("confirmPassword")}
+                readOnly={!unlocked}
+                {...confirmField}
+                name="medsim-confirm-password"
+                onFocus={unlock}
               />
               {errors.confirmPassword ? (
                 <p className="mt-1 text-[12px] text-red-600/90">{errors.confirmPassword.message}</p>

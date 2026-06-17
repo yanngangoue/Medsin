@@ -4,7 +4,7 @@ import { z } from "zod";
 import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
 import { requireIpsSession } from "@/lib/ips/auth";
-import { canAccessQuestionnaire } from "@/lib/ips/questionnaire-access";
+import { ensureIpsQuestionnaireAccess } from "@/lib/ips/questionnaire-access";
 import { auditMedicalRecordAccess } from "@/lib/audit-medical";
 import { generateIpsAiSummary } from "@/lib/ips/generate-ai-summary";
 import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
@@ -50,13 +50,19 @@ export async function GET(_req: Request, { params }: Params) {
         return NextResponse.json({ error: "Introuvable", code: "NOT_FOUND" }, { status: 404 });
       }
     
-      if (
-        !canAccessQuestionnaire(questionnaire, {
-          id: session.user.id,
-          role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
-        })
-      ) {
-        return NextResponse.json({ error: "Accès refusé", code: "FORBIDDEN" }, { status: 403 });
+      const access = await ensureIpsQuestionnaireAccess(questionnaire, {
+        id: session.user.id,
+        role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
+      });
+      if (!access.allowed) {
+        return NextResponse.json(
+          {
+            error:
+              "Ce dossier est assigné à une autre IPS. Consultez votre file d'attente sur /dashboard/ips.",
+            code: "FORBIDDEN",
+          },
+          { status: 403 },
+        );
       }
     
       await auditMedicalRecordAccess({
@@ -112,12 +118,11 @@ export async function PATCH(req: Request, { params }: Params) {
         return NextResponse.json({ error: "Introuvable", code: "NOT_FOUND" }, { status: 404 });
       }
     
-      if (
-        !canAccessQuestionnaire(questionnaire, {
-          id: session.user.id,
-          role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
-        })
-      ) {
+      const access = await ensureIpsQuestionnaireAccess(questionnaire, {
+        id: session.user.id,
+        role: session.user.role as "IPS" | "MEDECIN" | "ADMIN",
+      });
+      if (!access.allowed) {
         return NextResponse.json({ error: "Accès refusé", code: "FORBIDDEN" }, { status: 403 });
       }
     

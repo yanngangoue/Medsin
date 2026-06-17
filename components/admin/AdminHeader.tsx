@@ -8,7 +8,8 @@ type Props = {
 };
 
 export function AdminHeader({ prenom, role, title }: Props) {
-  const roleLabel = role === "ADMIN" ? "ADMIN" : "MÉDECIN";
+  const roleLabel =
+    role === "ADMIN" ? "Administrateur" : role === "MEDECIN" ? "Médecin" : role;
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">

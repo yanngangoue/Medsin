@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireIpsSession } from "@/lib/ips/auth";
-import { ipsQuestionnaireListFilter } from "@/lib/ips/questionnaire-access";
+import { ipsQuestionnaireListFilterForUser } from "@/lib/ips/questionnaire-access";
 import { patientDisplayName, patientInitials } from "@/lib/ips/queue-utils";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +10,7 @@ export default async function IpsPatientsPage() {
   const session = await requireIpsSession();
   if (!session) redirect("/connexion?callbackUrl=/dashboard/ips/patients");
 
-  const accessFilter = ipsQuestionnaireListFilter(
+  const accessFilter = await ipsQuestionnaireListFilterForUser(
     session.user.id,
     session.user.role as "IPS" | "MEDECIN" | "ADMIN",
   );

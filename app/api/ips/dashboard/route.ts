@@ -1,7 +1,7 @@
 import { catchRouteError } from "@/lib/api/catch-route-error";
 import { NextResponse } from "next/server";
 import { requireIpsSession } from "@/lib/ips/auth";
-import { ipsQuestionnaireListFilter } from "@/lib/ips/questionnaire-access";
+import { ipsQuestionnaireListFilterForUser } from "@/lib/ips/questionnaire-access";
 import { computeUrgentFromCheckIns, type QueueQuestionnaire } from "@/lib/ips/queue-utils";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
@@ -24,7 +24,7 @@ export async function GET() {
         });
       }
     
-      const accessFilter = ipsQuestionnaireListFilter(
+      const accessFilter = await ipsQuestionnaireListFilterForUser(
         session.user.id,
         session.user.role as "IPS" | "MEDECIN" | "ADMIN",
       );

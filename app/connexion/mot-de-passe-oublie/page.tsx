@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { forgotPasswordRequestSchema, type ForgotPasswordRequestValues } from "@/lib/schemas/forgot-password";
+import { useAntiAutofillGuard } from "@/lib/hooks/use-anti-autofill";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
@@ -16,6 +17,8 @@ function ForgotPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const { unlocked, unlock } = useAntiAutofillGuard();
+
   const {
     register,
     handleSubmit,
@@ -25,6 +28,8 @@ function ForgotPasswordForm() {
     mode: "onChange",
     defaultValues: { email: "" },
   });
+
+  const emailField = register("email");
 
   async function onSubmit(data: ForgotPasswordRequestValues) {
     setError(null);
@@ -107,10 +112,28 @@ function ForgotPasswordForm() {
             Saisissez le courriel associé à votre compte MedSim. Nous vous indiquerons la suite.
           </p>
 
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit((d) => void onSubmit(d))} noValidate>
+          <form
+            className="mt-8 space-y-5"
+            onSubmit={handleSubmit((d) => void onSubmit(d))}
+            noValidate
+            autoComplete="off"
+          >
             <div>
-              <Label htmlFor="email">Courriel</Label>
-              <Input id="email" type="email" autoComplete="email" className="h-12" {...register("email")} />
+              <Label htmlFor="medsim-forgot-email">Courriel</Label>
+              <Input
+                id="medsim-forgot-email"
+                type="email"
+                inputMode="email"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                className="h-12"
+                readOnly={!unlocked}
+                {...emailField}
+                name="medsim-forgot-email"
+                onFocus={unlock}
+              />
               {errors.email ? (
                 <p className="mt-1 text-[12px] text-red-600/90">{errors.email.message}</p>
               ) : null}

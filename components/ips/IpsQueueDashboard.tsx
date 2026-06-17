@@ -88,8 +88,8 @@ export function IpsQueueDashboard() {
       ) : (
         <>
           <header>
-            <h1 className="text-2xl font-black text-slate-900 sm:text-3xl">
-              Bonjour Dr. {data?.practitionerName ?? "…"} 👋
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+              Bonjour, {data?.practitionerName ?? "…"}
             </h1>
             <p className="mt-2 text-sm text-slate-600">
               <span className="font-semibold text-slate-800">
@@ -98,9 +98,9 @@ export function IpsQueueDashboard() {
               </span>
               <span className="text-slate-400"> · </span>
               <span>
-                {data?.stats.anneReportsUnread ?? 0} rapport
-                {(data?.stats.anneReportsUnread ?? 0) > 1 ? "s" : ""} Anne non lu
-                {(data?.stats.anneReportsUnread ?? 0) > 1 ? "s" : ""}
+                {(data?.stats.anneReportsUnread ?? 0) === 0
+                  ? "Aucun rapport Anne non lu"
+                  : `${data?.stats.anneReportsUnread} rapport${(data?.stats.anneReportsUnread ?? 0) > 1 ? "s" : ""} Anne non lu${(data?.stats.anneReportsUnread ?? 0) > 1 ? "s" : ""}`}
               </span>
             </p>
           </header>
@@ -168,9 +168,6 @@ export function IpsQueueDashboard() {
                                 {q.medicationRequested}
                               </span>
                             ) : null}
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700">
-                              IMC {q.bmi.toFixed(1)}
-                            </span>
                             {q.isUrgent ? (
                               <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">
                                 Urgent

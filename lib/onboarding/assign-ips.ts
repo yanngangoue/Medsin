@@ -9,17 +9,7 @@ export async function assignIpsToQuestionnaire(questionnaireId: string): Promise
   });
 
   if (ipsUsers.length === 0) {
-    const medecin = await prisma.user.findFirst({
-      where: { role: "MEDECIN" },
-      select: { id: true },
-      orderBy: { createdAt: "asc" },
-    });
-    if (!medecin) return null;
-    await prisma.medicalQuestionnaire.update({
-      where: { id: questionnaireId },
-      data: { ipsId: medecin.id },
-    });
-    return medecin.id;
+    return null;
   }
 
   const counts = await prisma.medicalQuestionnaire.groupBy({

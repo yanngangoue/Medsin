@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 const DEMO_KPIS = [
@@ -67,14 +68,13 @@ function InclusionCard({
     <li className="overflow-hidden rounded-[20px] bg-[#F5F4F0] shadow-sm ring-1 ring-black/5 sm:rounded-[24px]">
       <div className="flex min-h-[9.5rem] flex-col sm:min-h-[10.5rem] sm:flex-row">
         <div className="relative h-36 w-full shrink-0 overflow-hidden sm:h-auto sm:w-[38%] sm:min-h-[10.5rem]">
-          <img
+          <Image
             src={image}
             alt={imageAlt}
-            width={800}
-            height={800}
-            loading="eager"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center"
+            fill
+            sizes="(max-width: 640px) 100vw, 38vw"
+            className="object-cover object-center"
+            priority
           />
         </div>
         <div className="flex flex-1 flex-col justify-center px-5 py-4 text-left sm:px-6 sm:py-5">
@@ -88,15 +88,15 @@ function InclusionCard({
 
 function TrendBadge({ trend }: { trend: "up" | "down" | "neutral" }) {
   if (trend === "neutral") return null;
-  const isUp = trend === "up";
+  const isPositive = trend === "up";
   return (
     <span
       className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-        isUp ? "bg-emerald-100 text-emerald-700" : "bg-emerald-100 text-emerald-700"
+        isPositive ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-800"
       }`}
       aria-hidden
     >
-      {isUp ? "↑" : "↓"}
+      {isPositive ? "↑" : "↓"}
     </span>
   );
 }

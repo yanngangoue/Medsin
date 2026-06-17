@@ -14,6 +14,13 @@ type Conversation = {
   unreadCount: number;
 };
 
+function formatListTime(iso: string): string {
+  return new Date(iso).toLocaleString("fr-CA", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
 export default function AdminMessagesPage() {
   const { data: session } = useSession();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -25,12 +32,10 @@ export default function AdminMessagesPage() {
     if (res.ok) {
       const data = (await res.json()) as { conversations: Conversation[] };
       setConversations(data.conversations);
-      if (!selectedId && data.conversations[0]) {
-        setSelectedId(data.conversations[0].patientId);
-      }
+      setSelectedId((prev) => prev ?? data.conversations[0]?.patientId ?? null);
     }
     setLoading(false);
-  }, [selectedId]);
+  }, []);
 
   useEffect(() => {
     void load();
@@ -42,8 +47,8 @@ export default function AdminMessagesPage() {
   const staffId = session?.user?.id ?? "";
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-8rem)] max-w-6xl flex-col px-4 py-6 sm:px-6 md:flex-row md:gap-4">
-      <aside className="mb-4 flex max-h-48 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:mb-0 md:max-h-none md:w-80 md:shrink-0">
+    <div className="mx-auto flex min-h-[calc(100dvh-7rem)] max-w-6xl flex-col px-4 py-4 sm:px-6 md:flex-row md:gap-4 md:py-6">
+      <aside className="mb-3 flex max-h-56 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:mb-0 md:max-h-none md:h-full md:min-h-[28rem] md:w-80 md:shrink-0">
         <div className="border-b border-slate-100 px-4 py-3">
           <h1 className="font-semibold text-slate-900">Messages</h1>
         </div>
@@ -71,9 +76,7 @@ export default function AdminMessagesPage() {
                     ) : null}
                   </div>
                   <p className="mt-0.5 line-clamp-1 text-xs text-slate-600">{c.lastMessage}</p>
-                  <p className="text-[10px] text-slate-400">
-                    {new Date(c.lastAt).toLocaleString("fr-CA")}
-                  </p>
+                  <p className="text-[10px] text-slate-400">{formatListTime(c.lastAt)}</p>
                 </button>
               </li>
             ))
@@ -81,10 +84,10 @@ export default function AdminMessagesPage() {
         </ul>
       </aside>
 
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-[24rem] flex-1 flex-col md:min-h-0">
         {selected && staffId ? (
           <>
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-2 flex shrink-0 items-center justify-between">
               <p className="font-semibold text-slate-900">{selected.patientName}</p>
               <Link
                 href={`/admin/patients/${selected.patientId}`}
@@ -102,7 +105,7 @@ export default function AdminMessagesPage() {
             </div>
           </>
         ) : (
-          <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center text-slate-500">
+          <p className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center text-slate-500">
             Sélectionnez une conversation.
           </p>
         )}

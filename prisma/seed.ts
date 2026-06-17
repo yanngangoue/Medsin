@@ -12,6 +12,8 @@ import {
 import { GLP1_WEIGHT_GOAL_OPTIONS } from "../lib/patient/glp1-weight-goal";
 import type { Glp1EligibilityAnswers } from "../lib/patient/glp1-eligibility-questions";
 import { GLP1_HEALTH_NONE_IDS } from "../lib/patient/glp1-eligibility-questions";
+import { toPrismaMedicalQuestionnaire } from "../lib/onboarding/medical-questionnaire-map";
+import type { MedicalQuestionnaireV2 } from "../lib/schemas/medical-questionnaire-v2";
 
 const prisma = new PrismaClient();
 
@@ -30,6 +32,12 @@ const STAFF = [
     password: "Test1234!",
     role: "IPS" as const,
     license: "IPS-9001",
+  },
+  {
+    prenom: "Pharmacien Demo",
+    email: "pharmacien@medsim.ca",
+    password: "Pharmacien2026!",
+    role: "PHARMACIEN" as const,
   },
 ];
 
@@ -268,7 +276,7 @@ async function upsertPatients(medecinId: string) {
 async function seedMessages(medecinId: string, patients: { id: string; prenom: string }[]) {
   const samples = [
     "Bonjour, j'ai complété mon questionnaire GLP-1.",
-    "Merci docteur, j'ai une question sur mon traitement.",
+    "Merci, j'ai une question sur mon traitement.",
     "Puis-je avoir des précisions sur la prochaine étape ?",
   ];
 
@@ -297,6 +305,95 @@ async function seedMessages(medecinId: string, patients: { id: string; prenom: s
   console.log("✓ Messages médecin ↔ patients");
 }
 
+function sampleMedicalQuestionnaire(
+  overrides: Partial<MedicalQuestionnaireV2> = {},
+): MedicalQuestionnaireV2 {
+  return {
+    gender: "female",
+    birthMonth: "Mars",
+    birthDay: "12",
+    birthYear: "1988",
+    height: 165,
+    weight: 88,
+    targetWeight: 72,
+    health1: [GLP1_HEALTH_NONE_IDS.health1],
+    health2: [GLP1_HEALTH_NONE_IDS.health2],
+    health3: [GLP1_HEALTH_NONE_IDS.health3],
+    opioids3Months: "non",
+    bariatricSurgery: "non",
+    prescriptionMeds: "non",
+    bloodPressure: "normal",
+    restingHeartRate: "normal",
+    medications: [{ name: "Metformine 500 mg, 2×/jour" }],
+    allergies: "Aucune connue",
+    triedWeightLoss: true,
+    previousResults: "Régime hypocalorique — perte d'environ 5 kg en 6 mois.",
+    motivation: "Améliorer ma santé métabolique et retrouver de l'énergie.",
+    medicationPreference: "none",
+    activityDays: "1-2",
+    tobacco: "never",
+    alcohol: "occasional",
+    sleepHours: 7,
+    stressLevel: 3,
+    consentMedical: true,
+    consentDataSharing: true,
+    consentAiCoach: true,
+    consentPrivacy: true,
+    ...overrides,
+  };
+}
+
+async function seedMedicalQuestionnaires(ipsId: string) {
+  const targets: { email: string; overrides?: Partial<MedicalQuestionnaireV2> }[] = [
+    { email: "sophie.eligible@medsim.ca" },
+    {
+      email: "marc.eligible@medsim.ca",
+      overrides: {
+        gender: "male",
+        height: 178,
+        weight: 102,
+        targetWeight: 85,
+        motivation: "Mon médecin m'a recommandé un suivi GLP-1 pour mon IMC.",
+      },
+    },
+    {
+      email: "nadia.attente@medsim.ca",
+      overrides: {
+        weight: 95,
+        height: 162,
+        health2: ["hypertension"],
+      },
+    },
+  ];
+
+  let created = 0;
+  for (const { email, overrides } of targets) {
+    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+    if (!user) continue;
+
+    const existing = await prisma.medicalQuestionnaire.findFirst({
+      where: { userId: user.id, status: { not: "DRAFT" } },
+    });
+    if (existing) continue;
+
+    const payload = sampleMedicalQuestionnaire(overrides);
+    const data = toPrismaMedicalQuestionnaire(user.id, payload);
+    await prisma.medicalQuestionnaire.create({
+      data: {
+        ...data,
+        ipsId,
+        status: "SUBMITTED",
+        createdAt: new Date(Date.now() - created * 3600_000 * 4),
+      },
+    });
+    created += 1;
+  }
+
+  if (created > 0) {
+    console.log(`✓ ${created} questionnaire(s) médical(aux) pour file IPS`);
+  }
+}
+
 async function main() {
   console.log("Seed MedSim…\n");
   await upsertStaff();
@@ -307,11 +404,16 @@ async function main() {
   const patients = await upsertPatients(medecin.id);
   await seedMessages(medecin.id, patients);
 
+  const ips = await prisma.user.findUnique({ where: { email: "ips-test@medsim.ca" } });
+  if (ips) await seedMedicalQuestionnaires(ips.id);
+
   console.log("\nComptes de test :");
   console.log("  admin@medsim.ca / Admin2026!");
   console.log("  medecin@medsim.ca / Medecin2026!");
   console.log("  ips-test@medsim.ca / Test1234!");
+  console.log("  pharmacien@medsim.ca / Pharmacien2026!");
   console.log("  Patients : *@medsim.ca / Patient2026!");
+  console.log("\nAccès démo équipe (dev) : http://localhost:3001/acces-equipe");
 }
 
 main()

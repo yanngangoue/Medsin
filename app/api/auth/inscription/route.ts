@@ -1,6 +1,7 @@
 import { catchRouteError } from "@/lib/api/catch-route-error";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { staffEmailDomain } from "@/lib/admin/staff-email";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { isDemoMode } from "@/lib/is-demo-mode";
@@ -36,6 +37,18 @@ export async function POST(req: Request) {
       }
     
       const email = parsed.data.email.trim().toLowerCase();
+      const staffDomain = staffEmailDomain();
+
+      if (email.endsWith(`@${staffDomain}`)) {
+        return NextResponse.json(
+          {
+            error:
+              "Les courriels professionnels MedSim sont réservés à l'équipe. Utilisez votre courriel personnel ou contactez l'administrateur.",
+            code: "FORBIDDEN",
+          },
+          { status: 403 },
+        );
+      }
     
       try {
       if (isDemoMode()) {

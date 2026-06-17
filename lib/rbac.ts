@@ -4,7 +4,7 @@ export const ROLE_HOME: Record<Role, string> = {
   PATIENT: "/dashboard/patient",
   IPS: "/dashboard/ips",
   PHARMACIEN: "/pharmacien",
-  MEDECIN: "/medecin",
+  MEDECIN: "/medecin/file",
   NUTRITIONNISTE: "/nutritionniste",
   ADMIN: "/admin",
 };

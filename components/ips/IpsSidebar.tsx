@@ -8,17 +8,17 @@ import { MedsimLogo } from "@/components/MedsimLogo";
 type NavItem = {
   href: string;
   label: string;
-  icon: string;
+  short: string;
   badgeKey?: "queue" | "chat";
   exact?: boolean;
 };
 
 const NAV: NavItem[] = [
-  { href: "/dashboard/ips", label: "File d'attente", icon: "📋", badgeKey: "queue", exact: true },
-  { href: "/dashboard/ips/patients", label: "Mes patients", icon: "👥" },
-  { href: "/dashboard/ips/clavardage", label: "Clavardage", icon: "💬", badgeKey: "chat" },
-  { href: "/dashboard/ips/rapports", label: "Rapports Anne", icon: "📊" },
-  { href: "/dashboard/ips/parametres", label: "Paramètres", icon: "⚙️" },
+  { href: "/dashboard/ips", label: "File d'attente", short: "File", badgeKey: "queue", exact: true },
+  { href: "/dashboard/ips/patients", label: "Mes patients", short: "Patients" },
+  { href: "/dashboard/ips/clavardage", label: "Clavardage", short: "Chat", badgeKey: "chat" },
+  { href: "/dashboard/ips/rapports", label: "Rapports Anne", short: "Rapports" },
+  { href: "/dashboard/ips/parametres", label: "Paramètres", short: "Réglages" },
 ];
 
 type Stats = {
@@ -93,8 +93,13 @@ export function IpsSidebar({ stats, onNavigate }: Props) {
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
-              <span className="text-base" aria-hidden>
-                {item.icon}
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold uppercase ${
+                  active ? "bg-[#1D4D3A]/15 text-[#1D4D3A]" : "bg-slate-100 text-slate-500"
+                }`}
+                aria-hidden
+              >
+                {item.short.slice(0, 2)}
               </span>
               <span className="flex-1 leading-snug">{label}</span>
               {badge != null && item.badgeKey === "chat" ? (

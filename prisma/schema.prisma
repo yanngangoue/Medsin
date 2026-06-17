@@ -166,7 +166,11 @@ model User {
   anneReportsAsPatient         AnneIpsReport[]        @relation("AnneReportsPatient")
   anneReportsAsIps             AnneIpsReport[]        @relation("AnneReportsIps")
 
+  pharmacyPartnerId String?
+  pharmacyPartner   PharmacyPartner? @relation(fields: [pharmacyPartnerId], references: [id], onDelete: SetNull)
+
   @@index([role])
+  @@index([pharmacyPartnerId])
 }
 
 /** Consentement explicite Loi 25 — données comportement alimentaire / métabolique. */
@@ -606,6 +610,7 @@ model PharmacyPartner {
   isActive    Boolean                 @default(true)
   createdAt   DateTime                @default(now())
   fulfillments MedicationFulfillment[]
+  staffUsers  User[]
 }
 
 /** Livraison médicament + paiement (distinct de Prescription médicale legacy). */

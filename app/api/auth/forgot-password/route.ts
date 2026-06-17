@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     message: GENERIC_MSG,
   };
 
-  if (process.env.MEDSIM_DEV_PASSWORD_RESET === "true" && userFound && rawToken) {
+  if (process.env.NODE_ENV === "development" && process.env.MEDSIM_DEV_PASSWORD_RESET === "true" && userFound && rawToken) {
     payload.devResetUrl = `${appBaseUrl(req)}/connexion/reinitialisation?token=${encodeURIComponent(rawToken)}`;
   }
 

@@ -76,6 +76,7 @@ updates.set("NEXT_PUBLIC_APP_URL", isProdPush ? PROD_URL : LOCAL_URL);
 updates.set("MEDSIM_DEMO_MODE", "false");
 updates.set("MEDSIM_DEV_PASSWORD_RESET", "false");
 updates.set("MEDSIM_ENABLE_DEV_INTEROP_PAGE", "false");
+updates.set("MEDSIM_STAFF_EMAIL_DOMAIN", map.get("MEDSIM_STAFF_EMAIL_DOMAIN")?.trim() || "medsim.ca");
 
 for (const key of GENERATE_KEYS) {
   const current = map.get(key)?.trim() ?? "";

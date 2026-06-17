@@ -15,9 +15,26 @@ type Props = {
   peerId: string;
   currentUserId: string;
   title?: string;
+  /** Pleine hauteur dans les pages messagerie admin/médecin */
+  expanded?: boolean;
+  /** Masque la bordure externe si le parent fournit déjà un cadre */
+  borderless?: boolean;
 };
 
-export function MessageThread({ peerId, currentUserId, title = "Messagerie" }: Props) {
+function formatMessageTime(iso: string): string {
+  return new Date(iso).toLocaleString("fr-CA", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+export function MessageThread({
+  peerId,
+  currentUserId,
+  title = "Messagerie",
+  expanded = false,
+  borderless = false,
+}: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,13 +84,21 @@ export function MessageThread({ peerId, currentUserId, title = "Messagerie" }: P
     }
   }
 
+  const shellClass = borderless
+    ? "flex h-full min-h-0 flex-col"
+    : "flex flex-col rounded-2xl border border-slate-200 bg-white";
+
+  const listClass = expanded
+    ? "flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4"
+    : "flex max-h-72 min-h-48 flex-col gap-3 overflow-y-auto p-4";
+
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-100 px-4 py-3">
+    <div className={shellClass}>
+      <div className="shrink-0 border-b border-slate-100 px-4 py-3">
         <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
         <p className="text-[11px] text-slate-500">Actualisation automatique toutes les 30 s</p>
       </div>
-      <div className="flex max-h-72 min-h-48 flex-col gap-2 overflow-y-auto p-4">
+      <div className={listClass}>
         {loading ? (
           <p className="text-center text-sm text-slate-500">Chargement…</p>
         ) : messages.length === 0 ? (
@@ -83,20 +108,26 @@ export function MessageThread({ peerId, currentUserId, title = "Messagerie" }: P
             const mine = m.senderId === currentUserId;
             return (
               <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                    mine ? "bg-[#16a34a] text-white" : "bg-slate-100 text-slate-800"
-                  }`}
-                >
-                  {m.content}
+                <div className={`max-w-[85%] ${mine ? "text-right" : "text-left"}`}>
+                  <div
+                    className={`inline-block rounded-2xl px-3 py-2 text-sm ${
+                      mine ? "bg-[#16a34a] text-white" : "bg-slate-100 text-slate-800"
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                  <p className="mt-1 text-[10px] text-slate-400">{formatMessageTime(m.createdAt)}</p>
                 </div>
               </div>
             );
           })
         )}
       </div>
-      {error ? <p className="px-4 text-xs text-red-600">{error}</p> : null}
-      <form onSubmit={(e) => void send(e)} className="flex gap-2 border-t border-slate-100 p-3">
+      {error ? <p className="shrink-0 px-4 text-xs text-red-600">{error}</p> : null}
+      <form
+        onSubmit={(e) => void send(e)}
+        className="flex shrink-0 gap-2 border-t border-slate-100 p-3"
+      >
         <input
           value={content}
           onChange={(e) => setContent(e.target.value)}
