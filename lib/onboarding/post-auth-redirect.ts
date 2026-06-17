@@ -44,5 +44,5 @@ export function resolvePatientPostAuthPath(options: {
     return "/questionnaire";
   }
 
-  return "/eligibilite";
+  return "/dashboard/patient";
 }

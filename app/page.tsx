@@ -6,16 +6,16 @@ export default async function HomePage() {
   let session = null;
   try {
     session = await auth();
-  } catch (e) {
-    console.error("[HomePage] auth() failed:", e);
+  } catch {
+    // auth() peut échouer si NEXTAUTH_URL est mal configuré — la page s'affiche quand même
   }
 
   if (session?.user?.role === "PATIENT" && session.user.id) {
     let hubContext = null;
     try {
       hubContext = await loadPatientHubContext(session.user.id);
-    } catch (e) {
-      console.error("[HomePage] loadPatientHubContext failed:", e);
+    } catch {
+      // La page s'affiche en mode public si le contexte patient est indisponible
     }
     if (hubContext) {
       return (
