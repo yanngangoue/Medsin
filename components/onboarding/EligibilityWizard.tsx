@@ -199,7 +199,7 @@ export function EligibilityWizard() {
                 <span className="font-display text-6xl font-bold text-[#1D4D3A]">{age}</span>
                 <span className="text-2xl font-medium text-slate-400"> ans</span>
               </div>
-              <input type="range" min={18} max={85} value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-full cursor-pointer accent-[#1D4D3A]" />
+              <input type="range" min={18} max={85} value={age} onChange={(e) => setAge(Number(e.target.value))} className="h-11 w-full cursor-pointer accent-[#1D4D3A]" />
               <div className="mt-2 flex justify-between text-xs text-slate-400"><span>18 ans</span><span>85 ans</span></div>
             </div>
           </Slide>

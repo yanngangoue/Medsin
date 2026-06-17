@@ -75,17 +75,17 @@ function EligibiliteResultatContent() {
         </p>
 
         {/* Étapes visuelles */}
-        <div className="mt-7 grid grid-cols-3 gap-3">
+        <div className="mt-7 grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { n: "1", label: "Créer votre compte", done: true },
             { n: "2", label: "Questionnaire médical", done: false },
             { n: "3", label: "Évaluation IPS", done: false },
           ].map((s) => (
-            <div key={s.n} className={`rounded-2xl p-3 ${s.done ? "bg-[#F0F7F4]" : "bg-slate-50"}`}>
-              <span className={`text-xs font-bold ${s.done ? "text-[#1D4D3A]" : "text-slate-400"}`}>
+            <div key={s.n} className={`rounded-xl p-2.5 ${s.done ? "bg-[#F0F7F4]" : "bg-slate-50"}`}>
+              <span className={`text-[10px] font-bold ${s.done ? "text-[#1D4D3A]" : "text-slate-400"}`}>
                 Étape {s.n}
               </span>
-              <p className="mt-0.5 text-[11px] leading-snug text-slate-600">{s.label}</p>
+              <p className="mt-0.5 text-[10px] leading-snug text-slate-600">{s.label}</p>
             </div>
           ))}
         </div>
