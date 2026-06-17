@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     const { prenom, nom, email, sujet, message } = parsed.data;
-    const adminEmail = process.env.MEDSIM_ADMIN_EMAIL?.trim() ?? "gangoueyann3@gmail.com";
+    const adminEmail = process.env.MEDSIM_ADMIN_EMAIL?.trim() ?? "support@medsim.ca";
 
     await sendEmail({
       to: adminEmail,

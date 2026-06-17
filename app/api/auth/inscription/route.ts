@@ -8,6 +8,7 @@ import { isDemoMode } from "@/lib/is-demo-mode";
 import { demoCreateUser, demoUserExists } from "@/lib/demo-store";
 import { writeAuditLog } from "@/lib/audit";
 import { resetLoginRateLimitForKey } from "@/lib/login-rate-limit";
+import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
 
 function clientIp(req: Request): string | null {
   const xf = req.headers.get("x-forwarded-for");
@@ -24,6 +25,13 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   return catchRouteError("auth/inscription/POST", async () => {
+    if (!checkApiRateLimit("inscription", clientIp(req), 10)) {
+      return NextResponse.json(
+        { error: "Trop de tentatives. Réessayez dans 15 minutes.", code: "RATE_LIMITED" },
+        { status: 429 },
+      );
+    }
+
     let body: unknown;
       try {
         body = await req.json();

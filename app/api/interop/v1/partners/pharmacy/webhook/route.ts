@@ -20,8 +20,8 @@ const bodySchema = z.object({
 export async function POST(req: NextRequest) {
   return catchRouteError("interop/v1/partners/pharmacy/webhook/POST", async () => {
     const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-      const expected = process.env.MEDSIM_PARTNER_WEBHOOK_SECRET;
-      if (expected && token !== expected) {
+      const expected = process.env.MEDSIM_PARTNER_WEBHOOK_SECRET?.trim();
+      if (!expected || token !== expected) {
         return interopError(401, "webhook-auth", "Jeton partenaire invalide");
       }
     

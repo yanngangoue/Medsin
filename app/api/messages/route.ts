@@ -4,9 +4,17 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { unauthorized, badRequest, forbidden } from "@/lib/api-errors";
 import { sendMessageSchema } from "@/lib/schemas/message";
+import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
 
 export async function POST(req: Request) {
   return catchRouteError("messages/POST", async () => {
+    if (!checkApiRateLimit("messages", clientIp(req), 30)) {
+      return NextResponse.json(
+        { error: "Trop de messages. Réessayez dans 15 minutes.", code: "RATE_LIMITED" },
+        { status: 429 },
+      );
+    }
+
     const user = await getSessionUser();
       if (!user) return unauthorized();
     

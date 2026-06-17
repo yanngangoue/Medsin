@@ -6,6 +6,7 @@ import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
 import { getStripe, stripeErrorMessage } from "@/lib/stripe/client";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
 
 type CheckoutBody = {
   fulfillmentId?: string;
@@ -14,6 +15,13 @@ type CheckoutBody = {
 export async function POST(req: Request) {
   return catchRouteError("stripe/checkout/POST", async () => {
     try {
+        if (!checkApiRateLimit("stripe-checkout", clientIp(req), 5)) {
+          return NextResponse.json(
+            { error: "Trop de tentatives. Réessayez dans 15 minutes.", code: "RATE_LIMITED" },
+            { status: 429 },
+          );
+        }
+
         const user = await getSessionUser();
         if (!user) return unauthorized();
         if (user.role !== "PATIENT") return forbidden();
