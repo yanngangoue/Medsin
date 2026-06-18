@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loginIPS } from '../../api/mockApi'
+import { loginWithCredentials } from '../../api/mockApi'
 import { useApp } from '../../context/AppContext'
 import Layout from '../../components/Layout'
 
@@ -13,9 +13,9 @@ export default function IPSLoginPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const user = loginIPS(email)
+    const user = loginWithCredentials(email, password)
     if (!user) {
-      setError('Identifiants invalides. Email: ips@medsim.ca / Mot de passe: demo123')
+      setError('Identifiants invalides. Vérifiez votre courriel et mot de passe.')
       return
     }
     setUser(user)
@@ -33,7 +33,7 @@ export default function IPSLoginPage() {
           </div>
 
           <div className="alert alert-info">
-            <strong>Démo :</strong> ips@medsim.ca / demo123
+            <strong>Démo :</strong> ips@anne.ca / demo123
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
@@ -44,7 +44,7 @@ export default function IPSLoginPage() {
                 className="form-control"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError('') }}
-                placeholder="ips@medsim.ca"
+                placeholder="ips@anne.ca"
                 autoComplete="email"
               />
             </div>

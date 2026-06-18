@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 import { getCurrentUser, logout as apiLogout } from '../api/mockApi'
 import type { User } from '../types'
 
@@ -11,11 +11,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-
-  useEffect(() => {
-    setUser(getCurrentUser())
-  }, [])
+  const [user, setUser] = useState<User | null>(() => getCurrentUser())
 
   function logout() {
     apiLogout()

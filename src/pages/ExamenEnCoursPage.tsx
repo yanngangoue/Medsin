@@ -14,7 +14,7 @@ export default function ExamenEnCoursPage() {
     if (!id) return
     const updated = getQuestionnaireById(id)
     setQuestionnaire(updated)
-    if (updated?.status === 'approved') return
+    if (updated?.status === 'approved') { navigate('/paiement'); return }
     if (updated?.status === 'rejected') return
   }
 
@@ -104,7 +104,7 @@ export default function ExamenEnCoursPage() {
               Accéder au tableau de bord IPS →
             </Link>
             <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--gray-500)' }}>
-              Connexion : ips@medsim.ca / demo123
+              Connexion : ips@anne.ca / demo123
             </p>
           </div>
         </div>

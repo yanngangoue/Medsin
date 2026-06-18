@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { registerUser } from '../api/mockApi'
+import { registerUser, loginWithCredentials } from '../api/mockApi'
 import { useApp } from '../context/AppContext'
 import Layout from '../components/Layout'
 
@@ -15,7 +15,7 @@ interface FormData {
 
 export default function InscriptionPage() {
   const navigate = useNavigate()
-  const { setUser } = useApp()
+  const { user, setUser } = useApp()
   const [form, setForm] = useState<FormData>({
     prenom: '',
     nom: '',
@@ -51,14 +51,16 @@ export default function InscriptionPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) return
-    const user = registerUser({
+    registerUser({
       prenom: form.prenom.trim(),
       nom: form.nom.trim(),
       email: form.email.trim(),
       telephone: form.telephone.trim(),
+      password: form.password,
       role: 'patient',
     })
-    setUser(user)
+    const loggedIn = loginWithCredentials(form.email.trim(), form.password)
+    setUser(loggedIn)
     navigate('/questionnaire')
   }
 
