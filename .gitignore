@@ -10,6 +10,8 @@
 
 # testing
 /coverage
+/test-screenshots/
+/stripe-test-screenshots/
 
 # next.js
 /.next/
