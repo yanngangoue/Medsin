@@ -209,7 +209,7 @@ export function ExamenEnCoursPanel() {
             Votre dossier est en révision
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            Une IPS MedSim examine votre questionnaire. Délai habituel : <strong className="text-slate-700">24–48 heures</strong>.
+            Une IPS Anne Santé examine votre questionnaire. Délai habituel : <strong className="text-slate-700">24–48 heures</strong>.
           </p>
         </div>
 

@@ -52,7 +52,7 @@ export function AdminSidebar({ role }: { role?: string }) {
     <>
       <aside className="hidden w-56 shrink-0 flex-col border-r border-slate-200 bg-white md:flex">
         <div className="border-b border-slate-100 px-4 py-5">
-          <Link href="/admin/dashboard" aria-label="MedSim — administration">
+          <Link href="/admin/dashboard" aria-label="Anne Santé — administration">
             <MedsimLogo />
           </Link>
           <p className="mt-0.5 text-xs text-slate-500">Espace d&apos;administration clinique</p>

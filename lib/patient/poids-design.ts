@@ -1,4 +1,4 @@
-/** Tokens UI — suivi poids MedSim (étape 3 design). */
+/** Tokens UI — suivi poids Anne Santé (étape 3 design). */
 export const POIDS_BRAND = {
   primary: "#1D4D3A",
   primaryHover: "#163d2f",

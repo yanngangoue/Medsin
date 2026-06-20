@@ -92,7 +92,7 @@ export function ContactForm() {
         {sending ? "Envoi en cours…" : "Envoyer le message"}
       </Button>
       <p className="text-xs text-slate-500">
-        En envoyant ce formulaire, vous acceptez que MedSim traite vos renseignements conformément à
+        En envoyant ce formulaire, vous acceptez que Anne Santé traite vos renseignements conformément à
         notre{" "}
         <a href="/confidentialite" className="underline hover:text-slate-800">
           politique de confidentialité

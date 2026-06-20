@@ -109,7 +109,7 @@ function ForgotPasswordForm() {
         <Card>
           <h1 className="text-xl font-semibold text-slate-900">Mot de passe oublié</h1>
           <p className="mt-1 text-sm text-slate-600">
-            Saisissez le courriel associé à votre compte MedSim. Nous vous indiquerons la suite.
+            Saisissez le courriel associé à votre compte Anne Santé. Nous vous indiquerons la suite.
           </p>
 
           <form

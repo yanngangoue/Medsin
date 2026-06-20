@@ -4,7 +4,7 @@ import { EligibilityWizard } from "@/components/onboarding/EligibilityWizard";
 export const metadata: Metadata = {
   title: "Suis-je éligible ?",
   description:
-    "Vérifiez votre admissibilité au programme GLP-1 MedSim en quelques minutes — sans compte requis.",
+    "Vérifiez votre admissibilité au programme GLP-1 Anne Santé en quelques minutes — sans compte requis.",
 };
 
 export default function EligibilitePage() {

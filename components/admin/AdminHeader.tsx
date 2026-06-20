@@ -18,7 +18,7 @@ export function AdminHeader({ prenom, role, title }: Props) {
           {title ? (
             <h1 className="text-lg font-semibold text-slate-900 md:hidden">{title}</h1>
           ) : (
-            <Link href="/admin/dashboard" className="md:hidden" aria-label="MedSim">
+            <Link href="/admin/dashboard" className="md:hidden" aria-label="Anne Santé">
               <MedsimLogo />
             </Link>
           )}

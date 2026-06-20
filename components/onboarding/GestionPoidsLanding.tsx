@@ -17,7 +17,7 @@ export function GestionPoidsLanding() {
 
       <header className="border-b border-[#E8E0D8]/80 bg-[#F5F0EB]/95 px-4 py-3 backdrop-blur-sm sm:px-8">
         <div className="mx-auto flex max-w-6xl items-center gap-4 sm:gap-8">
-          <Link href={PUBLIC_CATALOG_HOME} className="shrink-0" aria-label="MedSim — accueil">
+          <Link href={PUBLIC_CATALOG_HOME} className="shrink-0" aria-label="Anne Santé — accueil">
             <MedsimLogo />
           </Link>
           <PartNavAccueilLink className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-[#1D9E75] hover:text-[var(--teal-900)] sm:hidden" />

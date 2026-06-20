@@ -95,7 +95,7 @@ export async function dispatchFulfillmentToPharmacy(fulfillmentId: string): Prom
     select: { prenom: true, name: true, medecinLicenseNumber: true },
   });
 
-  const prescripteurNom = ips?.prenom ?? ips?.name ?? "IPS MedSim";
+  const prescripteurNom = ips?.prenom ?? ips?.name ?? "IPS Anne Santé";
   const pdfBase64 = pdfBase64FromDataUrl(fulfillment.pdfUrl);
 
   if (fulfillment.pharmacy?.apiEndpoint) {
@@ -142,7 +142,7 @@ export async function dispatchFulfillmentToPharmacy(fulfillmentId: string): Prom
     template: "pharmacy_fulfillment_order",
     entityKey: `pharmacy_order:${fulfillmentId}`,
     subject: `Nouvelle ordonnance #${trackingNumber}`,
-    html: `<h2>Nouvelle ordonnance MedSim — #${trackingNumber}</h2>
+    html: `<h2>Nouvelle ordonnance Anne Santé — #${trackingNumber}</h2>
 <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
 <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Patient</td><td>${patient.prenom} ${patient.nom}</td></tr>
 <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Téléphone</td><td>${patient.telephone}</td></tr>
@@ -203,7 +203,7 @@ export async function notifyPatientPreparationEmail(
     template: "fulfillment_preparation",
     entityKey: `fulfillment_preparation:${fulfillmentId}`,
     userId: fulfillment.userId,
-    subject: "Votre médicament est en préparation — MedSim",
+    subject: "Votre médicament est en préparation — Anne Santé",
     html: `<p>Bonjour ${fulfillment.user.prenom},</p>
 <p><strong>Votre médicament est en préparation.</strong></p>
 <p>Livraison estimée : <strong>${eta}</strong></p>
@@ -257,9 +257,9 @@ export async function notifyFulfillmentStatusChange(
     template: "fulfillment_status",
     entityKey: `fulfillment_status:${fulfillmentId}:${newStatus}`,
     userId: fulfillment.userId,
-    subject: "Mise à jour de votre livraison MedSim",
+    subject: "Mise à jour de votre livraison Anne Santé",
     html: `<p>Bonjour ${fulfillment.user.prenom},</p>
-<p><strong>Mise à jour de votre livraison MedSim</strong></p>
+<p><strong>Mise à jour de votre livraison Anne Santé</strong></p>
 <p>${details}</p>
 ${trackingUrl ? `<p><a href="${trackingUrl}">Suivre sur ${carrier} →</a></p>` : ""}
 <p><a href="${ordonnanceUrl}">Voir le détail de ma commande</a></p>`,

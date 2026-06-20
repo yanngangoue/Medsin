@@ -155,7 +155,7 @@ function AuthInscriptionForm() {
                 seront conservées.
               </>
             ) : (
-              <>Créez votre compte patient MedSim pour suivre votre parcours de santé.</>
+              <>Créez votre compte patient Anne Santé pour suivre votre parcours de santé.</>
             )}
           </p>
 

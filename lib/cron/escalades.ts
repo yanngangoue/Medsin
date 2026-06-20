@@ -97,7 +97,7 @@ export async function runEscalades(): Promise<EscaladesResult> {
         data: { isUrgent: true },
       });
 
-      const rapportContent = `ESCALADE AUTOMATIQUE — ${prenom}\n${motif}\nConsultez le dossier dans MedSim.`;
+      const rapportContent = `ESCALADE AUTOMATIQUE — ${prenom}\n${motif}\nConsultez le dossier dans Anne Santé.`;
 
       await saveAnneIpsReport({
         userId,
@@ -119,7 +119,7 @@ export async function runEscalades(): Promise<EscaladesResult> {
           template: "ips_escalation",
           entityKey: `escalation:hourly:${userId}:${latest.id}`,
           userId: questionnaire.ipsId,
-          html: `<p>Escalade automatique Anne : ${motif}. Consultez le dossier dans MedSim.</p>`,
+          html: `<p>Escalade automatique Anne : ${motif}. Consultez le dossier dans Anne Santé.</p>`,
           text: `Escalade : ${motif}`,
         });
         notificationsSent += 1;

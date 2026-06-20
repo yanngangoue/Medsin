@@ -32,7 +32,7 @@ function SuccessPanel() {
             </svg>
           </div>
           <h1 className="mt-4 font-display text-2xl font-bold text-white">Paiement confirmé !</h1>
-          <p className="mt-1 text-sm text-white/70">Bienvenue dans le programme MedSim GLP-1</p>
+          <p className="mt-1 text-sm text-white/70">Bienvenue dans le programme Anne Santé GLP-1</p>
         </div>
 
         <div className="px-8 py-7">

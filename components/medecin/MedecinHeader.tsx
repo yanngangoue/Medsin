@@ -11,7 +11,7 @@ export function MedecinHeader({ prenom, urgentCount = 0 }: Props) {
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Link href="/medecin/file" className="md:hidden" aria-label="MedSim">
+          <Link href="/medecin/file" className="md:hidden" aria-label="Anne Santé">
             <MedsimLogo />
           </Link>
           <p className="hidden text-sm text-slate-600 md:block">

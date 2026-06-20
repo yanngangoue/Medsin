@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Guide nutritionnel GLP-1 — MedSim",
+  title: "Guide nutritionnel GLP-1 — Anne Santé",
   description: "Guide nutritionnel gratuit pour les patients sous traitement GLP-1 : aliments recommandés, plans de repas, hydratation et conseils pratiques.",
 };
 

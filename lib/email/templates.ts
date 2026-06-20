@@ -19,13 +19,13 @@ function layout(body: string): string {
 
 export function welcomeEmail(prenom: string) {
   const base = getAppBaseUrl();
-  const subject = "Bienvenue sur MedSim";
+  const subject = "Bienvenue sur Anne Santé";
   const html = layout(`
     <h1 style="font-size:20px">Bonjour ${prenom},</h1>
-    <p>Votre compte MedSim est créé. Vous pouvez poursuivre votre parcours de santé à tout moment.</p>
+    <p>Votre compte Anne Santé est créé. Vous pouvez poursuivre votre parcours de santé à tout moment.</p>
     <p><a href="${base}/dashboard/patient" style="display:inline-block;background:#1D9E75;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600">Accéder à mon espace</a></p>
   `);
-  const text = `Bonjour ${prenom},\n\nVotre compte MedSim est créé.\nMon espace : ${base}/dashboard/patient`;
+  const text = `Bonjour ${prenom},\n\nVotre compte Anne Santé est créé.\nMon espace : ${base}/dashboard/patient`;
   return { subject, html, text };
 }
 
@@ -36,7 +36,7 @@ export function eligibilityDecisionEmail(
 ) {
   const base = getAppBaseUrl();
   const label = ELIGIBILITY_FR[eligibility];
-  const subject = `MedSim — mise à jour de votre dossier (${label})`;
+  const subject = `Anne Santé — mise à jour de votre dossier (${label})`;
   const extra = patientMessage
     ? `<p style="background:#f0fbf7;padding:12px;border-radius:8px">${patientMessage}</p>`
     : "";
@@ -57,7 +57,7 @@ export function appointmentConfirmedEmail(
 ) {
   const base = getAppBaseUrl();
   const joinUrl = `${base}/dashboard/patient/consultation/${appointmentId}`;
-  const subject = `MedSim — consultation vidéo planifiée (${formattedDate})`;
+  const subject = `Anne Santé — consultation vidéo planifiée (${formattedDate})`;
   const html = layout(`
     <h1 style="font-size:20px">Bonjour ${prenom},</h1>
     <p>Votre téléconsultation est planifiée pour le <strong>${formattedDate}</strong>.</p>
@@ -76,10 +76,10 @@ export function appointmentReminderEmail(
 ) {
   const base = getAppBaseUrl();
   const joinUrl = `${base}/dashboard/patient/consultation/${appointmentId}`;
-  const subject = `Rappel MedSim — visio ${windowLabel} (${formattedDate})`;
+  const subject = `Rappel Anne Santé — visio ${windowLabel} (${formattedDate})`;
   const html = layout(`
     <h1 style="font-size:20px">Bonjour ${prenom},</h1>
-    <p>Rappel : votre consultation vidéo MedSim a lieu <strong>${windowLabel}</strong> (${formattedDate}).</p>
+    <p>Rappel : votre consultation vidéo Anne Santé a lieu <strong>${windowLabel}</strong> (${formattedDate}).</p>
     <p><a href="${joinUrl}" style="display:inline-block;background:#1D9E75;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600">Rejoindre la salle</a></p>
   `);
   const text = `Rappel visio ${windowLabel} — ${formattedDate}\n${joinUrl}`;

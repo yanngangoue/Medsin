@@ -50,7 +50,7 @@ export function MarketingAnne() {
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div>
           <p className="text-sm font-bold uppercase tracking-wide text-[#1D4D3A]">
-            Coach IA MedSim
+            Coach IA Anne Santé
           </p>
           <h2 className="mt-4 text-4xl font-black leading-tight tracking-tight text-[#1A1A2E] sm:text-5xl">
             Anne ne vous attend pas.

@@ -50,10 +50,10 @@ export const PATIENT_SERVICE_SECTIONS: readonly PatientServiceSection[] = [
     productFrameClass: "aspect-[4/3] rounded-2xl bg-white shadow-sm",
     imagePrimary:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop",
-    imagePrimaryAlt: "Patiente souriante sur fond clair — parcours MedSim",
+    imagePrimaryAlt: "Patiente souriante sur fond clair — parcours Anne Santé",
     imageSecondary:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&auto=format&fit=crop",
-    imageSecondaryAlt: "Patient souriant sur fond clair — accompagnement MedSim",
+    imageSecondaryAlt: "Patient souriant sur fond clair — accompagnement Anne Santé",
     ctaHref: "/onboarding/gestion-poids",
   },
 ];

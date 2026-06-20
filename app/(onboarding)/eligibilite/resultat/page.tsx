@@ -145,7 +145,7 @@ function EligibiliteResultatContent() {
         Votre dossier sera évalué
       </h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600">
-        Certaines de vos réponses méritent une revue par un professionnel MedSim. Vous pouvez
+        Certaines de vos réponses méritent une revue par un professionnel Anne Santé. Vous pouvez
         quand même poursuivre le questionnaire — notre équipe confirmera votre admissibilité.
       </p>
       <Link

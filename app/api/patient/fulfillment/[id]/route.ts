@@ -24,7 +24,7 @@ export async function GET(_req: Request, { params }: Params) {
           amountCents: 14900,
           priceLabel: "149 $/mois",
           paymentStatus: "PENDING",
-          ipsName: "IPS MedSim",
+          ipsName: "IPS Anne Santé",
         });
       }
     
@@ -53,7 +53,7 @@ export async function GET(_req: Request, { params }: Params) {
         amountCents,
         priceLabel: `${(amountCents / 100).toFixed(0)} $/mois`,
         paymentStatus: fulfillment.paymentStatus,
-        ipsName: ips?.prenom ?? ips?.name ?? "IPS MedSim",
+        ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne Santé",
       });
   });
 }

@@ -109,7 +109,7 @@ function SidebarContent({
         <div>
           <p className="font-bold text-slate-900">Anne</p>
           <p className="text-xs text-emerald-600">En ligne</p>
-          <p className="text-xs text-slate-500">Coach IA MedSim · 24 h/24</p>
+          <p className="text-xs text-slate-500">Coach IA Anne Santé · 24 h/24</p>
         </div>
       </div>
 

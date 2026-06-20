@@ -49,7 +49,7 @@ export function SignatureNumerique({ prescriptionId, onSigned }: Props) {
         <li>✓ J&apos;assume la responsabilité médicale de cette prescription</li>
       </ul>
       <label className="mt-4 block text-xs font-medium text-slate-700">
-        Confirmez votre mot de passe MedSim
+        Confirmez votre mot de passe Anne Santé
       </label>
       <input
         type="password"

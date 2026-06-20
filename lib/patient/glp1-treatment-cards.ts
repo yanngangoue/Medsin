@@ -39,7 +39,7 @@ export const GLP1_TREATMENT_CARDS: readonly Glp1TreatmentCard[] = [
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=640&q=80&fit=crop",
     imageAlt: "Patiente souriante, accompagnée dans son parcours santé",
     variant: "lifestyle",
-    title: "Suivi MedSim",
+    title: "Suivi Anne Santé",
     description: "Nutrition, objectifs et assistance 24 h/24.",
   },
   {

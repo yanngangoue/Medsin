@@ -1,6 +1,6 @@
 import type { CodeableConcept, FhirId, Meta, Quantity, Reference } from "./primitive";
 
-/** Extension Medsim : marque un complément alimentaire dans un item consommé (Profil URI stable). */
+/** Extension Anne Santé : marque un complément alimentaire dans un item consommé (Profil URI stable). */
 export const EXTENSION_DIETARY_SUPPLEMENT =
   "https://medsim.local/fhir/StructureDefinition/dietary-supplement";
 

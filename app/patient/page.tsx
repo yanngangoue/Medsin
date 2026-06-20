@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { MedsimLogo } from "@/components/MedsimLogo";
-import { signOutMedSim } from "@/lib/client-sign-out";
+import { signOutMedsim } from "@/lib/client-sign-out";
 import { objectifLabel } from "@/lib/questionnaire-labels";
 import { parseQuestionnaireResponse, type QuestionnaireApiPayload } from "@/lib/questionnaire-api";
 
@@ -40,7 +40,7 @@ export default function PatientDashboardPage() {
   }, [status, session?.user?.role, router]);
 
   async function logout() {
-    await signOutMedSim("/");
+    await signOutMedsim("/");
   }
 
   if (status === "loading" || !session?.user || !questionnaireFetched) {
@@ -63,7 +63,7 @@ export default function PatientDashboardPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <header className="border-b border-slate-200/80 bg-white px-4 py-4">
         <div className="mx-auto flex max-w-[680px] items-center justify-between">
-          <Link href="/" aria-label="MedSim">
+          <Link href="/" aria-label="Anne Santé">
             <MedsimLogo />
           </Link>
           <div className="flex items-center gap-4">

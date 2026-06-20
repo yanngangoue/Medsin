@@ -31,7 +31,7 @@ export async function GET(_req: Request, { params }: Params) {
           durationMonths: 3,
           refills: 2,
           instructions: "Injection sous-cutanée une fois par semaine.",
-          ipsName: "IPS MedSim",
+          ipsName: "IPS Anne Santé",
           issuedAt: new Date(),
         });
         return new NextResponse(new Uint8Array(demo), {
@@ -77,7 +77,7 @@ export async function GET(_req: Request, { params }: Params) {
         durationMonths: fulfillment.duration,
         refills: fulfillment.refills,
         instructions: fulfillment.instructions,
-        ipsName: ips?.prenom ?? ips?.name ?? "IPS MedSim",
+        ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne Santé",
         ipsLicense: ips?.medecinLicenseNumber ?? undefined,
         issuedAt: fulfillment.pdfGeneratedAt ?? fulfillment.createdAt,
       });

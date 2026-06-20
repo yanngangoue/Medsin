@@ -21,7 +21,7 @@ export function stripeErrorMessage(error: unknown): string {
       case "StripeRateLimitError":
         return "Trop de requêtes — réessayez dans quelques instants.";
       case "StripeInvalidRequestError":
-        return "Requête de paiement invalide. Contactez le soutien MedSim.";
+        return "Requête de paiement invalide. Contactez le soutien Anne Santé.";
       case "StripeAPIError":
       case "StripeConnectionError":
         return "Stripe est temporairement indisponible. Réessayez plus tard.";

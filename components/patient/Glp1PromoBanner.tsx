@@ -139,7 +139,7 @@ export function Glp1PromoBanner({
 
       <div className="pointer-events-none relative z-10 flex min-h-[min(40vh,300px)] flex-col items-center justify-center px-5 py-6 text-center sm:min-h-[min(44vh,340px)] sm:px-8 sm:py-7 md:min-h-[min(46vh,360px)] md:px-10 lg:min-h-[min(48vh,380px)]">
         <p className="max-w-lg text-base font-medium text-white/90 sm:max-w-xl sm:text-lg md:text-xl">
-          Reprenez le contrôle de votre poids, pour de bon avec MedSim
+          Reprenez le contrôle de votre poids, pour de bon avec Anne Santé
         </p>
         <h2 className="mt-4 max-w-lg text-balance px-1 text-2xl font-bold leading-snug tracking-tight text-white drop-shadow-md sm:max-w-xl sm:px-0 sm:text-3xl md:max-w-2xl md:text-4xl lg:text-[2.75rem] lg:leading-tight">
           Une nouvelle façon de vivre les soins de perte de poids.

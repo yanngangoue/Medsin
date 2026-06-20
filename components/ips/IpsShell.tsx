@@ -67,7 +67,7 @@ export function IpsShell({ children, stats }: Props) {
           >
             <MenuIcon />
           </button>
-          <Link href="/dashboard/ips" aria-label="MedSim">
+          <Link href="/dashboard/ips" aria-label="Anne Santé">
             <MedsimLogo />
           </Link>
         </header>

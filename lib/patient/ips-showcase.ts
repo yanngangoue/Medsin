@@ -23,7 +23,7 @@ export function ipsCertifiedLabel(gender: IpsGender): string {
   return gender === "m" ? "IPS certifié" : "IPS certifiée";
 }
 
-/** IPS MedSim — portraits et spécialités (données vitrine). */
+/** IPS Anne Santé — portraits et spécialités (données vitrine). */
 export const IPS_SHOWCASE_PROFILES: readonly IpsShowcaseProfile[] = [
   {
     id: "mc",
@@ -72,7 +72,7 @@ export const IPS_SHOWCASE_PROFILES: readonly IpsShowcaseProfile[] = [
     years: 10,
     specialty: "Endocrinologie communautaire",
     quote:
-      "Prescrire, c'est une chose. Suivre les effets, l'adhésion et le moral, c'est tout le parcours MedSim.",
+      "Prescrire, c'est une chose. Suivre les effets, l'adhésion et le moral, c'est tout le parcours Anne Santé.",
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=85&fit=crop",
     photoAlt: "Catherine L., IPS confiante en milieu clinique",
     tags: ["Endocrino", "Suivi continu", "Estrie"],

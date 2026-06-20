@@ -201,7 +201,7 @@ export function AdminTeamPanel() {
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">Inviter un membre</h2>
         <p className="mt-1 text-sm text-slate-600">
-          Le courriel MedSim sert d&apos;identifiant de connexion. Le membre définit son mot de passe
+          Le courriel Anne Santé sert d&apos;identifiant de connexion. Le membre définit son mot de passe
           via le lien d&apos;activation envoyé par courriel.
         </p>
 

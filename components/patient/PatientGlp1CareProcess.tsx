@@ -2,7 +2,7 @@ const STEPS = [
   {
     image: "/images/glp1-process-en-ligne.webp",
     title: "100 % en ligne",
-    alt: "Personne consulte MedSim sur tablette depuis chez elle",
+    alt: "Personne consulte Anne Santé sur tablette depuis chez elle",
   },
   {
     image: "/images/glp1-process-traitement-perso.webp",
@@ -17,7 +17,7 @@ const STEPS = [
   {
     image: "/images/glp1-process-suivi-anne.webp",
     title: "Suivi hebdomadaire",
-    alt: "Clavardage sur cellulaire avec Anne, assistante IA MedSim",
+    alt: "Clavardage sur cellulaire avec Anne, assistante IA Anne Santé",
     imageClassName: "object-cover object-center",
     highlighted: true,
   },

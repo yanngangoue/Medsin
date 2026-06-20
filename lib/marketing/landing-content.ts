@@ -158,7 +158,7 @@ export const PRICING_PLAN = {
 export const FAQ_ITEMS = [
   {
     q: "Est-ce que je suis admissible ?",
-    a: "L'admissibilité dépend de votre IMC, antécédents médicaux et critères cliniques. Complétez l'évaluation gratuite en ligne : un médecin MedSim analysera votre dossier sous 24 h.",
+    a: "L'admissibilité dépend de votre IMC, antécédents médicaux et critères cliniques. Complétez l'évaluation gratuite en ligne : un médecin Anne Santé analysera votre dossier sous 24 h.",
   },
   {
     q: "Combien de temps avant de voir des résultats ?",
@@ -174,7 +174,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Quelle est la différence avec Felix Health ?",
-    a: `Felix n'offre pas de coach IA proactif comme ${COACH_NAME}, qui analyse vos données et vous écrit en premier. MedSim combine prescription médicale, tableau de bord visuel et accompagnement ${COACH_NAME} 24 h/24 — au même prix tout inclus, avec une interface moderne pensée pour le Québec.`,
+    a: `Felix n'offre pas de coach IA proactif comme ${COACH_NAME}, qui analyse vos données et vous écrit en premier. Anne Santé combine prescription médicale, tableau de bord visuel et accompagnement ${COACH_NAME} 24 h/24 — au même prix tout inclus, avec une interface moderne pensée pour le Québec.`,
   },
   {
     q: "Comment annuler ?",

@@ -141,7 +141,7 @@ function PatientOrdonnanceViewInner({ prenom, fulfillmentId }: Props) {
           >
             ☰
           </button>
-          <Link href="/" aria-label="MedSim">
+          <Link href="/" aria-label="Anne Santé">
             <MedsimLogo />
           </Link>
         </header>

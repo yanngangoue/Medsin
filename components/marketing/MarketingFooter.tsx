@@ -78,11 +78,11 @@ export function MarketingFooter() {
 
       <div className="border-t border-white/10 px-5 py-8 lg:px-8">
         <p className="mx-auto max-w-7xl text-center text-xs leading-relaxed">
-          MedSim ne remplace pas un médecin. Tous les traitements sont prescrits par des IPS
+          Anne Santé ne remplace pas un médecin. Tous les traitements sont prescrits par des IPS
           certifiées au Québec. Anne est une IA — elle ne pose pas de diagnostic médical.
         </p>
         <p className="mx-auto mt-4 max-w-7xl text-center text-xs text-white/40">
-          © 2026 MedSim Inc. · Plateforme médicale québécoise · Loi 25 · Confidentialité · CGU ·
+          © 2026 Anne Santé Inc. · Plateforme médicale québécoise · Loi 25 · Confidentialité · CGU ·
           Contact
         </p>
       </div>

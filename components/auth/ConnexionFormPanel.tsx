@@ -63,7 +63,7 @@ function MarketingPanel() {
       {/* Témoignage */}
       <div className="relative z-10 rounded-2xl border border-white/10 bg-white/5 p-5">
         <p className="text-sm italic leading-relaxed text-white/75">
-          &ldquo;En 4 mois avec MedSim, j&apos;ai perdu 18 kg. Le suivi d&apos;Anne est incroyable — comme avoir un coach de santé disponible à toute heure.&rdquo;
+          &ldquo;En 4 mois avec Anne Santé, j&apos;ai perdu 18 kg. Le suivi d&apos;Anne est incroyable — comme avoir un coach de santé disponible à toute heure.&rdquo;
         </p>
         <div className="mt-3 flex items-center gap-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#3EBD93] text-xs font-bold text-white">
@@ -71,7 +71,7 @@ function MarketingPanel() {
           </div>
           <div>
             <p className="text-xs font-semibold text-white">Marie-Claude B.</p>
-            <p className="text-[11px] text-white/50">Patiente MedSim — Montréal</p>
+            <p className="text-[11px] text-white/50">Patiente Anne Santé — Montréal</p>
           </div>
           <div className="ml-auto flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -166,7 +166,7 @@ export function ConnexionFormPanel() {
                 Bon retour 👋
               </h1>
               <p className="mt-2 text-sm text-slate-500">
-                Connectez-vous à votre espace MedSim.
+                Connectez-vous à votre espace Anne Santé.
               </p>
             </div>
 

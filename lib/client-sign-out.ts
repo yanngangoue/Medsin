@@ -1,7 +1,7 @@
 import { signOut } from "next-auth/react";
 
 /** Déconnexion NextAuth + suppression du cookie JWT legacy éventuel. */
-export async function signOutMedSim(callbackUrl = "/"): Promise<void> {
+export async function signOutMedsim(callbackUrl = "/"): Promise<void> {
   try {
     await fetch("/api/auth/logout", { method: "POST" });
   } catch {

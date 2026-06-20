@@ -1,4 +1,4 @@
-# Medsim — reprise session (connexion après inscription)
+# Anne Santé — reprise session (connexion après inscription)
 
 ## Symptôme
 

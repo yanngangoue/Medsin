@@ -18,7 +18,7 @@ export const GLP1_MEDICATIONS: readonly Glp1Medication[] = [
     ingredient: "Sémaglutide",
     form: "Injection hebdomadaire",
     description:
-      "Traitement GLP-1 prescrit pour la gestion du poids et du métabolisme, avec suivi médical MedSim.",
+      "Traitement GLP-1 prescrit pour la gestion du poids et du métabolisme, avec suivi médical Anne Santé.",
     highlights: [
       "Réduction de l'appétit",
       "Suivi médical inclus",
@@ -75,7 +75,7 @@ export const GLP1_BENEFITS = [
   },
   {
     title: "Accompagnement global",
-    text: "Assistant IA, objectifs et assistance 24 h/24 au même endroit sur MedSim.",
+    text: "Assistant IA, objectifs et assistance 24 h/24 au même endroit sur Anne Santé.",
   },
 ] as const;
 

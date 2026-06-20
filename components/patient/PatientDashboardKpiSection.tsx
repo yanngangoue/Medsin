@@ -29,7 +29,7 @@ const INCLUSIONS = [
   },
   {
     image: "/images/glp1-process-suivi-anne.webp",
-    imageAlt: "Clavardage avec Anne, coach santé IA MedSim",
+    imageAlt: "Clavardage avec Anne, coach santé IA Anne Santé",
     title: (
       <>
         <span className="text-[#1D4D3A]">Suivi proactif</span> avec assistance 24 h/24, 7 jours/7
@@ -39,7 +39,7 @@ const INCLUSIONS = [
   },
   {
     image: "/images/glp1-process-en-ligne.webp",
-    imageAlt: "Tableau de bord MedSim sur tablette",
+    imageAlt: "Tableau de bord Anne Santé sur tablette",
     title: (
       <>
         <span className="text-[#1D4D3A]">Tableau de bord</span> personnalisé
@@ -142,7 +142,7 @@ export function PatientDashboardKpiSection({ prenom }: Props) {
         <div className="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-black/5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 sm:px-6">
             <div className="text-left">
-              <p className="text-xs font-medium text-slate-500">Mon espace MedSim</p>
+              <p className="text-xs font-medium text-slate-500">Mon espace Anne Santé</p>
               <p className="text-base font-bold text-[#1D4D3A] sm:text-lg">
                 Bonjour, {greetingName}
               </p>

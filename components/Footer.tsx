@@ -16,7 +16,7 @@ export function Footer() {
           <MedsimLogo variant="onDark" />
         </Link>
         <p className="text-[13px] text-white/80">
-          © 2026 MedSim · Médecins certifiés · 100 % en ligne
+          © 2026 Anne Santé · Médecins certifiés · 100 % en ligne
         </p>
 
         <nav

@@ -44,7 +44,7 @@ export function PatientCatalogFelixNav({
         <Link
           href={PUBLIC_CATALOG_HOME}
           className="shrink-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4D3A]"
-          aria-label="Accueil MedSim"
+          aria-label="Accueil Anne Santé"
         >
           <MedsimLogo />
         </Link>

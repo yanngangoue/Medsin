@@ -4,8 +4,8 @@ import { Footer } from "@/components/Footer";
 import { MedsimLogo } from "@/components/MedsimLogo";
 
 export const metadata = {
-  title: "Contact — MedSim",
-  description: "Contactez l'équipe MedSim pour toute question sur nos services de santé métabolique.",
+  title: "Contact — Anne Santé",
+  description: "Contactez l'équipe Anne Santé pour toute question sur nos services de santé métabolique.",
 };
 
 export default function ContactPage() {

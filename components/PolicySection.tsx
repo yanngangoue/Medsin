@@ -7,7 +7,7 @@ export function PolicySection() {
         </h2>
 
         <p className="mt-5 text-[14px] leading-relaxed text-neutral-700">
-          MedSim est une plateforme de télémédecine connectant les patients à des médecins licenciés au Canada.
+          Anne Santé est une plateforme de télémédecine connectant les patients à des médecins licenciés au Canada.
           Nous ne remplaçons pas une consultation en personne et ne fournissons aucun diagnostic. Les ordonnances
           sont émises uniquement par des professionnels de santé qualifiés, après évaluation médicale complète.
         </p>
@@ -19,7 +19,7 @@ export function PolicySection() {
         </p>
 
         <p className="mt-5 text-[10px] leading-relaxed text-neutral-400">
-          Vos données médicales sont protégées conformément à la Loi 25. En utilisant MedSim, vous acceptez nos{" "}
+          Vos données médicales sont protégées conformément à la Loi 25. En utilisant Anne Santé, vous acceptez nos{" "}
           <a href="/conditions-utilisation" className="underline underline-offset-2 hover:text-neutral-600">
             conditions d&apos;utilisation
           </a>{" "}

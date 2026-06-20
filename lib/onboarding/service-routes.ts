@@ -1,4 +1,4 @@
-/** Identifiants des parcours onboarding MedSim. */
+/** Identifiants des parcours onboarding Anne Santé. */
 export const ONBOARDING_SERVICES = {
   GLP1: "gestion-poids",
 } as const;

@@ -24,7 +24,7 @@ export function Glp1ExclusionScreen({ reasons }: Props) {
           de santé pour ce parcours.
         </p>
         <p className="mt-2 text-xs text-slate-500">
-          Cette évaluation automatisée ne remplace pas un avis médical. D&apos;autres services MedSim
+          Cette évaluation automatisée ne remplace pas un avis médical. D&apos;autres services Anne Santé
           peuvent vous accompagner.
         </p>
       </div>

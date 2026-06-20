@@ -17,8 +17,8 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "MedSim — Perte de poids GLP-1 avec Anne, coach santé IA",
-    template: "%s · MedSim",
+    default: "Anne Santé — Perte de poids GLP-1 avec Anne, coach santé IA",
+    template: "%s · Anne Santé",
   },
   description:
     "Prescription GLP-1 en ligne, livraison discrète et Anne, coach santé IA proactive pour les Canadiens francophones.",

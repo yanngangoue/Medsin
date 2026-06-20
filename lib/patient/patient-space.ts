@@ -55,7 +55,7 @@ export function patientStatusHeadline(status: EligibilityStatus): {
       return {
         title: "Bonne nouvelle pour votre dossier",
         subtitle:
-          "Votre profil correspond aux critères de simulation GLP-1. Un médecin MedSim confirmera sous 24 à 48 h.",
+          "Votre profil correspond aux critères de simulation GLP-1. Un médecin Anne Santé confirmera sous 24 à 48 h.",
       };
     case "NOT_ELIGIBLE":
       return {

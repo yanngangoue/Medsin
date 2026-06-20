@@ -5,7 +5,7 @@ import { useState } from "react";
 const FAQ_ITEMS = [
   {
     q: "Est-ce que j'ai besoin d'une assurance ?",
-    a: "Non. MedSim est un service à paiement direct, avec des tarifs transparents. Le prix mensuel inclut le médicament, la livraison et le suivi médical.",
+    a: "Non. Anne Santé est un service à paiement direct, avec des tarifs transparents. Le prix mensuel inclut le médicament, la livraison et le suivi médical.",
   },
   {
     q: "Combien de temps avant de voir des résultats ?",

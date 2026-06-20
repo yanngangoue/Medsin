@@ -1,6 +1,6 @@
-# Logo officiel MedSim
+# Logo officiel Anne Santé
 
-Le logo entreprise est le **mot-symbole « MedSim »** en typographie sans-serif grasse, fond **transparent**.
+Le logo entreprise est le **mot-symbole « Anne Santé »** en typographie sans-serif grasse, fond **transparent**.
 
 ## Fichiers sources
 
@@ -13,7 +13,7 @@ Copies servies par l’application : `public/brand/medsim-logo.svg` et `public/b
 
 ## Spécifications
 
-- **Texte** : `MedSim` (M et S majuscules)
+- **Texte** : `Anne Santé` (M et S majuscules)
 - **Couleur principale** : `#1D9E75`
 - **Couleur sur fond sombre** : `#FFFFFF`
 - **Fond** : transparent (aucun encadré)

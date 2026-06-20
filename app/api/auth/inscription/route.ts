@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         return NextResponse.json(
           {
             error:
-              "Les courriels professionnels MedSim sont réservés à l'équipe. Utilisez votre courriel personnel ou contactez l'administrateur.",
+              "Les courriels professionnels Anne Santé sont réservés à l'équipe. Utilisez votre courriel personnel ou contactez l'administrateur.",
             code: "FORBIDDEN",
           },
           { status: 403 },

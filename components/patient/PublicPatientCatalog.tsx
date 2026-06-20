@@ -80,7 +80,7 @@ export function PublicPatientCatalog({ connectedPatient = null }: Props) {
             <h2 className="text-lg font-semibold text-white">Votre suivi personnel</h2>
             <p className="mt-2 text-sm leading-relaxed text-white/85">
               Dossier, messages et rendez-vous sont dans votre espace patient. Ici, vous parcourez
-              librement la présentation des services MedSim.
+              librement la présentation des services Anne Santé.
             </p>
             <Link
               href={GLP1_PATIENT_DASHBOARD_PATH}

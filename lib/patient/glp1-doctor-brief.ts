@@ -10,7 +10,7 @@ export async function generateGlp1DoctorBrief(
   const summary = formatGlp1EligibilitySummary(w);
 
   const prompt = [
-    `Tu aides un médecin à préparer une revue de dossier GLP-1 (simulation MedSim) pour le patient : ${patientLabel}.`,
+    `Tu aides un médecin à préparer une revue de dossier GLP-1 (simulation Anne Santé) pour le patient : ${patientLabel}.`,
     "",
     "Données structurées :",
     summary,

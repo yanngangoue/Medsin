@@ -90,7 +90,7 @@ export function PatientNav({
         <Link
           href={PUBLIC_CATALOG_HOME}
           className="shrink-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--teal)]"
-          aria-label="MedSim — accueil"
+          aria-label="Anne Santé — accueil"
         >
           <MedsimLogo variant={isDark ? "onDark" : "default"} />
         </Link>

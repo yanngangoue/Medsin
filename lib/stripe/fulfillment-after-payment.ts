@@ -181,7 +181,7 @@ async function processFulfillmentPayment(
 
   await sendEmail({
     to: fulfillment.user.email,
-    subject: "Paiement confirmé — MedSim",
+    subject: "Paiement confirmé — Anne Santé",
     template: "payment_confirmed",
     entityKey: `payment_confirmed:${prescriptionId}`,
     userId: fulfillment.userId,
@@ -233,21 +233,21 @@ export async function handleSubscriptionRenewal(
       userId: program.userId,
       type: "subscription_renewed",
       title: "Abonnement renouvelé",
-      body: "Votre abonnement mensuel MedSim a été renouvelé. Un récépissé vous a été envoyé par courriel.",
+      body: "Votre abonnement mensuel Anne Santé a été renouvelé. Un récépissé vous a été envoyé par courriel.",
     },
   });
 
   await sendEmail({
     to: program.user.email,
-    subject: "Récépissé — abonnement MedSim renouvelé",
+    subject: "Récépissé — abonnement Anne Santé renouvelé",
     template: "subscription_renewed",
     entityKey: `subscription_renewed:${stripeInvoiceId}`,
     userId: program.userId,
     html: `<p>Bonjour ${program.user.prenom},</p>
-<p>Votre renouvellement mensuel MedSim a bien été traité.</p>
+<p>Votre renouvellement mensuel Anne Santé a bien été traité.</p>
 <p>Facture Stripe : ${stripeInvoiceId}</p>
 <p>Merci de votre confiance.</p>`,
-    text: `Bonjour ${program.user.prenom}, votre abonnement MedSim a été renouvelé. Facture : ${stripeInvoiceId}`,
+    text: `Bonjour ${program.user.prenom}, votre abonnement Anne Santé a été renouvelé. Facture : ${stripeInvoiceId}`,
   });
 }
 
@@ -281,10 +281,10 @@ export async function handlePaymentFailed(
     entityKey: `payment_failed:${stripeInvoiceId}`,
     userId: program.userId,
     html: `<p>Bonjour ${program.user.prenom},</p>
-<p>Le prélèvement de votre abonnement MedSim n'a pas pu être complété.</p>
+<p>Le prélèvement de votre abonnement Anne Santé n'a pas pu être complété.</p>
 <p>Mettez à jour votre carte bancaire dans votre espace client Stripe ou contactez-nous pour éviter une interruption de service.</p>
 <p><a href="${portalHint}">Accéder à mon espace</a></p>`,
-    text: `Bonjour ${program.user.prenom}, votre paiement MedSim a échoué. Mettez à jour votre mode de paiement : ${portalHint}`,
+    text: `Bonjour ${program.user.prenom}, votre paiement Anne Santé a échoué. Mettez à jour votre mode de paiement : ${portalHint}`,
   });
 
   await writeAuditLog({
@@ -318,20 +318,20 @@ export async function deactivateWeightProgramBySubscription(
       userId: program.userId,
       type: "subscription_cancelled",
       title: "Abonnement terminé",
-      body: "Votre abonnement MedSim a été désactivé. Contactez-nous pour toute question.",
+      body: "Votre abonnement Anne Santé a été désactivé. Contactez-nous pour toute question.",
     },
   });
 
   await sendEmail({
     to: program.user.email,
-    subject: "Votre abonnement MedSim est terminé",
+    subject: "Votre abonnement Anne Santé est terminé",
     template: "subscription_cancelled",
     entityKey: `subscription_cancelled:${stripeSubscriptionId}`,
     userId: program.userId,
     html: `<p>Bonjour ${program.user.prenom},</p>
-<p>Votre abonnement MedSim a été annulé ou expiré. Votre programme de suivi est désactivé.</p>
-<p>Pour toute question, répondez à ce courriel ou contactez votre IPS via MedSim.</p>`,
-    text: `Bonjour ${program.user.prenom}, votre abonnement MedSim a été désactivé.`,
+<p>Votre abonnement Anne Santé a été annulé ou expiré. Votre programme de suivi est désactivé.</p>
+<p>Pour toute question, répondez à ce courriel ou contactez votre IPS via Anne Santé.</p>`,
+    text: `Bonjour ${program.user.prenom}, votre abonnement Anne Santé a été désactivé.`,
   });
 
   await writeAuditLog({

@@ -29,7 +29,7 @@ Nausées : X/5
 ☐ Consultation requise
 ═══════════════════════════════`;
 
-export const COACH_SYSTEM_PROMPT = `Tu t'appelles ${COACH_NAME}. Tu es la coach santé IA de MedSim — plateforme médicale québécoise en gestion du poids GLP-1. Tu parles français canadien (Québec), chaleureuse, empathique, factuelle et proactive.
+export const COACH_SYSTEM_PROMPT = `Tu t'appelles ${COACH_NAME}. Tu es la coach santé IA de Anne Santé — plateforme médicale québécoise en gestion du poids GLP-1. Tu parles français canadien (Québec), chaleureuse, empathique, factuelle et proactive.
 
 IDENTITÉ OBLIGATOIRE
 - Tu es ${COACH_NAME}, une intelligence artificielle — jamais une humaine, jamais une IPS, jamais une médecin.
@@ -40,7 +40,7 @@ IDENTITÉ OBLIGATOIRE
 1) APRÈS CHAQUE CHECK-IN PATIENT
    • Analyser : poids + énergie (1-5) + sommeil (h) + nausées (1-5) + notes
    • Envoyer un message personnalisé au patient (3 à 5 phrases, 1-2 emojis max, question ouverte)
-   • Générer un rapport structuré pour l'IPS (format MedSim)
+   • Générer un rapport structuré pour l'IPS (format Anne Santé)
    • Détecter si escalade nécessaire (nausées ≥ 4/5, perte > 2 kg/7 j, énergie ≤ 1/5 sur les 3 derniers check-ins)
 
 2) CHAQUE LUNDI 9 H (CRON — MESSAGE PROACTIF)
@@ -51,7 +51,7 @@ IDENTITÉ OBLIGATOIRE
 
 3) CHAQUE VENDREDI 8 H (CRON — RAPPORT IPS)
    • Produire un rapport hebdomadaire structuré pour chaque patient actif
-   • Respecter EXACTEMENT le gabarit MedSim (voir ci-dessous)
+   • Respecter EXACTEMENT le gabarit Anne Santé (voir ci-dessous)
    • Recommandation : Maintenir dose / Envisager ajustement / Consultation requise
 
 4) SURVEILLANCE ESCALADES (CRON HORAIRE + POST CHECK-IN)
@@ -275,7 +275,7 @@ export async function coachRepondreStreamSansProgramme(
     `Prénom : ${prenom.trim() || "Patient"}`,
     "Programme poids : non activé (paiement ou démarrage de traitement en attente).",
     "Données de check-in : aucune — ne pas inventer de chiffres de poids.",
-    "Rôle : informer sur le GLP-1, les effets secondaires courants et le parcours MedSim.",
+    "Rôle : informer sur le GLP-1, les effets secondaires courants et le parcours Anne Santé.",
   ].join("\n");
 
   const { prior, consigne } = buildAnthropicMessages(historique, messagePatient);
@@ -501,7 +501,7 @@ export async function genererRapportIps(
     messages: [],
     consigneUtilisateur: [
       `Rédige le rapport hebdomadaire IPS pour ${nom}, semaine ${sem}.`,
-      "Respecte EXACTEMENT le gabarit MedSim (lignes ═══, sections 📊 📈 ⚠️ 💬 🔔, cases ☐).",
+      "Respecte EXACTEMENT le gabarit Anne Santé (lignes ═══, sections 📊 📈 ⚠️ 💬 🔔, cases ☐).",
       "Remplace [Nom] par le prénom du patient et [N] par le numéro de semaine.",
       "Utilise les vraies données du contexte — n'invente pas de chiffres.",
       dernierCheckIn

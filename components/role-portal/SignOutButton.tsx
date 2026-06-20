@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutMedSim } from "@/lib/client-sign-out";
+import { signOutMedsim } from "@/lib/client-sign-out";
 
 type Props = {
   callbackUrl?: string;
@@ -14,7 +14,7 @@ export function SignOutButton({
   return (
     <button
       type="button"
-      onClick={() => void signOutMedSim(callbackUrl)}
+      onClick={() => void signOutMedsim(callbackUrl)}
       className={className}
     >
       Déconnexion

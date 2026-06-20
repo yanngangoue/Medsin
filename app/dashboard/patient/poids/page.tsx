@@ -338,7 +338,7 @@ function PoidsSuiviContent() {
 export default function PatientPoidsPage() {
   return (
     <PatientDashboardPageShell
-      eyebrow="Suivi poids MedSim"
+      eyebrow="Suivi poids Anne Santé"
       title="Mon suivi poids"
       description="Bilans hebdomadaires, courbe de progression et rapports automatiques pour votre IPS via Anne."
       maxWidth="4xl"

@@ -110,7 +110,7 @@ export async function POST(req: Request) {
       if (user) {
         await sendEmail({
           to: user.email,
-          subject: "Votre dossier MedSim est en cours d'examen",
+          subject: "Votre dossier Anne Santé est en cours d'examen",
           template: "questionnaire_submitted_patient",
           entityKey: `questionnaire_submitted:${questionnaire.id}`,
           userId: user.id,

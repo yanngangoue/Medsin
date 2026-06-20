@@ -49,7 +49,7 @@ export async function runRappelCheckIn(): Promise<RappelCheckInResult> {
     }
 
     const prenom = program.user.prenom || program.user.name || "Patient";
-    let messageCoach = `Bonjour ${prenom}, c'est ${COACH_NAME} — l'heure de votre bilan hebdomadaire sur MedSim. Comment vous sentez-vous cette semaine ?`;
+    let messageCoach = `Bonjour ${prenom}, c'est ${COACH_NAME} — l'heure de votre bilan hebdomadaire sur Anne Santé. Comment vous sentez-vous cette semaine ?`;
 
     try {
       const dernierPublic = publicProgram.recentCheckIns[0];

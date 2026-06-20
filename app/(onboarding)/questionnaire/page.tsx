@@ -9,7 +9,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Questionnaire médical",
-  description: "Questionnaire médical MedSim — environ 5 minutes.",
+  description: "Questionnaire médical Anne Santé — environ 5 minutes.",
 };
 
 export default async function MedicalQuestionnairePage() {

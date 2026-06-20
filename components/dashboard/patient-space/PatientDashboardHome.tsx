@@ -369,7 +369,7 @@ function HeroBanner({
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white" />
       </div>
       <p className="relative text-sm font-semibold text-[#3EBD93]">{greeting}</p>
-      <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Bienvenue dans votre espace MedSim 🌿</p>
+      <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Bienvenue dans votre espace Anne Santé 🌿</p>
       <p className="relative mt-1 text-sm text-emerald-200">
         Votre programme de gestion du poids démarre ici.
       </p>

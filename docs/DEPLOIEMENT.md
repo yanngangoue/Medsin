@@ -1,6 +1,6 @@
-# Déploiement MedSim — production
+# Déploiement Anne Santé — production
 
-Guide pour rendre **MedSim** pleinement fonctionnel sur Vercel + Neon.
+Guide pour rendre **Anne Santé** pleinement fonctionnel sur Vercel + Neon.
 
 **URL prod actuelle :** https://medsim-roan.vercel.app  
 **Projet Vercel :** `builder-e834f123/medsim`  

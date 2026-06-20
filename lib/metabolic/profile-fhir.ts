@@ -17,7 +17,7 @@ export function buildMetabolicPanelObservation(input: {
     status: "final",
     category: [{ text: "MetabolicPanel" }],
     code: {
-      text: "Profil métabolique agrégé MedSim",
+      text: "Profil métabolique agrégé Anne Santé",
       coding: [
         { system: "https://medsim.local/fhir/CodeSystem/observation-kind", code: "METABOLIC_PROFILE_PANEL" },
       ],

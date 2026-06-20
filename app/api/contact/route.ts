@@ -38,12 +38,12 @@ export async function POST(req: Request) {
 
     await sendEmail({
       to: adminEmail,
-      subject: `[MedSim Contact] ${sujet}`,
+      subject: `[Anne Santé Contact] ${sujet}`,
       template: "contact",
       entityKey: null,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-          <h2 style="color:#0D7A5F">Nouveau message de contact — MedSim</h2>
+          <h2 style="color:#0D7A5F">Nouveau message de contact — Anne Santé</h2>
           <table style="width:100%;border-collapse:collapse">
             <tr><td style="padding:6px 0;color:#64748B;font-size:13px">Nom</td><td style="font-size:13px">${prenom} ${nom}</td></tr>
             <tr><td style="padding:6px 0;color:#64748B;font-size:13px">Courriel</td><td style="font-size:13px">${email}</td></tr>
@@ -52,10 +52,10 @@ export async function POST(req: Request) {
           <hr style="margin:16px 0;border-color:#E2E8F0" />
           <p style="font-size:14px;line-height:1.6;color:#1E293B">${message.replace(/\n/g, "<br />")}</p>
           <hr style="margin:16px 0;border-color:#E2E8F0" />
-          <p style="font-size:11px;color:#94A3B8">MedSim · Formulaire de contact</p>
+          <p style="font-size:11px;color:#94A3B8">Anne Santé · Formulaire de contact</p>
         </div>
       `,
-      text: `Nouveau message de contact MedSim\n\nNom : ${prenom} ${nom}\nCourriel : ${email}\nSujet : ${sujet}\n\n${message}`,
+      text: `Nouveau message de contact Anne Santé\n\nNom : ${prenom} ${nom}\nCourriel : ${email}\nSujet : ${sujet}\n\n${message}`,
     });
 
     return NextResponse.json({ ok: true });

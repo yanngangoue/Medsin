@@ -112,17 +112,17 @@ export async function sendStaffInviteEmail(opts: {
 
   const result = await sendEmail({
     to: deliverTo,
-    subject: "Votre accès MedSim — activez votre compte",
+    subject: "Votre accès Anne Santé — activez votre compte",
     template: "staff_invite",
     entityKey: `staff_invite:${opts.userId}:${Date.now()}`,
     userId: opts.userId,
     html: `<p>Bonjour ${opts.prenom},</p>
-<p>Un compte MedSim vous a été créé en tant que <strong>${roleLabel}</strong>.</p>
+<p>Un compte Anne Santé vous a été créé en tant que <strong>${roleLabel}</strong>.</p>
 <p><strong>Identifiant de connexion :</strong> ${opts.email}</p>
 <p><a href="${inviteUrl}">Créer mon mot de passe et activer mon compte</a></p>
 <p>Ce lien expire dans 7 jours.</p>
-<p>Après activation, connectez-vous avec votre courriel MedSim sur <a href="${loginUrl}">${loginUrl}</a>, puis accédez à <a href="${opts.baseUrl}${home}">votre espace professionnel</a>.</p>
-<p>— L'équipe MedSim</p>`,
+<p>Après activation, connectez-vous avec votre identifiant (${opts.email}) sur <a href="${loginUrl}">${loginUrl}</a>, puis accédez à <a href="${opts.baseUrl}${home}">votre espace professionnel</a>.</p>
+<p>— L'équipe Anne Santé</p>`,
     text: `Bonjour ${opts.prenom}, identifiant: ${opts.email}. Activez votre compte: ${inviteUrl}`,
   });
 
@@ -133,7 +133,7 @@ export async function sendStaffInviteEmail(opts: {
   });
 
   if (process.env.NODE_ENV === "development") {
-    console.info("[Medsim] Invitation équipe (dev) :", inviteUrl);
+    console.info("[Anne Santé] Invitation équipe (dev) :", inviteUrl);
   }
 
   return { inviteUrl, emailSent: result.ok && !result.skipped };

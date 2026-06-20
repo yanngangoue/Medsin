@@ -6,7 +6,7 @@ export function ChatCoachIa() {
     <div
       className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
       role="img"
-      aria-label="Aperçu de conversation avec Anne, coach santé MedSim"
+      aria-label="Aperçu de conversation avec Anne, coach santé Anne Santé"
     >
       <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1D4D3A]/10 text-sm text-[#1D4D3A]">
