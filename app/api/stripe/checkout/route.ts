@@ -91,7 +91,7 @@ export async function POST(req: Request) {
               price_data: {
                 currency: "cad",
                 product_data: {
-                  name: "Anne Santé — Programme GLP-1",
+                  name: "Anne-sante — Programme GLP-1",
                   description: "Suivi IPS + Coach Anne + Livraison",
                 },
                 unit_amount: amountCents,

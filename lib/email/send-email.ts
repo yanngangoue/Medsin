@@ -22,7 +22,7 @@ export type SendEmailResult = { ok: boolean; skipped?: boolean; error?: string }
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
   if (isDemoMode()) {
-    console.info("[Anne Santé email demo]", input.template, "→", input.to, input.subject);
+    console.info("[Anne-sante email demo]", input.template, "→", input.to, input.subject);
     return { ok: true, skipped: true };
   }
 
@@ -44,7 +44,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
   let error: string | null = null;
 
   if (!apiKey) {
-    console.info("[Anne Santé email]", input.template, "→", input.to);
+    console.info("[Anne-sante email]", input.template, "→", input.to);
     console.info("  Sujet:", input.subject);
     console.info("  (Configurer RESEND_API_KEY pour envoi réel)");
     status = "skipped";
@@ -73,7 +73,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     } catch (e) {
       status = "failed";
       error = e instanceof Error ? e.message : "send failed";
-      console.error("[Anne Santé email]", input.template, error);
+      console.error("[Anne-sante email]", input.template, error);
     }
   }
 
@@ -99,7 +99,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       await prisma.emailLog.create({ data: logData });
     }
   } catch (logErr) {
-    console.error("[Anne Santé email] log failed", logErr);
+    console.error("[Anne-sante email] log failed", logErr);
   }
 
   return status === "failed" ? { ok: false, error: error ?? undefined } : { ok: true, skipped: status === "skipped" };

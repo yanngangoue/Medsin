@@ -93,7 +93,7 @@ function buildTrackingPayload(fulfillment: {
     dosage: formatDose(fulfillment.dosage),
     refills: fulfillment.refills,
     prescriptionNumber: formatPrescriptionNumber(fulfillment.id),
-    pharmacyName: fulfillment.pharmacy?.name ?? "Pharmacie partenaire Anne Santé",
+    pharmacyName: fulfillment.pharmacy?.name ?? "Pharmacie partenaire Anne-sante",
     lastUpdated: fulfillment.updatedAt.toISOString(),
     issuedAt:
       fulfillment.pdfGeneratedAt?.toISOString() ?? fulfillment.createdAt.toISOString(),
@@ -150,8 +150,8 @@ export async function GET(_req: Request, { params }: Params) {
           carrierLabel: "Purolator",
           pdfUrl: null,
           prescriptionNumber: "MS-DEMO0001",
-          ipsName: "IPS Anne Santé",
-          pharmacyName: "Pharmacie partenaire Anne Santé",
+          ipsName: "IPS Anne-sante",
+          pharmacyName: "Pharmacie partenaire Anne-sante",
           lastUpdated: now.toISOString(),
           issuedAt: issued.toISOString(),
           estimatedDelivery: eta.toISOString(),
@@ -164,7 +164,7 @@ export async function GET(_req: Request, { params }: Params) {
             delivered: null,
           },
           pharmacy: {
-            name: "Pharmacie partenaire Anne Santé",
+            name: "Pharmacie partenaire Anne-sante",
             address: "1000, rue Sainte-Catherine Ouest",
             city: "Montréal",
             province: "QC",
@@ -195,7 +195,7 @@ export async function GET(_req: Request, { params }: Params) {
     
       return NextResponse.json({
         ...payload,
-        ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne Santé",
+        ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne-sante",
       });
   });
 }

@@ -105,7 +105,7 @@ export function buildCoachWelcomeMessage(prenom: string): string {
   const name = prenom.trim() || "cher patient";
   return `Bonjour ${name} ! 👋
 
-Je suis Anne, votre coach santé IA chez Anne Santé.
+Je suis Anne, votre coach santé IA chez Anne-sante.
 
 Chaque semaine, je vais analyser vos données et vous écrire en premier — sans que vous ayez à demander. Voici ce que je peux faire pour vous :
 
@@ -122,7 +122,7 @@ export function buildCoachNoProgramMessage(prenom: string): string {
   const name = prenom.trim() || "cher patient";
   return `Bonjour ${name} ! 👋
 
-Je suis Anne, votre coach santé IA chez Anne Santé.
+Je suis Anne, votre coach santé IA chez Anne-sante.
 
 Votre programme de suivi n'est pas encore activé — une fois votre parcours GLP-1 démarré, je pourrai analyser vos bilans hebdomadaires et vous écrire en premier chaque semaine.
 
@@ -227,7 +227,7 @@ export async function enregistrerMessageProactifApresCheckIn(input: {
         template: "ips_escalation",
         entityKey: `escalation:checkin:${input.dernierCheckIn.id}`,
         userId: ipsId,
-        html: `<p>Escalade détectée après bilan hebdomadaire. Consultez le rapport Anne dans Anne Santé.</p>`,
+        html: `<p>Escalade détectée après bilan hebdomadaire. Consultez le rapport Anne dans Anne-sante.</p>`,
         text: "Escalade détectée après bilan hebdomadaire.",
       });
     }

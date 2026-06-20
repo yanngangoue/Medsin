@@ -26,7 +26,7 @@ export async function notifyDossierDecision(params: {
     html = `<p>Bonjour ${patientPrenom},</p>
 <p>Après examen de votre dossier, <strong>Dr. ${medecinName}</strong> a déterminé que le traitement GLP-1 n'est pas approprié pour vous actuellement.</p>
 ${motifRefus ? `<p><strong>Motif :</strong> ${motifRefus}</p>` : ""}
-<p><a href="${process.env.NEXTAUTH_URL ?? "http://localhost:3001"}/dashboard/patient">Voir les alternatives Anne Santé</a></p>`;
+<p><a href="${process.env.NEXTAUTH_URL ?? "http://localhost:3001"}/dashboard/patient">Voir les alternatives Anne-sante</a></p>`;
   } else {
     subject = "Informations complémentaires requises";
     html = `<p>Bonjour ${patientPrenom},</p>

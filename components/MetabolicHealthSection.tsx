@@ -80,7 +80,7 @@ export function MetabolicHealthSection() {
             jour.
           </p>
           <p className="mt-5 text-left text-[14px] leading-relaxed text-neutral-700 sm:text-center sm:text-[15px]">
-            Anne Santé propose un accompagnement global : santé métabolique, sommeil, énergie, assistant IA et bien-être
+            Anne-sante propose un accompagnement global : santé métabolique, sommeil, énergie, assistant IA et bien-être
             comportemental — articulés autour de votre dossier médical et des décisions de votre professionnel de santé.
             Chaque axe est intégré dans un parcours sobre, mesurable et réaliste.
           </p>

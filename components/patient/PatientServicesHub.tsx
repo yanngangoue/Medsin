@@ -38,9 +38,9 @@ export function PatientServicesHub({
     <section
       id="patient-services-hub"
       className="relative overflow-x-hidden pb-2 sm:pb-3"
-      aria-label="Accueil GLP-1 Anne Santé"
+      aria-label="Accueil GLP-1 Anne-sante"
     >
-      <h1 className="sr-only">Anne Santé — parcours GLP-1 au Québec</h1>
+      <h1 className="sr-only">Anne-sante — parcours GLP-1 au Québec</h1>
 
       {!hideTopNav && !heroWithEmbeddedNav ? nav : null}
 

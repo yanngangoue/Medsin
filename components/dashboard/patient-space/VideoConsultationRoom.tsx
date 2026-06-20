@@ -105,7 +105,7 @@ export function VideoConsultationRoom({
       <header className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-6">
         <div>
           <p className="text-xs font-medium text-white/70">
-            Anne Santé · {data.role === "staff" ? "Médecin" : "Patient"}
+            Anne-sante · {data.role === "staff" ? "Médecin" : "Patient"}
           </p>
           <p className="text-sm font-semibold text-white">
             {displayName}
@@ -125,7 +125,7 @@ export function VideoConsultationRoom({
 
       <div className="relative flex-1">
         <iframe
-          title="Consultation vidéo Anne Santé"
+          title="Consultation vidéo Anne-sante"
           src={meetingUrl}
           allow="camera; microphone; fullscreen; display-capture"
           className="absolute inset-0 h-full w-full border-0"

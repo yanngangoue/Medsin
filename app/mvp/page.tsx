@@ -1,8 +1,8 @@
 export default function MvpPage() {
   return (
     <div style={{ padding: 20 }}>
-      <h1>Anne Santé MVP</h1>
-      <p>Plateforme Anne Santé — authentification via NextAuth.</p>
+      <h1>Anne-sante MVP</h1>
+      <p>Plateforme Anne-sante — authentification via NextAuth.</p>
     </div>
   );
 }

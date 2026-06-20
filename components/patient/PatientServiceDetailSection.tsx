@@ -77,7 +77,7 @@ export function PatientServiceDetailSection({ section }: Props) {
 
         {showProductCards ? (
           <p className="mx-auto mt-6 max-w-2xl px-2 text-[15px] leading-relaxed text-white/90 sm:mt-8 sm:text-base">
-            Chez Anne Santé, votre santé passe avant tout. Chaque ordonnance est émise uniquement par une IPS
+            Chez Anne-sante, votre santé passe avant tout. Chaque ordonnance est émise uniquement par une IPS
             certifiée, après évaluation rigoureuse de votre dossier médical.
           </p>
         ) : null}

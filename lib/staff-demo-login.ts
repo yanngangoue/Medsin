@@ -47,7 +47,7 @@ const ACCOUNTS: StaffDemoAccount[] = [
   {
     role: "ADMIN",
     label: "Admin",
-    description: "Administration Anne Santé",
+    description: "Administration Anne-sante",
     email: "admin@medsim.ca",
     password: "Admin2026!",
     home: "/admin/dashboard",

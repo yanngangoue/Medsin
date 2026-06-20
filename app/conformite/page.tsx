@@ -2,15 +2,15 @@ import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
-  title: "Conformité & Loi 25 — Anne Santé",
-  description: "Conformité Anne Santé : Loi 25, santé et protection des renseignements.",
+  title: "Conformité & Loi 25 — Anne-sante",
+  description: "Conformité Anne-sante : Loi 25, santé et protection des renseignements.",
 };
 
 export default function ConformitePage() {
   return (
     <LegalPageLayout title="Conformité & Loi 25">
       <p>
-        Anne Santé déploie ses services dans un cadre visant la conformité aux exigences québécoises et
+        Anne-sante déploie ses services dans un cadre visant la conformité aux exigences québécoises et
         canadiennes en matière de protection des renseignements personnels et de télésanté.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Loi 25 (Québec)</h2>
@@ -27,7 +27,7 @@ export default function ConformitePage() {
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Télémédecine</h2>
       <p>
-        Anne Santé est une plateforme de mise en relation et d&apos;accompagnement ; elle ne remplace pas une
+        Anne-sante est une plateforme de mise en relation et d&apos;accompagnement ; elle ne remplace pas une
         relation médecin-patient établie en personne lorsque la loi ou la clinique l&apos;exige. Les
         prescriptions sont émises uniquement après évaluation par un professionnel licencié.
       </p>

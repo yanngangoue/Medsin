@@ -52,7 +52,7 @@ export function PatientFelixSidebar({ prenom = "", anneHasNewMessage = false, on
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-slate-200/80 px-5 py-5">
-        <Link href="/" className="inline-flex items-center" onClick={onNavigate} aria-label="Anne Santé">
+        <Link href="/" className="inline-flex items-center" onClick={onNavigate} aria-label="Anne-sante">
           <MedsimLogo />
         </Link>
       </div>
@@ -98,7 +98,7 @@ export function PatientFelixSidebar({ prenom = "", anneHasNewMessage = false, on
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">{prenom || "Patient"}</p>
-            <p className="text-[11px] text-slate-400">Patient Anne Santé</p>
+            <p className="text-[11px] text-slate-400">Patient Anne-sante</p>
             <SignOutButton />
           </div>
         </div>

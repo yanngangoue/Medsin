@@ -13,7 +13,7 @@ export default function GlobalError({ error, reset }: Props) {
         Une erreur empêche l&apos;affichage de la page.
       </p>
       <p className="max-w-lg text-sm text-slate-600">
-        Réessayez dans quelques instants. Si le problème persiste, contactez le support Anne Santé.
+        Réessayez dans quelques instants. Si le problème persiste, contactez le support Anne-sante.
       </p>
       <button
         type="button"

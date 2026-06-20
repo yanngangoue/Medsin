@@ -16,7 +16,7 @@ type Practitioner = {
 const TEAM: Practitioner[] = [
   {
     id: "anne",
-    name: "Anne — Coach IA Anne Santé",
+    name: "Anne — Coach IA Anne-sante",
     title: "Intelligence artificielle",
     specialty: "Analyse · Rappels · Rapports IPS",
     tags: ["Proactif", "GLP-1", "24 h/24"],
@@ -110,7 +110,7 @@ export function MarketingPractitioners() {
     <section id="equipe" className="bg-[#FAFAF8] py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <h2 className="text-4xl font-black tracking-tight text-[#1A1A2E] md:text-5xl">
-          Votre équipe de soins Anne Santé
+          Votre équipe de soins Anne-sante
         </h2>
         <p className="mt-4 max-w-xl text-lg text-gray-500">
           De vraies IPS québécoises + Anne, l&apos;IA qui ne dort jamais.

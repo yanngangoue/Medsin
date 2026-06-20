@@ -1,4 +1,4 @@
-/** Tokens Anne Santé — palette officielle (marketing + produit). */
+/** Tokens Anne-sante — palette officielle (marketing + produit). */
 export const ds = {
   primary: "#1D4D3A",
   accent: "#3EBD93",

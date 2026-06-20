@@ -1,5 +1,5 @@
 /**
- * Données de démonstration Anne Santé — staff, patients GLP-1, messages.
+ * Données de démonstration Anne-sante — staff, patients GLP-1, messages.
  * Usage : npx prisma db push && npx tsx prisma/seed.ts
  */
 import { PrismaClient, type DossierStatus, type EligibilityStatus } from "@prisma/client";
@@ -232,7 +232,7 @@ async function upsertPatients(medecinId: string) {
           changedById: medecinId,
           oldStatus: "PENDING",
           newStatus: p.eligibility === "ELIGIBLE" ? "MEDICAL_REVIEW_REQUIRED" : p.eligibility,
-          note: "Statut initial — seed Anne Santé",
+          note: "Statut initial — seed Anne-sante",
         },
       });
     }
@@ -296,7 +296,7 @@ async function seedMessages(medecinId: string, patients: { id: string; prenom: s
       data: {
         senderId: medecinId,
         receiverId: patient.id,
-        content: `Bonjour ${patient.prenom}, nous avons bien reçu votre dossier. Un médecin Anne Santé vous répondra sous 48 h.`,
+        content: `Bonjour ${patient.prenom}, nous avons bien reçu votre dossier. Un médecin Anne-sante vous répondra sous 48 h.`,
         read: true,
         createdAt: new Date(t0.getTime() + 600_000),
       },
@@ -395,7 +395,7 @@ async function seedMedicalQuestionnaires(ipsId: string) {
 }
 
 async function main() {
-  console.log("Seed Anne Santé…\n");
+  console.log("Seed Anne-sante…\n");
   await upsertStaff();
 
   const medecin = await prisma.user.findUnique({ where: { email: "medecin@medsim.ca" } });

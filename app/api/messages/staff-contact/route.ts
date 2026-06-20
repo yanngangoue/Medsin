@@ -19,7 +19,7 @@ export async function GET() {
     
       return NextResponse.json({
         peer: staff
-          ? { id: staff.id, prenom: staff.prenom || staff.name || "Équipe Anne Santé", role: staff.role }
+          ? { id: staff.id, prenom: staff.prenom || staff.name || "Équipe Anne-sante", role: staff.role }
           : null,
       });
   });

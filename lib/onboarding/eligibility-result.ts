@@ -36,7 +36,7 @@ export function evaluateEligibility(draft: EligibilityDraft): EligibilityResult 
       status: "NOT_ELIGIBLE",
       bmi,
       title: "Âge minimum requis",
-      message: "Le programme Anne Santé s'adresse aux adultes de 18 ans et plus.",
+      message: "Le programme Anne-sante s'adresse aux adultes de 18 ans et plus.",
       ctaHref: "/",
     };
   }
@@ -52,7 +52,7 @@ export function evaluateEligibility(draft: EligibilityDraft): EligibilityResult 
       title: "Nous allons évaluer votre dossier",
       message:
         lowBmi && borderlineDiabetes
-          ? "Votre IMC est sous le seuil habituel et certaines réponses nécessitent une revue clinique. Un professionnel Anne Santé vous contactera."
+          ? "Votre IMC est sous le seuil habituel et certaines réponses nécessitent une revue clinique. Un professionnel Anne-sante vous contactera."
           : lowBmi
             ? "Le traitement GLP-1 est généralement recommandé pour un IMC ≥ 27. Nous pouvons quand même évaluer votre dossier avec notre équipe."
             : "Un professionnel examinera votre dossier pour confirmer la pertinence du traitement.",

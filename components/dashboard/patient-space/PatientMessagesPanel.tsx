@@ -17,7 +17,7 @@ export function PatientMessagesPanel({ userId, staffId, loading, embedded }: Pro
         <div className="border-b border-slate-100 px-6 py-5">
           <h2 className="text-lg font-bold text-slate-900">Messagerie sécurisée</h2>
           <p className="mt-1 text-sm leading-relaxed text-slate-600">
-            Posez vos questions sur votre dossier. Un membre de l&apos;équipe Anne Santé vous répond.
+            Posez vos questions sur votre dossier. Un membre de l&apos;équipe Anne-sante vous répond.
           </p>
         </div>
       ) : (
@@ -30,7 +30,7 @@ export function PatientMessagesPanel({ userId, staffId, loading, embedded }: Pro
         {loading ? (
           <p className="py-8 text-center text-sm text-slate-500">Connexion à la messagerie…</p>
         ) : staffId ? (
-          <MessageThread peerId={staffId} currentUserId={userId} title="Équipe Anne Santé" />
+          <MessageThread peerId={staffId} currentUserId={userId} title="Équipe Anne-sante" />
         ) : (
           <div className="rounded-xl bg-amber-50/80 px-4 py-6 text-center text-sm text-amber-950">
             <p className="font-medium">Messagerie en configuration</p>

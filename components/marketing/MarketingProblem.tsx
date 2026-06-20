@@ -21,7 +21,7 @@ export function MarketingProblem() {
         <h2 className="text-center text-3xl font-black tracking-tight text-[#1A1A2E] sm:text-4xl md:text-5xl">
           Le système actuel ne vous suit pas.
           <br className="hidden sm:block" />
-          <span className="text-[#1D4D3A]"> Anne Santé, si.</span>
+          <span className="text-[#1D4D3A]"> Anne-sante, si.</span>
         </h2>
 
         <div className="mt-16 grid gap-10 lg:grid-cols-2 lg:gap-16">
@@ -43,7 +43,7 @@ export function MarketingProblem() {
 
           <div className="rounded-3xl border border-[#1D4D3A]/20 bg-[#F0F7F4] p-8 lg:p-10">
             <p className="text-sm font-bold uppercase tracking-wide text-[#1D4D3A]">
-              Avec Anne Santé
+              Avec Anne-sante
             </p>
             <ul className="mt-6 space-y-4">
               {AFTER.map((item) => (

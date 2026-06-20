@@ -1,4 +1,4 @@
-# Anne Santé — reprise session (connexion après inscription)
+# Anne-sante — reprise session (connexion après inscription)
 
 ## Symptôme
 

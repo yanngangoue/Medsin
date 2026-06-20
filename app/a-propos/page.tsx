@@ -2,16 +2,16 @@ import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
-  title: "À propos de nous — Anne Santé",
+  title: "À propos de nous — Anne-sante",
   description:
-    "Anne Santé : plateforme québécoise de santé métabolique en ligne, encadrée par des professionnels certifiés.",
+    "Anne-sante : plateforme québécoise de santé métabolique en ligne, encadrée par des professionnels certifiés.",
 };
 
 export default function AProposPage() {
   return (
     <LegalPageLayout title="À propos de nous">
       <p>
-        Anne Santé est une plateforme québécoise de santé métabolique 100 % en ligne. Nous accompagnons les
+        Anne-sante est une plateforme québécoise de santé métabolique 100 % en ligne. Nous accompagnons les
         personnes éligibles dans leur parcours de gestion du poids, avec des traitements personnalisés,
         un suivi proactif et un tableau de bord dédié.
       </p>

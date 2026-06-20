@@ -61,7 +61,7 @@ export default async function NutritionnisteDashboardPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <header className="border-b border-slate-200/80 bg-white px-4 py-4">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <Link href="/" aria-label="Anne Santé">
+          <Link href="/" aria-label="Anne-sante">
             <MedsimLogo />
           </Link>
           <span className="text-xs font-medium text-slate-500">Espace nutritionniste</span>

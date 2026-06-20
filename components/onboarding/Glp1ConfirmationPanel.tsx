@@ -39,7 +39,7 @@ function eligibilityCopy(summary: Glp1DossierSummary): { title: string; body: st
     case "NOT_ELIGIBLE":
       return {
         title: "GLP-1 : non admissible",
-        body: "Ce parcours ne correspond pas à votre profil. D'autres services Anne Santé peuvent vous accompagner.",
+        body: "Ce parcours ne correspond pas à votre profil. D'autres services Anne-sante peuvent vous accompagner.",
       };
     case "MEDICAL_REVIEW_REQUIRED":
       return {
@@ -151,7 +151,7 @@ export function Glp1ConfirmationPanel({ prenom, summary, syncing, syncError }: P
 
       {showAlternatives ? (
         <div className="mt-6 rounded-xl border border-amber-200/80 bg-amber-50/80 p-4 text-sm text-amber-950">
-          <p className="font-medium">Poursuivre avec Anne Santé</p>
+          <p className="font-medium">Poursuivre avec Anne-sante</p>
           <p className="mt-1 text-xs leading-relaxed">
             Votre espace patient reste accessible pour consulter votre dossier et contacter l&apos;équipe
             médicale.

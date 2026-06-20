@@ -72,7 +72,7 @@ export function PatientMonEspace({
         />
 
         <p className="rounded-xl border border-slate-200/60 bg-white/60 px-4 py-4 text-center text-[11px] leading-relaxed text-slate-500">
-          Anne Santé est une plateforme de télésanté et de simulation. Les informations affichées ne
+          Anne-sante est une plateforme de télésanté et de simulation. Les informations affichées ne
           constituent pas un avis médical. Toute prescription est validée par un professionnel
           autorisé au Québec.
         </p>

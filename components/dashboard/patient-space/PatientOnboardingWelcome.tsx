@@ -91,7 +91,7 @@ export function PatientOnboardingWelcome({
 
   return (
     <section className="rounded-2xl border border-[#3EBD93]/25 bg-gradient-to-br from-[#F0F7F4] to-white p-6 shadow-sm">
-      <h2 className="text-xl font-bold text-slate-900">Bienvenue chez Anne Santé ! 🎉</h2>
+      <h2 className="text-xl font-bold text-slate-900">Bienvenue chez Anne-sante ! 🎉</h2>
       <p className="mt-1 text-sm text-slate-600">Voici où en est votre parcours :</p>
       <ol className="mt-5 space-y-4">
         {steps.map((step) => (

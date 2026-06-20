@@ -28,7 +28,7 @@ export async function ensureFulfillmentPdf(fulfillmentId: string): Promise<strin
     durationMonths: fulfillment.duration,
     refills: fulfillment.refills,
     instructions: fulfillment.instructions,
-    ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne Santé",
+    ipsName: ips?.prenom ?? ips?.name ?? "IPS Anne-sante",
     ipsLicense: ips?.medecinLicenseNumber ?? undefined,
     issuedAt,
   });

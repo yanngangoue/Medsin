@@ -10,7 +10,7 @@ export function MarketingAiCoach() {
             Votre coach santé IA — bien plus qu&apos;un suivi classique
           </h2>
           <p className="mt-4 text-base text-[#1A1A2E]/70 lg:hidden">
-            Felix et les cliniques classiques vous laissent seul entre les rendez-vous. Anne Santé vous
+            Felix et les cliniques classiques vous laissent seul entre les rendez-vous. Anne-sante vous
             contacte en premier.
           </p>
         </div>
@@ -20,7 +20,7 @@ export function MarketingAiCoach() {
 
           <div>
             <p className="hidden text-base text-[#1A1A2E]/70 lg:block">
-              Felix et les cliniques classiques vous laissent seul entre les rendez-vous. Anne Santé
+              Felix et les cliniques classiques vous laissent seul entre les rendez-vous. Anne-sante
               vous contacte en premier — même prix, meilleur accompagnement.
             </p>
 
@@ -36,7 +36,7 @@ export function MarketingAiCoach() {
             </ul>
 
             <div className="mt-8 rounded-2xl border border-[#1D4D3A]/10 bg-white p-5 text-sm text-[#1A1A2E]/75">
-              <p className="font-semibold text-[#1D4D3A]">Anne Santé vs Felix Health</p>
+              <p className="font-semibold text-[#1D4D3A]">Anne-sante vs Felix Health</p>
               <ul className="mt-3 space-y-2">
                 <li>✅ Anne, coach IA proactive — analyse vos données et vous écrit en premier</li>
                 <li>✅ Tableau de bord visuel complet</li>

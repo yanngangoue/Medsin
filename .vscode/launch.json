@@ -13,7 +13,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Node.js : smoke Anne Santé",
+      "name": "Node.js : smoke Anne-sante",
       "program": "${workspaceFolder}/scripts/smoke-medsim.mjs",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "node",

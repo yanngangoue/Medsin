@@ -51,7 +51,7 @@ export function IpsSidebar({ stats, onNavigate }: Props) {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-slate-200/80 px-5 py-5">
-        <Link href="/dashboard/ips" className="inline-flex flex-col gap-1" onClick={onNavigate} aria-label="Anne Santé">
+        <Link href="/dashboard/ips" className="inline-flex flex-col gap-1" onClick={onNavigate} aria-label="Anne-sante">
           <MedsimLogo />
           <p className="text-[10px] font-semibold uppercase tracking-wide text-[#3EBD93]">
             Espace IPS

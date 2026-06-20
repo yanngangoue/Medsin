@@ -22,7 +22,7 @@ h1{font-size:1.25rem;color:#16a34a}
 .section{margin:1rem 0;padding:1rem;border:1px solid #e2e8f0;border-radius:8px}
 </style></head>
 <body>
-<h1>Anne Santé — Ordonnance GLP-1</h1>
+<h1>Anne-sante — Ordonnance GLP-1</h1>
 <p class="meta">N° ${params.numeroOrdonnance} · ${dateStr}</p>
 <p><strong>Médecin :</strong> Dr. ${params.medecinName}${params.license ? ` · Permis ${params.license}` : ""}</p>
 <p><strong>Patient :</strong> ${params.patientName}</p>

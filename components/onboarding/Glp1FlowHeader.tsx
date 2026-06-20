@@ -52,7 +52,7 @@ export function Glp1FlowHeader({ back, forward, subtitle }: Props) {
             <Link
               href={PUBLIC_CATALOG_HOME}
               className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--teal)]"
-              aria-label="Anne Santé — catalogue des services"
+              aria-label="Anne-sante — catalogue des services"
             >
               <MedsimLogo />
             </Link>

@@ -545,8 +545,8 @@ export function MedicalQuestionnaireWizard() {
         const CONSENTS: Record<string, { title: string; desc: string; icon: string }> = {
           consentMedical:     { title: "Soins par IPS", desc: "Je consens à être pris·e en charge par une infirmière praticienne spécialisée (IPS) via télémédecine.", icon: "🩺" },
           consentDataSharing: { title: "Partage de dossier", desc: "J'autorise le partage de mon dossier avec les professionnels de santé impliqués dans mon suivi.", icon: "🔒" },
-          consentAiCoach:     { title: "Coach Anne (IA)", desc: "J'accepte l'accompagnement personnalisé par Anne, coach santé IA de Anne Santé.", icon: "💬" },
-          consentPrivacy:     { title: "Politique de confidentialité", desc: "J'ai lu et j'accepte la politique de confidentialité Anne Santé, conforme à la Loi 25.", icon: "📋" },
+          consentAiCoach:     { title: "Coach Anne (IA)", desc: "J'accepte l'accompagnement personnalisé par Anne, coach santé IA de Anne-sante.", icon: "💬" },
+          consentPrivacy:     { title: "Politique de confidentialité", desc: "J'ai lu et j'accepte la politique de confidentialité Anne-sante, conforme à la Loi 25.", icon: "📋" },
         };
         const c = CONSENTS[currentId];
         const checked = form[currentId as keyof MedicalQuestionnaireV2] === true;

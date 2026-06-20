@@ -2,20 +2,20 @@ import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
-  title: "Conditions d'utilisation — Anne Santé",
-  description: "Conditions générales d'utilisation de la plateforme Anne Santé.",
+  title: "Conditions d'utilisation — Anne-sante",
+  description: "Conditions générales d'utilisation de la plateforme Anne-sante.",
 };
 
 export default function ConditionsUtilisationPage() {
   return (
     <LegalPageLayout title="Conditions d'utilisation">
       <p>
-        En accédant à Anne Santé, vous acceptez les présentes conditions. Si vous n&apos;acceptez pas ces
+        En accédant à Anne-sante, vous acceptez les présentes conditions. Si vous n&apos;acceptez pas ces
         termes, n&apos;utilisez pas la plateforme.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Services</h2>
       <p>
-        Anne Santé propose un parcours de gestion du poids (GLP-1) encadré par des professionnels de santé,
+        Anne-sante propose un parcours de gestion du poids (GLP-1) encadré par des professionnels de santé,
         complété par un assistant IA proactif pour le suivi au quotidien.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Compte utilisateur</h2>
@@ -25,12 +25,12 @@ export default function ConditionsUtilisationPage() {
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Limitation de responsabilité</h2>
       <p>
-        Anne Santé ne garantit pas de résultats spécifiques. Les contenus sont fournis à titre informatif et
+        Anne-sante ne garantit pas de résultats spécifiques. Les contenus sont fournis à titre informatif et
         ne constituent pas un avis médical en l&apos;absence d&apos;évaluation par un professionnel.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Propriété intellectuelle</h2>
       <p>
-        Les marques, textes et éléments visuels de Anne Santé sont protégés. Toute reproduction non autorisée
+        Les marques, textes et éléments visuels de Anne-sante sont protégés. Toute reproduction non autorisée
         est interdite.
       </p>
       <p className="pt-4">

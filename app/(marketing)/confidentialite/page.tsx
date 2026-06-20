@@ -5,7 +5,7 @@ import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { MarketingLogo } from "@/components/marketing/MarketingLogo";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — Anne Santé",
+  title: "Politique de confidentialité — Anne-sante",
   description: "Protection des données et conformité Loi 25 (Québec) et LPRPDE (Canada).",
 };
 

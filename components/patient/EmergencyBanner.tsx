@@ -11,7 +11,7 @@ export function EmergencyBanner() {
       <a href="tel:911" className="font-bold underline">
         911
       </a>
-      . Anne Santé ne remplace pas les services d&apos;urgence.
+      . Anne-sante ne remplace pas les services d&apos;urgence.
     </div>
   );
 }

@@ -21,7 +21,7 @@ const FAQ = [
   },
   {
     q: "Quelle est la différence avec Felix Health ?",
-    a: "Felix est une excellente plateforme, mais elle opère principalement en anglais et n'offre pas de suivi IA proactif. Anne Santé est 100 % québécois, en français authentique, et Anne vous contacte en premier chaque semaine — vous n'avez pas à demander de l'aide, on vient à vous.",
+    a: "Felix est une excellente plateforme, mais elle opère principalement en anglais et n'offre pas de suivi IA proactif. Anne-sante est 100 % québécois, en français authentique, et Anne vous contacte en premier chaque semaine — vous n'avez pas à demander de l'aide, on vient à vous.",
   },
   {
     q: "Est-ce que je peux parler à une vraie IPS ?",

@@ -369,7 +369,7 @@ function HeroBanner({
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white" />
       </div>
       <p className="relative text-sm font-semibold text-[#3EBD93]">{greeting}</p>
-      <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Bienvenue dans votre espace Anne Santé 🌿</p>
+      <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Bienvenue dans votre espace Anne-sante 🌿</p>
       <p className="relative mt-1 text-sm text-emerald-200">
         Votre programme de gestion du poids démarre ici.
       </p>
@@ -527,7 +527,7 @@ function PatientDashboardHomeInner({ prenom }: Props) {
               <path fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clipRule="evenodd" />
             </svg>
           </button>
-          <Link href="/" aria-label="MedSim"><MedsimLogo /></Link>
+          <Link href="/" aria-label="Anne-sante"><MedsimLogo /></Link>
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 space-y-5 px-4 py-6 sm:px-6 sm:py-8 [&_h2]:font-display [&_h2]:tracking-tight">

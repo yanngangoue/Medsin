@@ -92,7 +92,7 @@ export function GestionPoidsHowItWorks() {
             Votre parcours GLP-1 en 4 étapes
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-            Anne Santé vous accompagne de l&apos;évaluation pré-diagnostique à la prescription encadrée.
+            Anne-sante vous accompagne de l&apos;évaluation pré-diagnostique à la prescription encadrée.
             Aucune décision thérapeutique automatisée — le professionnel de santé a le dernier mot.
           </p>
         </div>

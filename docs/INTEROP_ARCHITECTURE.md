@@ -1,4 +1,4 @@
-# Architecture d’interopérabilité Anne Santé
+# Architecture d’interopérabilité Anne-sante
 
 Objectif : couche **canonique FHIR R4**, bus d’événements, multi‑locataire par province, audit et contrats d’API — extensible vers gateway dédiée (NestJS), NATS/Kafka et connecteurs clinique.
 

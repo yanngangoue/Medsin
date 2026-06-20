@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       ipAddress: ip,
     });
     if (process.env.NODE_ENV === "development") {
-      console.info("[Anne Santé] Lien réinitialisation mot de passe (dev) :", url);
+      console.info("[Anne-sante] Lien réinitialisation mot de passe (dev) :", url);
     }
   }
 

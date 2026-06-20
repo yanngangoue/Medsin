@@ -1,4 +1,4 @@
-/** Identifiants des parcours onboarding Anne Santé. */
+/** Identifiants des parcours onboarding Anne-sante. */
 export const ONBOARDING_SERVICES = {
   GLP1: "gestion-poids",
 } as const;

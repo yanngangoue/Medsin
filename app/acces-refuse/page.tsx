@@ -11,7 +11,7 @@ export default function AccesRefusePage() {
         <h1 className="text-xl font-semibold text-slate-900">Accès refusé</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-600">
           Vous n’avez pas les droits nécessaires pour consulter cette section. Si vous pensez qu’il s’agit d’une erreur,
-          contactez le soutien Anne Santé.
+          contactez le soutien Anne-sante.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link

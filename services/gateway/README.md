@@ -1,6 +1,6 @@
 # Gateway NestJS (phase 2)
 
-Le MVP Anne Santé expose l’interop via **Route Handlers Next.js** (`app/api/interop/v1/*`) avec la même logique métier dans `lib/interop`.
+Le MVP Anne-sante expose l’interop via **Route Handlers Next.js** (`app/api/interop/v1/*`) avec la même logique métier dans `lib/interop`.
 
 Pour une **API Gateway** dédiée (limite de débit globale, WAF, mTLS vers partenaires, agrégation multi‑backend) :
 

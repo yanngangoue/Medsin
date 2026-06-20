@@ -206,7 +206,7 @@ export async function PATCH(req: Request, { params }: Params) {
           durationMonths: duration,
           refills: refills ?? 2,
           instructions: instructions ?? "",
-          ipsName: ipsUser?.prenom ?? ipsUser?.name ?? "IPS Anne Santé",
+          ipsName: ipsUser?.prenom ?? ipsUser?.name ?? "IPS Anne-sante",
           ipsLicense: ipsUser?.medecinLicenseNumber ?? undefined,
           issuedAt: new Date(),
         });
@@ -248,7 +248,7 @@ export async function PATCH(req: Request, { params }: Params) {
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
         await sendEmail({
           to: questionnaire.user.email,
-          subject: "Votre ordonnance Anne Santé est prête",
+          subject: "Votre ordonnance Anne-sante est prête",
           template: "prescription_ready",
           entityKey: `prescription_ready:${fulfillment.id}`,
           userId: questionnaire.userId,

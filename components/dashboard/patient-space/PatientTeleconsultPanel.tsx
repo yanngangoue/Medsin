@@ -91,7 +91,7 @@ export function PatientTeleconsultPanel() {
           <h2 className="text-lg font-bold text-slate-900">Consultation vidéo</h2>
         </div>
         <p className="mt-1 text-sm leading-relaxed text-slate-600">
-          Prenez rendez-vous avec un médecin Anne Santé, puis rejoignez la salle sécurisée à l&apos;heure
+          Prenez rendez-vous avec un médecin Anne-sante, puis rejoignez la salle sécurisée à l&apos;heure
           prévue.
         </p>
       </div>
@@ -189,7 +189,7 @@ export function PatientTeleconsultPanel() {
         </div>
 
         <p className="text-[10px] leading-relaxed text-slate-400">
-          Visioconférence chiffrée via salle privée Anne Santé. Connexion possible 15 min avant le
+          Visioconférence chiffrée via salle privée Anne-sante. Connexion possible 15 min avant le
           rendez-vous. Un avis médical formel suit la consultation.
         </p>
       </div>

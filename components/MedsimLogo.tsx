@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MEDSIM_BRAND } from "@/lib/brand/medsim-logo";
+import { APP_BRAND } from "@/lib/brand/app-brand";
 
 type MedsimLogoProps = {
   className?: string;
@@ -7,15 +7,15 @@ type MedsimLogoProps = {
   variant?: "default" | "onDark";
 };
 
+/** Logo wordmark Anne-sante (composant historique MedsimLogo — nom interne conservé). */
 export function MedsimLogo({ className = "", variant = "default" }: MedsimLogoProps) {
-  const src =
-    variant === "onDark" ? MEDSIM_BRAND.logo.onDark : MEDSIM_BRAND.logo.default;
+  const src = variant === "onDark" ? APP_BRAND.logo.onDark : APP_BRAND.logo.default;
 
   return (
     <Image
       src={src}
-      alt={MEDSIM_BRAND.name}
-      width={112}
+      alt={APP_BRAND.name}
+      width={148}
       height={28}
       unoptimized
       className={`h-5 w-auto shrink-0 sm:h-6 ${className}`}
@@ -23,3 +23,6 @@ export function MedsimLogo({ className = "", variant = "default" }: MedsimLogoPr
     />
   );
 }
+
+/** Alias explicite pour le nouveau branding */
+export const AnneSanteLogo = MedsimLogo;

@@ -1,20 +1,21 @@
 /**
- * Marque produit visible — plateforme GLP-1 (ex-Anne Santé).
- * Les identifiants techniques (MEDSIM_*, @medsim.ca, medsim-logo.svg) restent inchangés.
+ * Marque produit visible — plateforme GLP-1 Anne-sante.
+ * Les identifiants techniques (MEDSIM_*, @medsim.ca) restent inchangés.
  */
 export const APP_BRAND = {
-  name: "Anne Santé",
+  name: "Anne-sante",
+  slug: "anne-sante",
   /** Coach IA intégré — prénom distinct de la marque plateforme */
   coachName: "Anne",
   color: "#1D9E75",
   colorOnDark: "#FFFFFF",
   logo: {
-    default: "/brand/medsim-logo.svg",
-    onDark: "/brand/medsim-logo-white.svg",
+    default: "/brand/anne-sante-logo.svg",
+    onDark: "/brand/anne-sante-logo-white.svg",
   },
   docs: {
-    default: "docs/logo/medsim-logo.svg",
-    onDark: "docs/logo/medsim-logo-white.svg",
+    default: "public/brand/anne-sante-logo.svg",
+    onDark: "public/brand/anne-sante-logo-white.svg",
   },
 } as const;
 

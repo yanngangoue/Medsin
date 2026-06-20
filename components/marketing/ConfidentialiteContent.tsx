@@ -10,7 +10,7 @@ export function ConfidentialiteContent() {
       <p className="text-sm text-[#6B7280]">Dernière mise à jour : {LAST_UPDATED}</p>
 
       <p>
-        Anne Santé respecte la vie privée des personnes dont nous traitons les renseignements personnels,
+        Anne-sante respecte la vie privée des personnes dont nous traitons les renseignements personnels,
         en conformité avec la{" "}
         <em>Loi sur la protection des renseignements personnels dans le secteur privé</em> au Québec
         (Loi 25) et la <em>Loi sur la protection des renseignements personnels et les documents
@@ -19,7 +19,7 @@ export function ConfidentialiteContent() {
 
       <h2>Qui sommes-nous</h2>
       <p>
-        Anne Santé Inc. est une plateforme médicale québécoise spécialisée en gestion du poids avec
+        Anne-sante Inc. est une plateforme médicale québécoise spécialisée en gestion du poids avec
         traitements GLP-1. Siège au Québec, Canada.
       </p>
 

@@ -81,7 +81,7 @@ export async function runRapportIps(): Promise<RapportIpsResult> {
     const body = sections.join("\n\n");
     const result = await sendEmail({
       to: ips.email,
-      subject: "Rapport hebdomadaire Anne — Anne Santé",
+      subject: "Rapport hebdomadaire Anne — Anne-sante",
       template: "ips_weekly_report",
       entityKey: `ips_weekly:${ips.id}:${weekKey}`,
       userId: ips.id,

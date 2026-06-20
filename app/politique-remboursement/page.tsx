@@ -2,8 +2,8 @@ import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
-  title: "Politique de remboursement — Anne Santé",
-  description: "Conditions de remboursement pour les services et commandes Anne Santé.",
+  title: "Politique de remboursement — Anne-sante",
+  description: "Conditions de remboursement pour les services et commandes Anne-sante.",
 };
 
 export default function PolitiqueRemboursementPage() {
@@ -11,7 +11,7 @@ export default function PolitiqueRemboursementPage() {
     <LegalPageLayout title="Politique de remboursement">
       <p>
         La présente politique décrit les conditions dans lesquelles un remboursement peut être demandé pour
-        les services payants offerts sur Anne Santé. Elle complète notre page{" "}
+        les services payants offerts sur Anne-sante. Elle complète notre page{" "}
         <Link href="/garantie" className="text-[var(--teal-900)] underline">
           Garantie
         </Link>
@@ -32,7 +32,7 @@ export default function PolitiqueRemboursementPage() {
       <p>
         Les frais liés à une évaluation ou à un suivi déjà réalisé par un professionnel de santé ne sont
         généralement pas remboursables. Un remboursement partiel peut être étudié si le service n&apos;a pas
-        été rendu (ex. consultation annulée par Anne Santé) ou en cas d&apos;erreur de facturation avérée.
+        été rendu (ex. consultation annulée par Anne-sante) ou en cas d&apos;erreur de facturation avérée.
       </p>
 
       <h2 className="pt-4 text-base font-semibold text-slate-900">Modalités de remboursement</h2>

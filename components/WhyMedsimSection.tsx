@@ -27,7 +27,7 @@ export function WhyMedsimSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <h2 id="why-medsim-heading" className="text-[26px] font-bold tracking-tight text-[var(--gray-900)] sm:text-[32px]">
-            {`Pourquoi choisir Anne Santé\u202f?`}
+            {`Pourquoi choisir Anne-sante\u202f?`}
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-[var(--gray-muted)] sm:text-[16px]">
             La première plateforme canadienne de santé métabolique intégrée, soutenue par l’IA et supervisée par des

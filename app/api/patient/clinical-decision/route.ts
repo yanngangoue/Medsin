@@ -27,7 +27,7 @@ export async function GET() {
           patientMessage: decision.patientMessage,
           createdAt: decision.createdAt.toISOString(),
           decidedBy:
-            decision.decidedBy.prenom || decision.decidedBy.name || "Équipe Anne Santé",
+            decision.decidedBy.prenom || decision.decidedBy.name || "Équipe Anne-sante",
         },
       });
   });

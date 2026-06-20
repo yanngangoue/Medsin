@@ -1,15 +1,15 @@
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata = {
-  title: "Garantie — Anne Santé",
-  description: "Politique de garantie et satisfaction Anne Santé.",
+  title: "Garantie — Anne-sante",
+  description: "Politique de garantie et satisfaction Anne-sante.",
 };
 
 export default function GarantiePage() {
   return (
     <LegalPageLayout title="Garantie">
       <p>
-        Anne Santé s&apos;engage à offrir un accompagnement de qualité encadré par des professionnels de
+        Anne-sante s&apos;engage à offrir un accompagnement de qualité encadré par des professionnels de
         santé licenciés au Canada.
       </p>
       <h2 className="pt-4 text-base font-semibold text-slate-900">Satisfaction</h2>
