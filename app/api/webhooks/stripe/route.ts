@@ -3,7 +3,6 @@ import { processStripeWebhook } from "@/lib/stripe/process-webhook";
 
 export const runtime = "nodejs";
 
-/** @deprecated Préférer POST /api/webhooks/stripe — conservé pour compatibilité CLI Stripe. */
 export async function POST(req: Request) {
-  return catchRouteError("stripe/webhook/POST", () => processStripeWebhook(req));
+  return catchRouteError("webhooks/stripe/POST", () => processStripeWebhook(req));
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { catchRouteError } from "@/lib/api/catch-route-error";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/send-email";
+import { APP_BRAND } from "@/lib/brand/app-brand";
 import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
 
 const schema = z.object({
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const { prenom, nom, email, sujet, message } = parsed.data;
-    const adminEmail = process.env.MEDSIM_ADMIN_EMAIL?.trim() ?? "support@medsim.ca";
+    const adminEmail = process.env.MEDSIM_ADMIN_EMAIL?.trim() ?? APP_BRAND.supportEmail;
 
     await sendEmail({
       to: adminEmail,

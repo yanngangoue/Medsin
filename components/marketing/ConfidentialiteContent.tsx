@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { APP_BRAND } from "@/lib/brand/app-brand";
 
-const DPO_EMAIL = "confidentialite@medsim.ca";
+const DPO_EMAIL = APP_BRAND.privacyEmail;
 const LAST_UPDATED = "6 juin 2026";
 
 export function ConfidentialiteContent() {

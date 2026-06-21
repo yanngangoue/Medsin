@@ -7,6 +7,7 @@ import { MarketingLogo } from "@/components/marketing/MarketingLogo";
 const NAV_LINKS = [
   { href: "#medicaments", label: "Médicaments" },
   { href: "#comment-ca-marche", label: "Comment ça marche" },
+  { href: "#calculateur-imc", label: "IMC" },
   { href: "#tarifs", label: "Tarifs" },
   { href: "#faq", label: "FAQ" },
 ];
@@ -32,8 +33,10 @@ export function MarketingNavbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b bg-white transition-shadow ${
-          scrolled ? "border-gray-100 shadow-sm" : "border-gray-100"
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+          scrolled
+            ? "border-gray-100/80 bg-white/85 shadow-sm backdrop-blur-xl"
+            : "border-transparent bg-white/70 backdrop-blur-md"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
@@ -62,7 +65,7 @@ export function MarketingNavbar() {
               href="/eligibilite"
               className="rounded-full bg-[#1D4D3A] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
-              Suis-je éligible ?
+              Commencer
             </Link>
           </div>
 
@@ -124,7 +127,7 @@ export function MarketingNavbar() {
                 onClick={() => setMenuOpen(false)}
                 className="rounded-full bg-[#1D4D3A] px-6 py-3 text-center text-sm font-semibold text-white"
               >
-                Suis-je éligible ?
+                Commencer
               </Link>
             </div>
           </div>

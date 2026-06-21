@@ -3,7 +3,7 @@ import { AI_COACH_BENEFITS } from "@/lib/marketing/landing-content";
 
 export function MarketingAiCoach() {
   return (
-    <section className="bg-[#F0F7F4] py-16 sm:py-20">
+    <section id="coach-anne" className="bg-[#F0F7F4] py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center lg:max-w-none lg:text-left">
           <h2 className="text-3xl font-bold text-[#1A1A2E] sm:text-4xl">

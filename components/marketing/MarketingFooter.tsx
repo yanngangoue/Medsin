@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_BRAND } from "@/lib/brand/app-brand";
 import { MarketingLogo } from "@/components/marketing/MarketingLogo";
 
 export function MarketingFooter() {
@@ -63,8 +64,8 @@ export function MarketingFooter() {
           <p className="text-sm font-semibold text-white">Contact</p>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
-              <a href="mailto:support@medsim.ca" className="hover:text-white">
-                support@medsim.ca
+              <a href={`mailto:${APP_BRAND.supportEmail}`} className="hover:text-white">
+                {APP_BRAND.supportEmail}
               </a>
             </li>
             <li>

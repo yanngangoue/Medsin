@@ -4,6 +4,7 @@ import { forbidden, unauthorized } from "@/lib/api-errors";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { getStripeIpePriceId } from "@/lib/stripe/env";
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -25,12 +26,12 @@ export async function createCheckoutSession(req?: Request) {
     ? ((await req.json().catch(() => null)) as CheckoutBody | null)
     : null;
 
-  const priceId = process.env.STRIPE_PRICE_ID;
+  const priceId = getStripeIpePriceId();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
 
   if (!priceId) {
     return NextResponse.json(
-      { error: "STRIPE_PRICE_ID non configuré — ajoutez un prix dans .env" },
+      { error: "STRIPE_IPE_PRICE_ID non configuré — ajoutez un prix dans .env" },
       { status: 503 },
     );
   }

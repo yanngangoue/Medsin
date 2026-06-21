@@ -29,7 +29,7 @@ export async function GET() {
 
   return NextResponse.json(data, {
     headers: {
-      "Content-Disposition": `attachment; filename="medsim-donnees-${session.user.id}.json"`,
+      "Content-Disposition": `attachment; filename="anne-sante-donnees-${session.user.id}.json"`,
     },
   });
   });

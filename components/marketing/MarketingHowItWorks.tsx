@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MarketingReveal } from "@/components/marketing/MarketingReveal";
 
 const STEPS = [
   {
@@ -46,8 +47,13 @@ export function MarketingHowItWorks() {
 
           <ol className="grid gap-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             {STEPS.map((step, index) => (
-              <li key={step.title} className="relative text-center">
-                <div className="mx-auto flex h-24 w-24 flex-col items-center justify-center rounded-full border-2 border-[#1D4D3A]/20 bg-white shadow-sm">
+              <MarketingReveal
+                key={step.title}
+                as="li"
+                delay={index * 100}
+                className="group relative text-center"
+              >
+                <div className="mx-auto flex h-24 w-24 flex-col items-center justify-center rounded-full border-2 border-[#1D4D3A]/20 bg-white shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:border-[#1D4D3A]/40 group-hover:shadow-md">
                   <span className="text-2xl" aria-hidden>
                     {step.icon}
                   </span>
@@ -58,7 +64,7 @@ export function MarketingHowItWorks() {
                 </span>
                 <h3 className="mt-2 text-lg font-bold text-[#1A1A2E]">{step.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-gray-500">{step.description}</p>
-              </li>
+              </MarketingReveal>
             ))}
           </ol>
         </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Montserrat, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "./providers";
 
@@ -13,6 +13,17 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-medsim-display",
   weight: ["600", "700", "800"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+});
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -31,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr-CA" className="scroll-smooth">
-      <body className={`${montserrat.variable} ${jakarta.variable} overflow-x-hidden font-sans antialiased`}>
+      <body className={`${montserrat.variable} ${jakarta.variable} ${playfair.variable} ${inter.variable} overflow-x-hidden font-sans antialiased`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

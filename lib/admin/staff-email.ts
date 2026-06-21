@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-/** Domaine des courriels professionnels MedSim (ex. medsim.ca — à valider avec le vrai domaine). */
+/** Domaine des courriels professionnels Anne-sante. */
 export function staffEmailDomain(): string {
-  return (process.env.MEDSIM_STAFF_EMAIL_DOMAIN ?? "medsim.ca").trim().toLowerCase();
+  return (process.env.MEDSIM_STAFF_EMAIL_DOMAIN ?? "anne-sante.ca").trim().toLowerCase();
 }
 
 function slugPart(value: string): string {
@@ -14,14 +14,14 @@ function slugPart(value: string): string {
     .replace(/^\.+|\.+$/g, "");
 }
 
-/** Propose un courriel @medsim.ca à partir du prénom et du nom. */
+/** Propose un courriel @anne-sante.ca à partir du prénom et du nom. */
 export function proposeStaffEmail(prenom: string, nom: string): string {
   const domain = staffEmailDomain();
   const local = [slugPart(prenom), slugPart(nom)].filter(Boolean).join(".");
   return `${local || "membre"}@${domain}`;
 }
 
-/** Retourne un courriel @medsim.ca unique (suffixe numérique si collision). */
+/** Retourne un courriel @anne-sante.ca unique (suffixe numérique si collision). */
 export async function ensureUniqueStaffEmail(
   prenom: string,
   nom: string,

@@ -1,14 +1,16 @@
 import Stripe from "stripe";
 
 let stripeClient: Stripe | null = null;
+let stripeClientKey: string | null = null;
 
 export function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key) {
     throw new Error("STRIPE_SECRET_KEY manquant");
   }
-  if (!stripeClient) {
+  if (!stripeClient || stripeClientKey !== key) {
     stripeClient = new Stripe(key);
+    stripeClientKey = key;
   }
   return stripeClient;
 }

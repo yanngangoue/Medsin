@@ -61,8 +61,9 @@ MEDSIM_SMOKE_BASE=https://medsim-roan.vercel.app node scripts/mvp-audit.mjs
 | `ENCRYPTION_KEY` | Chiffrement données médicales (min. 32 car.) |
 | `ANTHROPIC_API_KEY` | Coach Anne |
 | `STRIPE_SECRET_KEY` | Checkout |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Checkout client |
-| `STRIPE_PRICE_ID` | Abonnement |
+| `STRIPE_IPE_PRICE_ID` | Abonnement IPS / IPE |
+| `NEXT_PUBLIC_STRIPE_IPE_PUBLISHABLE_KEY` | Checkout client |
+| `STRIPE_IPE_WEBHOOK_SECRET` | Validation signature webhook |
 | `MEDSIM_CRON_SECRET` / `CRON_SECRET` | Crons Vercel (`vercel.json`) |
 
 ### À compléter manuellement
@@ -70,18 +71,18 @@ MEDSIM_SMOKE_BASE=https://medsim-roan.vercel.app node scripts/mvp-audit.mjs
 #### 1. Stripe Webhook (paiements)
 
 1. [Stripe Dashboard](https://dashboard.stripe.com/webhooks) → **Ajouter un endpoint**
-2. URL : `https://medsim-roan.vercel.app/api/stripe/webhook`
+2. URL : `https://anne-sante.vercel.app/api/webhooks/stripe`
 3. Événements recommandés :
    - `checkout.session.completed`
    - `invoice.paid`
    - `invoice.payment_failed`
-4. Copier le **Signing secret** (`whsec_…`) → Vercel : `STRIPE_WEBHOOK_SECRET`
+4. Copier le **Signing secret** (`whsec_…`) → Vercel : `STRIPE_IPE_WEBHOOK_SECRET`
 5. Redéployer
 
 Test local (dev) :
 
 ```bash
-stripe listen --forward-to localhost:3001/api/stripe/webhook
+stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
 #### 2. Resend (courriels)
@@ -145,7 +146,7 @@ MEDSIM_SMOKE_BASE=https://medsim-roan.vercel.app npx tsx scripts/test-mvp-flows.
 
 ## Checklist « go-live »
 
-- [ ] `STRIPE_WEBHOOK_SECRET` configuré + webhook actif
+- [ ] `STRIPE_IPE_WEBHOOK_SECRET` configuré + webhook actif sur `/api/webhooks/stripe`
 - [ ] `RESEND_API_KEY` + domaine vérifié
 - [ ] Paiement test Stripe (mode test) bout-en-bout
 - [ ] Connexion patient + dashboard + coach Anne

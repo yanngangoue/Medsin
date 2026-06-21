@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
+import { APP_BRAND } from "@/lib/brand/app-brand";
 
 export const metadata = {
   title: "Conformité & Loi 25 — Anne-sante",
@@ -34,8 +35,8 @@ export default function ConformitePage() {
       <h2 className="pt-4 text-base font-semibold text-slate-900">Responsable de la protection</h2>
       <p>
         Pour toute question relative à la conformité :{" "}
-        <a href="mailto:confidentialite@medsim.ca" className="text-[var(--teal-900)] underline">
-          confidentialite@medsim.ca
+        <a href={`mailto:${APP_BRAND.privacyEmail}`} className="text-[var(--teal-900)] underline">
+          {APP_BRAND.privacyEmail}
         </a>
         . Voir aussi notre{" "}
         <Link href="/confidentialite" className="text-[var(--teal-900)] underline">

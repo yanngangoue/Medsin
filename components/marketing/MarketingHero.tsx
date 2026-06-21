@@ -1,89 +1,99 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-const AVATARS = ["#1D4D3A", "#2D6A4F", "#3EBD93", "#6B7280", "#9CA3AF"];
+import Link from "next/link";
+import { useState } from "react";
+import { MarketingHeroVisual } from "@/components/marketing/MarketingHeroVisual";
+import { APP_BRAND } from "@/lib/brand/app-brand";
+
+const SERVICES = [
+  { id: "glp1", label: "Gestion du poids GLP-1", active: true, href: "/eligibilite" },
+  { id: "coach", label: `Coach ${APP_BRAND.coachName}`, active: true, href: "#coach-anne" },
+  { id: "nutrition", label: "Nutrition métabolique", active: false, href: null },
+] as const;
 
 export function MarketingHero() {
+  const [activeService, setActiveService] = useState("glp1");
+
   return (
-    <section className="bg-white py-20 lg:py-28">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+    <section className="marketing-hero-bg relative overflow-hidden pb-16 pt-10 sm:pb-20 sm:pt-14 lg:pb-24 lg:pt-16">
+      <div className="marketing-hero-orb marketing-hero-orb-a" aria-hidden />
+      <div className="marketing-hero-orb marketing-hero-orb-b" aria-hidden />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div>
-          <span className="inline-flex rounded-full bg-gray-100 px-4 py-1.5 text-sm font-medium text-gray-600">
-            🇨🇦 Disponible partout au Québec
-          </span>
-
-          <h1 className="mt-8 text-5xl font-black leading-[1.05] tracking-tight text-[#1A1A2E] sm:text-6xl lg:text-7xl">
-            Perdez du poids.
-            <br />
-            Pour de bon.
-          </h1>
-
-          <p className="mt-8 max-w-lg text-lg leading-relaxed text-gray-500 sm:text-xl">
-            Ordonnance GLP-1 par une IPS certifiée. Anne, votre coach IA, vous suit chaque
-            semaine — sans que vous ayez à demander.
+          <p className="marketing-hero-in inline-flex items-center gap-2 rounded-full border border-[#1D4D3A]/15 bg-white/80 px-4 py-1.5 text-sm font-medium text-[#1D4D3A] shadow-sm backdrop-blur-sm">
+            <span className="h-2 w-2 rounded-full bg-[#3EBD93] animate-pulse-dot" aria-hidden />
+            Rejoignez 2 400+ patients {APP_BRAND.name}
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              href="/eligibilite"
-              className="inline-flex items-center rounded-full bg-[#1D4D3A] px-8 py-4 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
-            >
-              Suis-je éligible ? →
-            </Link>
-            <Link
-              href="#tarifs"
-              className="inline-flex items-center rounded-full border border-gray-300 bg-white px-8 py-4 text-base font-semibold text-[#1A1A2E] shadow-sm transition-colors hover:border-gray-400"
-            >
-              Voir les tarifs
-            </Link>
+          <h1 className="marketing-hero-in marketing-hero-in-d1 mt-6 font-display text-[2.75rem] font-black leading-[1.02] tracking-tight text-[#1A1A2E] sm:text-6xl lg:text-[4.25rem]">
+            Les soins de santé,
+            <br />
+            <span className="bg-gradient-to-r from-[#1D4D3A] to-[#3EBD93] bg-clip-text text-transparent">
+              repensés pour la vraie vie.
+            </span>
+          </h1>
+
+          <p className="marketing-hero-in marketing-hero-in-d2 mt-6 max-w-lg text-base leading-relaxed text-gray-500 sm:text-lg">
+            Soins médicaux en ligne — simples, directs et encadrés par des professionnels
+            licenciés. Pas de salle d&apos;attente. Juste des soins qui fonctionnent.
+          </p>
+
+          <div className="marketing-hero-in marketing-hero-in-d3 mt-8 flex flex-wrap gap-2">
+            {SERVICES.map((service) => {
+              const isActive = activeService === service.id;
+              if (!service.active) {
+                return (
+                  <span
+                    key={service.id}
+                    className="cursor-not-allowed rounded-full border border-dashed border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-400"
+                    title="Bientôt disponible"
+                  >
+                    {service.label}
+                    <span className="ml-1.5 text-[10px] font-bold uppercase tracking-wide">
+                      Bientôt
+                    </span>
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={service.id}
+                  type="button"
+                  onClick={() => setActiveService(service.id)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#1D4D3A] text-white shadow-md shadow-[#1D4D3A]/20 scale-[1.02]"
+                      : "border border-gray-200 bg-white text-gray-600 hover:border-[#1D4D3A]/30"
+                  }`}
+                >
+                  {service.label}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <div className="flex -space-x-2">
-              {AVATARS.map((bg, i) => (
-                <span
-                  key={bg}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white"
-                  style={{ backgroundColor: bg, zIndex: AVATARS.length - i }}
-                  aria-hidden
-                >
-                  {String.fromCharCode(65 + i)}
-                </span>
-              ))}
-            </div>
-            <p className="text-sm text-gray-500">
-              <span className="font-semibold text-[#1A1A2E]">4,9/5</span> · 2 000+ patients
-              accompagnés
-            </p>
+          <div className="marketing-hero-in marketing-hero-in-d4 mt-8 flex flex-wrap gap-3 sm:gap-4">
+            <Link
+              href="/eligibilite"
+              className="group inline-flex items-center rounded-full bg-[#1D4D3A] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#1D4D3A]/25 transition hover:scale-[1.02] hover:shadow-xl active:scale-[0.99] sm:text-base"
+            >
+              Commencer
+              <span className="ml-2 inline-block transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </Link>
+            <Link
+              href="#calculateur-imc"
+              className="inline-flex items-center rounded-full border border-gray-200 bg-white/90 px-8 py-3.5 text-sm font-semibold text-[#1A1A2E] backdrop-blur-sm transition hover:border-gray-300 hover:bg-white sm:text-base"
+            >
+              Calculer mon IMC
+            </Link>
           </div>
         </div>
 
-        <div className="relative">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-sm sm:aspect-square">
-            <Image
-              src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&q=80"
-              alt="Personne active en pleine santé"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority
-            />
-          </div>
-
-          <div className="absolute bottom-5 left-4 right-4 max-w-xs rounded-2xl bg-white p-4 shadow-xl sm:left-6 sm:right-auto">
-            <div className="flex items-start gap-3">
-              <div className="relative shrink-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1D4D3A] text-sm font-bold text-white">
-                  M
-                </div>
-                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-[#10B981] animate-pulse-dot" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-[#1A1A2E]">✓ Marie-Ève a perdu 8,2 kg</p>
-                <p className="mt-0.5 text-xs text-gray-500">Anne lui écrit ce lundi matin</p>
-              </div>
-            </div>
-          </div>
+        <div className="marketing-hero-in marketing-hero-in-d2">
+          <MarketingHeroVisual />
         </div>
       </div>
     </section>

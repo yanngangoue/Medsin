@@ -37,7 +37,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     }
   }
 
-  const from = process.env.MEDSIM_EMAIL_FROM?.trim() || "MedSim <onboarding@resend.dev>";
+  const from = process.env.MEDSIM_EMAIL_FROM?.trim() || "Anne-sante <onboarding@resend.dev>";
   const apiKey = process.env.RESEND_API_KEY?.trim();
 
   let status: "sent" | "skipped" | "failed" = "skipped";

@@ -4,12 +4,18 @@ import { MarketingCta } from "@/components/marketing/MarketingCta";
 import { MarketingFaq } from "@/components/marketing/MarketingFaq";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { MarketingHero } from "@/components/marketing/MarketingHero";
+import { MarketingHomeBmi } from "@/components/marketing/MarketingHomeBmi";
 import { MarketingHowItWorks } from "@/components/marketing/MarketingHowItWorks";
+import { MarketingIncluded } from "@/components/marketing/MarketingIncluded";
 import { MarketingMedications } from "@/components/marketing/MarketingMedications";
 import { MarketingNavbar } from "@/components/marketing/MarketingNavbar";
 import { MarketingPricing } from "@/components/marketing/MarketingPricing";
 import { MarketingResults } from "@/components/marketing/MarketingResults";
+import { MarketingStatsBand } from "@/components/marketing/MarketingStatsBand";
+import { MarketingTestimonials } from "@/components/marketing/MarketingTestimonials";
 import { MarketingTrustBar } from "@/components/marketing/MarketingTrustBar";
+import { MarketingHeroTrustStrip } from "@/components/marketing/MarketingHeroTrustStrip";
+import { MarketingReveal } from "@/components/marketing/MarketingReveal";
 import { GLP1_PATIENT_DASHBOARD_PATH } from "@/lib/patient/glp1-flow-routes";
 
 type Props = {
@@ -43,13 +49,34 @@ export function MedsimLanding({ connectedPatient = null }: Props) {
       <MarketingNavbar />
       <main className="flex-1">
         <MarketingHero />
+        <MarketingHeroTrustStrip />
+        <MarketingStatsBand />
         <MarketingTrustBar />
-        <MarketingHowItWorks />
-        <MarketingAiCoach />
-        <MarketingResults />
-        <MarketingMedications />
-        <MarketingPricing />
-        <MarketingFaq />
+        <MarketingReveal>
+          <MarketingIncluded />
+        </MarketingReveal>
+        <MarketingReveal delay={80}>
+          <MarketingHowItWorks />
+        </MarketingReveal>
+        <MarketingReveal>
+          <MarketingHomeBmi />
+        </MarketingReveal>
+        <MarketingReveal>
+          <MarketingAiCoach />
+        </MarketingReveal>
+        <MarketingReveal delay={60}>
+          <MarketingResults />
+        </MarketingReveal>
+        <MarketingReveal>
+          <MarketingMedications />
+        </MarketingReveal>
+        <MarketingTestimonials />
+        <MarketingReveal>
+          <MarketingPricing />
+        </MarketingReveal>
+        <MarketingReveal>
+          <MarketingFaq />
+        </MarketingReveal>
         <MarketingCta />
       </main>
       <MarketingFooter />

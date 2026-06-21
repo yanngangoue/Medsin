@@ -7,6 +7,8 @@ export const APP_BRAND = {
   slug: "anne-sante",
   /** Coach IA intégré — prénom distinct de la marque plateforme */
   coachName: "Anne",
+  supportEmail: "support@anne-sante.ca",
+  privacyEmail: "confidentialite@anne-sante.ca",
   color: "#1D9E75",
   colorOnDark: "#FFFFFF",
   logo: {

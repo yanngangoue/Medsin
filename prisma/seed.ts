@@ -18,7 +18,7 @@ import type { MedicalQuestionnaireV2 } from "../lib/schemas/medical-questionnair
 const prisma = new PrismaClient();
 
 const STAFF = [
-  { prenom: "Admin MedSim", email: "admin@medsim.ca", password: "Admin2026!", role: "ADMIN" as const },
+  { prenom: "Admin Anne-sante", email: "admin@medsim.ca", password: "Admin2026!", role: "ADMIN" as const },
   {
     prenom: "Dr Médecin",
     email: "medecin@medsim.ca",

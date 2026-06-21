@@ -4,6 +4,7 @@ import { forbidden, unauthorized } from "@/lib/api-errors";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
 import { getStripe, stripeErrorMessage } from "@/lib/stripe/client";
+import { getStripeIpePriceId } from "@/lib/stripe/env";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
@@ -61,11 +62,12 @@ export async function POST(req: Request) {
         }
     
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
+        const priceId = getStripeIpePriceId();
         const amountCents =
           fulfillment.amountCents > 0
             ? fulfillment.amountCents
             : monthlyPriceCentsForMedication(fulfillment.medication);
-    
+
         const stripe = getStripe();
         const checkout = await stripe.checkout.sessions.create({
           mode: "subscription",
@@ -86,20 +88,22 @@ export async function POST(req: Request) {
               prescriptionId: fulfillment.id,
             },
           },
-          line_items: [
-            {
-              price_data: {
-                currency: "cad",
-                product_data: {
-                  name: "Anne-sante — Programme GLP-1",
-                  description: "Suivi IPS + Coach Anne + Livraison",
+          line_items: priceId
+            ? [{ price: priceId, quantity: 1 }]
+            : [
+                {
+                  price_data: {
+                    currency: "cad",
+                    product_data: {
+                      name: "Anne-sante — Programme GLP-1",
+                      description: "Suivi IPS + Coach Anne + Livraison",
+                    },
+                    unit_amount: amountCents,
+                    recurring: { interval: "month" },
+                  },
+                  quantity: 1,
                 },
-                unit_amount: amountCents,
-                recurring: { interval: "month" },
-              },
-              quantity: 1,
-            },
-          ],
+              ],
         });
     
         await prisma.medicationFulfillment.update({

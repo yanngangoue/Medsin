@@ -14,7 +14,7 @@ export default async function AdminEquipePage() {
         <h1 className="text-xl font-bold text-slate-900">Gestion de l&apos;équipe</h1>
         <p className="mt-1 text-sm text-slate-600">
           Réservé à l&apos;administrateur : invitez des IPS, médecins et pharmaciens partenaires.
-          Chaque membre reçoit un identifiant <strong>@medsim.ca</strong> et crée son mot de passe
+          Chaque membre reçoit un identifiant <strong>@anne-sante.ca</strong> et crée son mot de passe
           via le lien d&apos;activation.
         </p>
       </div>

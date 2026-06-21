@@ -37,7 +37,7 @@ export async function GET(_req: Request, { params }: Params) {
         return new NextResponse(new Uint8Array(demo), {
           headers: {
             "Content-Type": "application/pdf",
-            "Content-Disposition": 'attachment; filename="ordonnance-medsim.pdf"',
+            "Content-Disposition": 'attachment; filename="ordonnance-anne-sante.pdf"',
           },
         });
       }
@@ -59,7 +59,7 @@ export async function GET(_req: Request, { params }: Params) {
           return new NextResponse(new Uint8Array(stored), {
             headers: {
               "Content-Type": "application/pdf",
-              "Content-Disposition": 'attachment; filename="ordonnance-medsim.pdf"',
+              "Content-Disposition": 'attachment; filename="ordonnance-anne-sante.pdf"',
             },
           });
         }
@@ -85,7 +85,7 @@ export async function GET(_req: Request, { params }: Params) {
       return new NextResponse(new Uint8Array(generated), {
         headers: {
           "Content-Type": "application/pdf",
-          "Content-Disposition": 'attachment; filename="ordonnance-medsim.pdf"',
+          "Content-Disposition": 'attachment; filename="ordonnance-anne-sante.pdf"',
         },
       });
   });

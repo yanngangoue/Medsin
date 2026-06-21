@@ -1,3 +1,4 @@
+import { APP_BRAND } from "@/lib/brand/app-brand";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { Footer } from "@/components/Footer";
@@ -36,10 +37,10 @@ export default function ContactPage() {
                 <span className="font-medium text-slate-800">Courriel</span>
                 <br />
                 <a
-                  href="mailto:support@medsim.ca"
+                  href={`mailto:${APP_BRAND.supportEmail}`}
                   className="text-[var(--teal-900)] hover:underline"
                 >
-                  support@medsim.ca
+                  {APP_BRAND.supportEmail}
                 </a>
               </li>
               <li>

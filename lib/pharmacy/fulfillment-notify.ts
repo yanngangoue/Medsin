@@ -68,7 +68,7 @@ function pdfAttachmentFromDataUrl(
 ): { filename: string; content: string } | null {
   const content = pdfBase64FromDataUrl(pdfUrl);
   if (!content) return null;
-  return { filename: "ordonnance-medsim.pdf", content };
+  return { filename: "ordonnance-anne-sante.pdf", content };
 }
 
 /** Envoie l'ordonnance à la pharmacie partenaire (API ou courriel MVP). */

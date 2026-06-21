@@ -34,7 +34,7 @@ const EMPTY: FormState = {
 
 export function AdminTeamPanel() {
   const [members, setMembers] = useState<StaffMemberRow[]>([]);
-  const [emailDomain, setEmailDomain] = useState("medsim.ca");
+  const [emailDomain, setEmailDomain] = useState("anne-sante.ca");
   const [form, setForm] = useState<FormState>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -310,7 +310,7 @@ export function AdminTeamPanel() {
 
           <Field
             label="Courriel pour recevoir l'invitation"
-            hint="Personnel (Gmail, etc.) — le lien d'activation y est envoyé tant que @medsim.ca n'a pas de boîte mail"
+            hint="Personnel (Gmail, etc.) — le lien d'activation y est envoyé tant que @anne-sante.ca n'a pas de boîte mail"
           >
             <input
               type="email"
