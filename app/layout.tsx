@@ -27,12 +27,19 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Anne-sante — Perte de poids GLP-1 avec Anne, coach santé IA",
-    template: "%s · Anne-sante",
-  },
+  title: "Anne Santé — Télésanté GLP-1 au Québec",
   description:
-    "Prescription GLP-1 en ligne, livraison discrète et Anne, coach santé IA proactive pour les Canadiens francophones.",
+    "Ordonnance GLP-1 par une IPS certifiée, coach IA Anne incluse. Sans file d'attente ni rendez-vous en clinique.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Anne Santé",
+    description: "Télésanté GLP-1 au Québec",
+    url: "https://anne-sante.vercel.app",
+    siteName: "Anne Santé",
+  },
 };
 
 export default function RootLayout({

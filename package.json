@@ -22,6 +22,7 @@
     "test:interop": "tsx lib/interop/__tests__/gateway.test.ts",
     "test:mvp": "tsx scripts/test-mvp-flows.ts",
     "typecheck": "tsc --noEmit",
+    "favicons": "node scripts/generate-favicons.mjs",
     "cutout:pens": "python scripts/cutout-pen-images.py"
   },
   "dependencies": {
@@ -56,7 +57,9 @@
     "eslint-config-next": "15.5.9",
     "playwright": "^1.61.0",
     "prisma": "^6.19.3",
+    "sharp": "^0.35.2",
     "tailwindcss": "^4.1.17",
+    "to-ico": "^1.1.5",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   }
