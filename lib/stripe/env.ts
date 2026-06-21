@@ -21,5 +21,8 @@ export function getStripeIpePublishableKey(): string | undefined {
 }
 
 export function getStripeIpeWebhookSecret(): string | undefined {
-  return realEnvValue(process.env.STRIPE_IPE_WEBHOOK_SECRET);
+  return (
+    realEnvValue(process.env.STRIPE_IPE_WEBHOOK_SECRET) ??
+    realEnvValue(process.env.STRIPE_WEBHOOK_SECRET)
+  );
 }
