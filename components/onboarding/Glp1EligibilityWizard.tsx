@@ -43,6 +43,7 @@ import {
 } from "@/lib/patient/glp1-wizard-progress";
 import { Glp1ExclusionScreen } from "@/components/onboarding/Glp1ExclusionScreen";
 import { runGlp1PreDiagnosticTriage } from "@/lib/patient/glp1-triage";
+import { HeightFeetInchesInput } from "@/components/onboarding/HeightFeetInchesInput";
 
 const INSCRIPTION_PATH = "/auth/inscription?service=gestion-poids";
 const CONFIRMATION_PATH = "/onboarding/confirmation?service=gestion-poids";
@@ -428,14 +429,14 @@ export function Glp1EligibilityWizard() {
                   <Glp1QuestionTitle>Quelle est votre taille et votre poids ?</Glp1QuestionTitle>
                 </Glp1Reveal>
                 <Glp1Reveal index={1} visibleCount={visibleCount} className="mt-4">
-                  <label className="block text-xs font-semibold text-slate-600">Taille (cm)</label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    value={answers.heightCm ?? ""}
-                    onChange={(e) => patch({ heightCm: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                    placeholder="170"
+                  <HeightFeetInchesInput
+                    valueCm={
+                      answers.heightCm ? Number.parseFloat(answers.heightCm) : undefined
+                    }
+                    onChangeCm={(cm) =>
+                      patch({ heightCm: cm !== undefined ? String(Math.round(cm)) : "" })
+                    }
+                    inputClassName="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 pr-12 text-sm font-semibold outline-none focus:border-[#5B9FD4] focus:ring-2 focus:ring-[#5B9FD4]/25"
                   />
                 </Glp1Reveal>
                 <Glp1Reveal index={2} visibleCount={visibleCount} className="mt-3">

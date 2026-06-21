@@ -10,7 +10,6 @@ import { connexionSchema, type ConnexionFormValues } from "@/lib/schemas/connexi
 import { defaultHomeForRole } from "@/lib/rbac";
 import { resolvePatientPostAuthPath } from "@/lib/onboarding/post-auth-redirect";
 import { useAntiAutofillGuard } from "@/lib/hooks/use-anti-autofill";
-import { Button } from "@/components/ui/Button";
 import { FieldError, Input, Label } from "@/components/ui/Field";
 import { MedsimLogo } from "@/components/MedsimLogo";
 import { StaffDemoLoginLink } from "@/components/dev/StaffDemoLoginLink";
@@ -98,7 +97,7 @@ export function ConnexionFormPanel() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ConnexionFormValues>({
     resolver: zodResolver(connexionSchema),
     mode: "onChange",
@@ -121,24 +120,28 @@ export function ConnexionFormPanel() {
         password: data.password,
         redirect: false,
       });
-      if (result?.error) {
+      if (result?.error || !result?.ok) {
         setError("Courriel ou mot de passe incorrect.");
         return;
       }
-      const session = await getSession();
+
       const raw = searchParams.get("callbackUrl");
       const callbackUrl =
         raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : null;
       const serviceGestionPoids = searchParams.get("service") === "gestion-poids";
 
-      const destination =
-        session?.user?.role === "PATIENT"
-          ? resolvePatientPostAuthPath({ callbackUrl, serviceGestionPoids })
-          : session?.user?.role
-            ? defaultHomeForRole(session.user.role)
-            : callbackUrl ?? "/dashboard/patient";
-
-      router.push(destination);
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        const session = await getSession();
+        const destination =
+          session?.user?.role === "PATIENT"
+            ? resolvePatientPostAuthPath({ callbackUrl: null, serviceGestionPoids })
+            : session?.user?.role
+              ? defaultHomeForRole(session.user.role)
+              : "/dashboard";
+        router.push(destination);
+      }
       router.refresh();
     } finally {
       setIsSubmitting(false);
@@ -203,8 +206,9 @@ export function ConnexionFormPanel() {
                   className="h-12 rounded-2xl border-slate-200 bg-slate-50 focus:border-[#3EBD93] focus:bg-white focus:ring-4 focus:ring-[#3EBD93]/10"
                   readOnly={!unlocked}
                   {...emailField}
-                  name="medsim-login-email"
-                  onFocus={() => { unlock(); }}
+                  onFocus={() => {
+                    unlock();
+                  }}
                 />
                 {errors.email ? (
                   <p className="mt-1 text-[12px] text-red-600/90">{errors.email.message}</p>
@@ -229,8 +233,9 @@ export function ConnexionFormPanel() {
                   className="h-12 rounded-2xl border-slate-200 bg-slate-50 focus:border-[#3EBD93] focus:bg-white focus:ring-4 focus:ring-[#3EBD93]/10"
                   readOnly={!unlocked}
                   {...passwordField}
-                  name="medsim-login-password"
-                  onFocus={() => { unlock(); }}
+                  onFocus={() => {
+                    unlock();
+                  }}
                 />
                 {errors.password ? (
                   <p className="mt-1 text-[12px] text-red-600/90">{errors.password.message}</p>
@@ -241,7 +246,7 @@ export function ConnexionFormPanel() {
 
               <button
                 type="submit"
-                disabled={!isValid || isSubmitting}
+                disabled={isSubmitting}
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] text-sm font-bold text-white shadow-md transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {isSubmitting ? (

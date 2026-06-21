@@ -43,11 +43,11 @@ export function patientInitials(prenom: string, nom: string | null): string {
 export function statusLabel(status: ConsultationStatus): string {
   const labels: Record<ConsultationStatus, string> = {
     DRAFT: "Brouillon",
-    SUBMITTED: "Soumis",
+    SUBMITTED: "En attente",
     UNDER_REVIEW: "En révision",
     APPROVED: "Approuvé",
-    REJECTED: "Rejeté",
-    PRESCRIPTION_ISSUED: "Ordonnance émise",
+    REJECTED: "Refusé",
+    PRESCRIPTION_ISSUED: "Approuvé",
   };
   return labels[status] ?? status;
 }

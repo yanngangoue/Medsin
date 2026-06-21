@@ -84,6 +84,11 @@ export const { handlers, signIn, signOut } = NextAuth({
           return null;
         }
 
+        if (user.isActive === false) {
+          console.warn("[authorize] account disabled");
+          return null;
+        }
+
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) {
           console.warn("[authorize] invalid password");

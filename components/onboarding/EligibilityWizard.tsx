@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { computeBmi } from "@/lib/eligibility";
+import { computeBmi, isValidHeightCm } from "@/lib/eligibility";
+import { HeightFeetInchesInput } from "@/components/onboarding/HeightFeetInchesInput";
 import { evaluateEligibility } from "@/lib/onboarding/eligibility-result";
 import {
   ELIGIBILITY_RESULT_KEY,
@@ -113,7 +114,7 @@ export function EligibilityWizard() {
 
   const canContinue = useMemo(() => {
     if (step === 0) return age >= 18 && age <= 85;
-    if (step === 1) return Number(heightCm) >= 100 && Number(weightKg) >= 30;
+    if (step === 1) return isValidHeightCm(Number(heightCm)) && Number(weightKg) >= 30;
     if (step === 2) return hasDiabetes !== undefined;
     if (step === 3) return hasThyroidOrPancreatitis !== null;
     if (step === 4) return isPregnantOrNursing !== null;
@@ -206,17 +207,15 @@ export function EligibilityWizard() {
         )}
 
         {step === 1 && (
-          <Slide dir={dir} label="Quelle est votre taille et votre poids ?" hint="Ces mesures permettent de calculer votre IMC.">
+          <Slide dir={dir} label="Quelle est votre taille et votre poids ?" hint="Taille en pieds et pouces — poids en kilogrammes.">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Taille</label>
-                <div className="relative">
-                  <input type="number" min={100} max={250} value={heightCm} onChange={(e) => setHeightCm(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3.5 pr-12 text-lg font-bold text-slate-900 outline-none transition focus:border-[#3EBD93] focus:ring-4 focus:ring-[#3EBD93]/10" placeholder="170" />
-                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">cm</span>
-                </div>
+              <div className="sm:col-span-2">
+                <HeightFeetInchesInput
+                  valueCm={heightCm === "" ? undefined : Number(heightCm)}
+                  onChangeCm={(cm) => setHeightCm(cm === undefined ? "" : cm)}
+                />
               </div>
-              <div>
+              <div className="sm:col-span-2">
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Poids actuel</label>
                 <div className="relative">
                   <input type="number" min={30} max={400} step={0.1} value={weightKg} onChange={(e) => setWeightKg(e.target.value === "" ? "" : Number(e.target.value))}

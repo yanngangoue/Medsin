@@ -40,7 +40,19 @@ function extractPatientContact(
 
   if (draftJson && typeof draftJson === "object") {
     const d = draftJson as Record<string, unknown>;
+    const mh = d.medicalHistory as Record<string, unknown> | undefined;
+    const delivery = mh?.delivery as Record<string, unknown> | undefined;
     const addrParts = [
+      d.deliveryAddress,
+      d.adresseLivraison,
+      delivery?.adresseLivraison,
+      delivery?.street,
+      d.deliveryCity,
+      delivery?.city,
+      d.deliveryProvince,
+      delivery?.province,
+      d.deliveryPostalCode,
+      delivery?.postalCode,
       d.deliveryAddress,
       d.adresseLivraison,
       d.address,
@@ -54,6 +66,7 @@ function extractPatientContact(
     if (addrParts.length > 0) adresse = addrParts.join(", ");
 
     const phone =
+      (typeof d.deliveryPhone === "string" && d.deliveryPhone) ||
       (typeof d.phone === "string" && d.phone) ||
       (typeof d.telephone === "string" && d.telephone) ||
       (typeof d.mobile === "string" && d.mobile);

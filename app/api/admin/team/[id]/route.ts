@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { resendStaffInvite } from "@/lib/admin/invite-staff";
 import { isDemoMode } from "@/lib/is-demo-mode";
+import { isAdminInvitableRole } from "@/lib/admin/staff-roles";
+import { writeAuditLog } from "@/lib/audit";
+import { prisma } from "@/lib/prisma";
 
 function appBaseUrl(req: Request): string {
   return (
@@ -27,6 +30,34 @@ export async function POST(
 
     const { id } = await params;
     const body = (await req.json().catch(() => ({}))) as { action?: string };
+    if (body.action === "deactivate") {
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user || !isAdminInvitableRole(user.role)) {
+        return NextResponse.json({ error: "Membre introuvable" }, { status: 404 });
+      }
+      await prisma.user.update({ where: { id }, data: { isActive: false } });
+      await writeAuditLog({
+        userId: session.user.id,
+        action: "staff_member_deactivated",
+        entity: id,
+      });
+      return NextResponse.json({ ok: true, message: "Compte désactivé." });
+    }
+
+    if (body.action === "activate") {
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user || !isAdminInvitableRole(user.role)) {
+        return NextResponse.json({ error: "Membre introuvable" }, { status: 404 });
+      }
+      await prisma.user.update({ where: { id }, data: { isActive: true } });
+      await writeAuditLog({
+        userId: session.user.id,
+        action: "staff_member_activated",
+        entity: id,
+      });
+      return NextResponse.json({ ok: true, message: "Compte réactivé." });
+    }
+
     if (body.action !== "resend-invite") {
       return NextResponse.json({ error: "Action non reconnue" }, { status: 400 });
     }

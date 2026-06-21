@@ -41,7 +41,7 @@ export function resolvePatientPostAuthPath(options: {
   }
 
   if (serviceGestionPoids || hasEligibilityPreCheck()) {
-    return "/questionnaire";
+    return "/paiement?onboarding=1";
   }
 
   return "/dashboard/patient";

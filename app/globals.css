@@ -4,7 +4,7 @@
   /* Anne-sante design system */
   --primary: #1d4d3a;
   --accent: #3ebd93;
-  --bg: #fafaf8;
+  --bg: #faf9f6;
   --surface: #ffffff;
   --text: #1a1a2e;
   --muted: #6b7280;
@@ -27,7 +27,7 @@
   --teal-400: #3ebd93;
   --teal-600: #1d4d3a;
   --teal-900: #1a1a2e;
-  --gray-50: #fafaf8;
+  --gray-50: #faf9f6;
   --gray-900: #1a1a2e;
 
   --background: var(--bg);
@@ -444,6 +444,27 @@ h1, h2, h3 {
   }
 }
 
+.products-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.products-marquee-track {
+  animation: comments-marquee-scroll 38s linear infinite;
+  will-change: transform;
+}
+
+.products-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .products-marquee-track {
+    animation: none;
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -581,7 +602,7 @@ h1, h2, h3 {
 .marketing-hero-in-d8 { animation-delay: 0.85s; }
 
 .marketing-hero-bg {
-  background: linear-gradient(180deg, #ffffff 0%, #fafaf8 55%, #f5f9f7 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #faf9f6 55%, #f5f3f0 100%);
 }
 
 .marketing-hero-orb {

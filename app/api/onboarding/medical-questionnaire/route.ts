@@ -15,6 +15,7 @@ import {
 } from "@/lib/schemas/medical-questionnaire-v2";
 import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
+import { hasActiveGlp1Membership } from "@/lib/membership/glp1-membership";
 
 export async function GET() {
   return catchRouteError("onboarding/medical-questionnaire/GET", async () => {
@@ -76,6 +77,13 @@ export async function POST(req: Request) {
       }
       if (session.user.role !== "PATIENT") {
         return NextResponse.json({ error: "Accès réservé aux patients", code: "FORBIDDEN" }, { status: 403 });
+      }
+
+      if (!(await hasActiveGlp1Membership(session.user.id))) {
+        return NextResponse.json(
+          { error: "Abonnement requis avant le questionnaire", code: "PAYMENT_REQUIRED" },
+          { status: 402 },
+        );
       }
     
       const body: unknown = await req.json().catch(() => null);

@@ -66,6 +66,15 @@ export function toPrismaMedicalQuestionnaire(
       stressLevel: data.stressLevel,
       medicationPreference: data.medicationPreference,
       supplements: data.supplements ?? null,
+      targetTimelineMonths: data.targetTimelineMonths,
+      delivery: {
+        street: data.deliveryStreet,
+        city: data.deliveryCity,
+        province: data.deliveryProvince.toUpperCase(),
+        postalCode: data.deliveryPostalCode,
+        phone: data.deliveryPhone,
+        adresseLivraison: `${data.deliveryStreet}, ${data.deliveryCity}, ${data.deliveryProvince} ${data.deliveryPostalCode}`,
+      },
     },
     currentMedications: data.medications,
     allergies: { text: data.allergies ?? "" },
@@ -81,6 +90,15 @@ export function toPrismaMedicalQuestionnaire(
     consentDataSharing: data.consentDataSharing,
     consentAiCoach: data.consentAiCoach,
     status: "SUBMITTED",
+    draftJson: {
+      deliveryAddress: data.deliveryStreet,
+      deliveryCity: data.deliveryCity,
+      deliveryProvince: data.deliveryProvince,
+      deliveryPostalCode: data.deliveryPostalCode,
+      deliveryPhone: data.deliveryPhone,
+      adresseLivraison: `${data.deliveryStreet}, ${data.deliveryCity}, ${data.deliveryProvince} ${data.deliveryPostalCode}`,
+      targetTimelineMonths: data.targetTimelineMonths,
+    },
   };
 }
 

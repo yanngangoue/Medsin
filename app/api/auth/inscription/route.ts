@@ -7,6 +7,7 @@ import { z } from "zod";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { demoCreateUser, demoUserExists } from "@/lib/demo-store";
 import { writeAuditLog } from "@/lib/audit";
+import { sendEmail } from "@/lib/email/send-email";
 import { resetLoginRateLimitForKey } from "@/lib/login-rate-limit";
 import { checkApiRateLimit } from "@/lib/api-rate-limit";
 
@@ -98,6 +99,25 @@ export async function POST(req: Request) {
         entity: "credentials",
         ipAddress: clientIp(req),
       });
+
+      const baseUrl =
+        process.env.NEXTAUTH_URL?.replace(/\/$/, "") ??
+        process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+        "http://localhost:3001";
+
+      await sendEmail({
+        to: user.email,
+        subject: "Bienvenue chez Anne-sante",
+        template: "patient_registration",
+        entityKey: `patient_registration:${user.id}`,
+        userId: user.id,
+        html: `<p>Bonjour ${user.prenom},</p>
+<p>Votre compte Anne-sante a été créé avec succès.</p>
+<p>Prochaine étape : activer votre abonnement GLP-1 pour accéder au questionnaire médical.</p>
+<p><a href="${baseUrl}/paiement?onboarding=1">Activer mon abonnement</a></p>`,
+        text: `Bonjour ${user.prenom}, compte créé. Abonnement : ${baseUrl}/paiement?onboarding=1`,
+      });
+
       resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);
       return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
       } catch (e) {

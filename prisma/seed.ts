@@ -339,6 +339,12 @@ function sampleMedicalQuestionnaire(
     consentDataSharing: true,
     consentAiCoach: true,
     consentPrivacy: true,
+    deliveryStreet: "1234 rue Sainte-Catherine",
+    deliveryCity: "Montréal",
+    deliveryProvince: "QC",
+    deliveryPostalCode: "H3B1A1",
+    deliveryPhone: "5145550100",
+    targetTimelineMonths: "6",
     ...overrides,
   };
 }

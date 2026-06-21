@@ -19,7 +19,7 @@ function formatAmount(cents: number): string {
 }
 
 /* ── Succès paiement ─────────────────────────────────────────── */
-function SuccessPanel() {
+function SuccessPanel({ onboarding }: { onboarding?: boolean }) {
   return (
     <div className="q-enter-forward mx-auto max-w-md py-4">
       {/* Carte succès */}
@@ -32,18 +32,28 @@ function SuccessPanel() {
             </svg>
           </div>
           <h1 className="mt-4 font-display text-2xl font-bold text-white">Paiement confirmé !</h1>
-          <p className="mt-1 text-sm text-white/70">Bienvenue dans le programme Anne-sante GLP-1</p>
+          <p className="mt-1 text-sm text-white/70">
+            {onboarding
+              ? "Votre abonnement Anne-sante GLP-1 est actif"
+              : "Bienvenue dans le programme Anne-sante GLP-1"}
+          </p>
         </div>
 
         <div className="px-8 py-7">
-          {/* Prochaines étapes */}
           <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Ce qui se passe maintenant</p>
           <div className="space-y-3">
-            {[
-              { icon: "💊", title: "Pharmacie notifiée", body: "Votre médicament est en cours de préparation" },
-              { icon: "📦", title: "Livraison sous 1–3 jours", body: "Suivi de colis disponible dans votre espace patient" },
-              { icon: "🤖", title: "Anne vous contacte", body: "Votre coach IA démarre votre suivi hebdomadaire" },
-            ].map((step) => (
+            {(onboarding
+              ? [
+                  { icon: "📋", title: "Questionnaire médical", body: "Complétez votre dossier en 5 minutes" },
+                  { icon: "👩‍⚕️", title: "Examen IPS", body: "Réponse sous 48 h ouvrables" },
+                  { icon: "🤖", title: "Coach Anne", body: "Suivi personnalisé dès la livraison" },
+                ]
+              : [
+                  { icon: "💊", title: "Pharmacie notifiée", body: "Votre médicament est en cours de préparation" },
+                  { icon: "📦", title: "Livraison sous 1–3 jours", body: "Suivi de colis disponible dans votre espace patient" },
+                  { icon: "🤖", title: "Anne vous contacte", body: "Votre coach IA démarre votre suivi hebdomadaire" },
+                ]
+            ).map((step) => (
               <div key={step.title} className="flex items-start gap-3 rounded-2xl bg-slate-50 px-4 py-3">
                 <span className="text-lg">{step.icon}</span>
                 <div>
@@ -55,10 +65,10 @@ function SuccessPanel() {
           </div>
 
           <Link
-            href="/dashboard/patient"
+            href={onboarding ? "/questionnaire" : "/dashboard/patient"}
             className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-xl"
           >
-            Accéder à mon espace patient
+            {onboarding ? "Commencer le questionnaire" : "Accéder à mon espace patient"}
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
               <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
             </svg>
@@ -75,14 +85,19 @@ export function PaiementCheckout() {
   const fulfillmentParam = searchParams.get("fulfillment");
   const cancelled = searchParams.get("cancelled") === "1";
   const paid = searchParams.get("paid") === "1";
+  const onboarding = searchParams.get("onboarding") === "1" || !fulfillmentParam;
 
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
+  const [fetching, setFetching] = useState(!onboarding);
   const [error, setError] = useState<string | null>(null);
   const [fulfillment, setFulfillment] = useState<FulfillmentSummary | null>(null);
   const [resolvedId, setResolvedId] = useState<string | null>(fulfillmentParam);
 
   const loadFulfillment = useCallback(async () => {
+    if (onboarding) {
+      setFetching(false);
+      return;
+    }
     setFetching(true);
     setError(null);
 
@@ -104,7 +119,7 @@ export function PaiementCheckout() {
     const data = (await res.json()) as FulfillmentSummary;
     setFulfillment(data);
     setFetching(false);
-  }, [fulfillmentParam]);
+  }, [fulfillmentParam, onboarding]);
 
   useEffect(() => { void loadFulfillment(); }, [loadFulfillment]);
 
@@ -114,7 +129,13 @@ export function PaiementCheckout() {
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(resolvedId ? { fulfillmentId: resolvedId } : {}),
+      body: JSON.stringify(
+        onboarding
+          ? { purpose: "onboarding" }
+          : resolvedId
+            ? { fulfillmentId: resolvedId, purpose: "fulfillment" }
+            : { purpose: "fulfillment" },
+      ),
     });
     const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
     setLoading(false);
@@ -122,7 +143,7 @@ export function PaiementCheckout() {
     window.location.href = data.url;
   }
 
-  if (paid) return <SuccessPanel />;
+  if (paid) return <SuccessPanel onboarding={onboarding} />;
 
   if (fetching) {
     return (
@@ -134,15 +155,21 @@ export function PaiementCheckout() {
     );
   }
 
-  const amountLabel = fulfillment ? formatAmount(fulfillment.amountCents) : "—";
+  const amountLabel = onboarding ? "149,99 $" : fulfillment ? formatAmount(fulfillment.amountCents) : "—";
 
   return (
     <div className="mx-auto max-w-2xl">
       {/* En-tête */}
       <div className="mb-8">
         <p className="text-xs font-bold uppercase tracking-widest text-[#3EBD93]">Dernière étape</p>
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-slate-900">Finaliser mon abonnement</h1>
-        <p className="mt-2 text-sm text-slate-500">Votre traitement sera expédié dans les 24 h suivant le paiement.</p>
+        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-slate-900">
+          {onboarding ? "Activer mon abonnement GLP-1" : "Finaliser mon abonnement"}
+        </h1>
+        <p className="mt-2 text-sm text-slate-500">
+          {onboarding
+            ? "149,99 $/mois — accès au questionnaire médical, suivi IPS et coach Anne."
+            : "Votre traitement sera expédié dans les 24 h suivant le paiement."}
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
@@ -158,10 +185,22 @@ export function PaiementCheckout() {
             </div>
           )}
 
-          {/* Ordonnance */}
+          {/* Ordonnance / programme */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Votre ordonnance</p>
-            {fulfillment ? (
+            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+              {onboarding ? "Programme inclus" : "Votre ordonnance"}
+            </p>
+            {onboarding ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 rounded-xl bg-[#F0F7F4] px-4 py-3">
+                  <span className="text-2xl">🌿</span>
+                  <div>
+                    <p className="font-display text-lg font-bold text-[#1D4D3A]">Anne-sante GLP-1</p>
+                    <p className="text-sm text-slate-600">Questionnaire · IPS · Coach Anne · Livraison</p>
+                  </div>
+                </div>
+              </div>
+            ) : fulfillment ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 rounded-xl bg-[#F0F7F4] px-4 py-3">
                   <span className="text-2xl">💊</span>
@@ -232,7 +271,7 @@ export function PaiementCheckout() {
 
             <button
               type="button"
-              disabled={loading || !fulfillment || fulfillment.paymentStatus === "PAID"}
+              disabled={loading || (!onboarding && (!fulfillment || fulfillment.paymentStatus === "PAID"))}
               onClick={() => void payer()}
               className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] text-base font-bold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
             >

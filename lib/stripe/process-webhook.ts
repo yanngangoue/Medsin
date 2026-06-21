@@ -8,6 +8,7 @@ import {
   handlePaymentFailed,
   handleSubscriptionRenewal,
 } from "@/lib/stripe/fulfillment-after-payment";
+import { onboardingAfterPayment } from "@/lib/stripe/onboarding-payment";
 
 function subscriptionIdFrom(
   value: string | Stripe.Subscription | null | undefined,
@@ -60,7 +61,11 @@ export async function processStripeWebhook(req: Request): Promise<NextResponse> 
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
-      await fulfillmentAfterPayment(session);
+      if (session.metadata?.purpose === "onboarding") {
+        await onboardingAfterPayment(session);
+      } else {
+        await fulfillmentAfterPayment(session);
+      }
     }
 
     if (event.type === "invoice.payment_succeeded") {

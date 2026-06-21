@@ -23,6 +23,7 @@ export type StaffMemberRow = {
   role: AdminInvitableRole;
   licenseNumber: string | null;
   status: StaffMemberStatus;
+  isActive: boolean;
   pharmacyName: string | null;
   pharmacyCity: string | null;
   createdAt: string;
@@ -49,6 +50,7 @@ export async function listStaffMembers(): Promise<{
       role: true,
       medecinLicenseNumber: true,
       emailVerified: true,
+      isActive: true,
       passwordHash: true,
       createdAt: true,
       pharmacyPartner: { select: { name: true, city: true } },
@@ -68,6 +70,7 @@ export async function listStaffMembers(): Promise<{
         role: u.role as AdminInvitableRole,
         licenseNumber: u.medecinLicenseNumber,
         status: active ? "active" : "invited",
+        isActive: u.isActive,
         pharmacyName: u.pharmacyPartner?.name ?? null,
         pharmacyCity: u.pharmacyPartner?.city ?? null,
         createdAt: u.createdAt.toISOString(),
@@ -215,6 +218,7 @@ export async function createStaffMember(
       role: user.role as AdminInvitableRole,
       licenseNumber: user.medecinLicenseNumber,
       status: "invited",
+      isActive: true,
       pharmacyName: user.pharmacyPartner?.name ?? null,
       pharmacyCity: user.pharmacyPartner?.city ?? null,
       createdAt: user.createdAt.toISOString(),

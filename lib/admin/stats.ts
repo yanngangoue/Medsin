@@ -1,10 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import { buildAdminPatientsWhere } from "@/lib/admin/patient-filters";
+import { GLP1_MONTHLY_PRICE_CENTS } from "@/lib/membership/glp1-membership";
+
+function startOfMonth(): Date {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
 
 export async function getAdminStats() {
   const reviewWhere = buildAdminPatientsWhere(null, "a_revoir", false);
+  const monthStart = startOfMonth();
 
-  const [totalPatients, eligible, pendingReview, unreadMessages] = await Promise.all([
+  const [
+    totalPatients,
+    eligible,
+    pendingReview,
+    unreadMessages,
+    activePatients,
+    pendingFulfillments,
+    membershipsThisMonth,
+    fulfillmentsPaidThisMonth,
+  ] = await Promise.all([
     prisma.user.count({ where: { role: "PATIENT" } }),
     prisma.patientProfile.count({ where: { eligibility: "ELIGIBLE" } }),
     prisma.user.count({ where: reviewWhere }),
@@ -15,9 +31,31 @@ export async function getAdminStats() {
         sender: { role: "PATIENT" },
       },
     }),
+    prisma.glp1Membership.count({ where: { status: "PAID" } }),
+    prisma.medicationFulfillment.count({
+      where: { status: { in: ["ISSUED", "SENT_TO_PHARMACY", "IN_PREPARATION", "SHIPPED"] } },
+    }),
+    prisma.glp1Membership.count({
+      where: { status: "PAID", paidAt: { gte: monthStart } },
+    }),
+    prisma.medicationFulfillment.count({
+      where: { paymentStatus: "PAID", paidAt: { gte: monthStart } },
+    }),
   ]);
 
-  return { totalPatients, eligible, pendingReview, unreadMessages };
+  const stripeRevenueCentsThisMonth =
+    membershipsThisMonth * GLP1_MONTHLY_PRICE_CENTS +
+    fulfillmentsPaidThisMonth * GLP1_MONTHLY_PRICE_CENTS;
+
+  return {
+    totalPatients,
+    eligible,
+    pendingReview,
+    unreadMessages,
+    activePatients,
+    pendingFulfillments,
+    stripeRevenueCentsThisMonth,
+  };
 }
 
 export async function getRecentPatients(limit = 5) {

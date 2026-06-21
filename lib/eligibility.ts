@@ -48,6 +48,29 @@ export function computeBmi(weightKg: number, heightCm: number): number {
   return Math.round(raw * 10) / 10;
 }
 
+/** Pieds + pouces → centimètres (stockage interne / IMC). */
+export function feetInchesToCm(feet: number, inches: number): number {
+  if (feet < 0 || inches < 0 || inches > 11) return 0;
+  return Math.round((feet * 12 + inches) * 2.54);
+}
+
+/** Centimètres → pieds + pouces (affichage questionnaire). */
+export function cmToFeetInches(heightCm: number): { feet: number; inches: number } {
+  if (heightCm <= 0) return { feet: 0, inches: 0 };
+  const totalInches = Math.round(heightCm / 2.54);
+  let feet = Math.floor(totalInches / 12);
+  let inches = totalInches % 12;
+  if (inches === 12) {
+    feet += 1;
+    inches = 0;
+  }
+  return { feet, inches };
+}
+
+export function isValidHeightCm(heightCm: number): boolean {
+  return heightCm >= 100 && heightCm <= 250;
+}
+
 export function simulateGlp1Eligibility(input: EligibilityInput): {
   status: EligibilityStatus;
   /** Libellé UI — simulation logicielle uniquement, pas un avis médical. */

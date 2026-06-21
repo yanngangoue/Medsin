@@ -25,7 +25,7 @@ export function staffRoleHome(role: AdminInvitableRole): string {
     case "MEDECIN":
       return "/medecin/file";
     case "PHARMACIEN":
-      return "/pharmacien";
+      return "/dashboard/pharmacie";
   }
 }
 

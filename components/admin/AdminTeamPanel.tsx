@@ -143,6 +143,27 @@ export function AdminTeamPanel() {
     }
   }
 
+  async function toggleActive(id: string, activate: boolean) {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/admin/team/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: activate ? "activate" : "deactivate" }),
+      });
+      const data = (await res.json()) as { error?: string; message?: string };
+      if (!res.ok) throw new Error(data.error ?? "Échec");
+      setMessage(data.message ?? (activate ? "Compte réactivé." : "Compte désactivé."));
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function resendInvite(id: string) {
     setBusy(true);
     setError(null);
@@ -414,18 +435,21 @@ export function AdminTeamPanel() {
             title="Infirmières IPS"
             members={ipsMembers}
             onResend={(id) => void resendInvite(id)}
+            onToggleActive={(id, active) => void toggleActive(id, active)}
             busy={busy}
           />
           <MemberTable
             title="Médecins"
             members={medecinMembers}
             onResend={(id) => void resendInvite(id)}
+            onToggleActive={(id, active) => void toggleActive(id, active)}
             busy={busy}
           />
           <MemberTable
             title="Pharmaciens partenaires"
             members={pharmaMembers}
             onResend={(id) => void resendInvite(id)}
+            onToggleActive={(id, active) => void toggleActive(id, active)}
             busy={busy}
           />
         </>
@@ -438,11 +462,13 @@ function MemberTable({
   title,
   members,
   onResend,
+  onToggleActive,
   busy,
 }: {
   title: string;
   members: StaffMemberRow[];
   onResend: (id: string) => void;
+  onToggleActive: (id: string, activate: boolean) => void;
   busy: boolean;
 }) {
   return (
@@ -473,7 +499,13 @@ function MemberTable({
                   </td>
                   <td className="px-5 py-3 font-mono text-xs text-slate-600">{m.email}</td>
                   <td className="px-5 py-3">
-                    <StatusBadge status={m.status} />
+                    {!m.isActive ? (
+                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold uppercase text-red-800">
+                        Désactivé
+                      </span>
+                    ) : (
+                      <StatusBadge status={m.status} />
+                    )}
                   </td>
                   <td className="px-5 py-3 text-xs text-slate-500">
                     {m.role === "PHARMACIEN"
@@ -481,16 +513,28 @@ function MemberTable({
                       : (m.licenseNumber ?? "—")}
                   </td>
                   <td className="px-5 py-3 text-right">
-                    {m.status === "invited" ? (
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => onResend(m.id)}
-                        className="text-xs font-semibold text-[#16a34a] hover:underline disabled:opacity-50"
-                      >
-                        Renvoyer l&apos;invitation
-                      </button>
-                    ) : null}
+                    <div className="flex flex-col items-end gap-1">
+                      {m.status === "invited" ? (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => onResend(m.id)}
+                          className="text-xs font-semibold text-[#16a34a] hover:underline disabled:opacity-50"
+                        >
+                          Renvoyer l&apos;invitation
+                        </button>
+                      ) : null}
+                      {m.status === "active" ? (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => onToggleActive(m.id, !m.isActive)}
+                          className="text-xs font-semibold text-slate-600 hover:underline disabled:opacity-50"
+                        >
+                          {m.isActive ? "Désactiver" : "Réactiver"}
+                        </button>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))}

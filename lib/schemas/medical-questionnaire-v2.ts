@@ -53,6 +53,13 @@ export const medicalQuestionnaireV2Schema = z.object({
   consentDataSharing: z.literal(true),
   consentAiCoach: z.literal(true),
   consentPrivacy: z.literal(true),
+  // Livraison
+  deliveryStreet: z.string().min(3),
+  deliveryCity: z.string().min(2),
+  deliveryProvince: z.string().min(2).max(2),
+  deliveryPostalCode: z.string().min(6),
+  deliveryPhone: z.string().min(10),
+  targetTimelineMonths: z.enum(["3", "6", "12", "18"]),
 });
 
 export type MedicalQuestionnaireV2 = z.infer<typeof medicalQuestionnaireV2Schema>;
