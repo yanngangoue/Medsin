@@ -1,5 +1,6 @@
 import type { FulfillmentStatus } from "@prisma/client";
 import { sendEmail } from "@/lib/email/send-email";
+import { formatDeliveryAddress } from "@/lib/pharmacy/delivery-address";
 import { decryptPharmacyApiKey } from "@/lib/pharmacy/secrets";
 import { pdfBase64FromDataUrl } from "@/lib/pharmacy/fulfillment-pdf";
 import { resolveCarrierTrackingUrl, carrierLabelFromTracking } from "@/lib/pharmacy/tracking-url";
@@ -31,45 +32,26 @@ type PatientContact = {
 function extractPatientContact(
   draftJson: unknown,
   user: { prenom: string; name: string | null; email: string },
+  medicalHistory?: unknown,
 ): PatientContact {
   const prenom = user.prenom || "Patient";
   const nom = user.name?.trim() || prenom;
+  const adresse = formatDeliveryAddress(draftJson, user.email, medicalHistory);
 
-  let adresse = `À confirmer — ${user.email}`;
   let telephone = "Non renseigné";
-
   if (draftJson && typeof draftJson === "object") {
     const d = draftJson as Record<string, unknown>;
-    const mh = d.medicalHistory as Record<string, unknown> | undefined;
-    const delivery = mh?.delivery as Record<string, unknown> | undefined;
-    const addrParts = [
-      d.deliveryAddress,
-      d.adresseLivraison,
-      delivery?.adresseLivraison,
-      delivery?.street,
-      d.deliveryCity,
-      delivery?.city,
-      d.deliveryProvince,
-      delivery?.province,
-      d.deliveryPostalCode,
-      delivery?.postalCode,
-      d.deliveryAddress,
-      d.adresseLivraison,
-      d.address,
-      d.street,
-      d.city,
-      d.ville,
-      d.province,
-      d.postalCode,
-      d.codePostal,
-    ].filter((v) => typeof v === "string" && v.trim()) as string[];
-    if (addrParts.length > 0) adresse = addrParts.join(", ");
-
     const phone =
       (typeof d.deliveryPhone === "string" && d.deliveryPhone) ||
       (typeof d.phone === "string" && d.phone) ||
       (typeof d.telephone === "string" && d.telephone) ||
       (typeof d.mobile === "string" && d.mobile);
+    if (phone) telephone = phone;
+  }
+
+  if (telephone === "Non renseigné" && medicalHistory && typeof medicalHistory === "object") {
+    const delivery = (medicalHistory as Record<string, unknown>).delivery as Record<string, unknown> | undefined;
+    const phone = typeof delivery?.phone === "string" ? delivery.phone : undefined;
     if (phone) telephone = phone;
   }
 
@@ -90,7 +72,7 @@ export async function dispatchFulfillmentToPharmacy(fulfillmentId: string): Prom
     where: { id: fulfillmentId },
     include: {
       user: { select: { prenom: true, name: true, email: true } },
-      questionnaire: { select: { draftJson: true } },
+      questionnaire: { select: { draftJson: true, medicalHistory: true } },
       pharmacy: true,
     },
   });
@@ -101,6 +83,7 @@ export async function dispatchFulfillmentToPharmacy(fulfillmentId: string): Prom
   const patient = extractPatientContact(
     fulfillment.questionnaire.draftJson,
     fulfillment.user,
+    fulfillment.questionnaire.medicalHistory,
   );
 
   const ips = await prisma.user.findUnique({

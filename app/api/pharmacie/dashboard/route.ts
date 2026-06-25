@@ -4,22 +4,7 @@ import { auth } from "@/auth";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { prisma } from "@/lib/prisma";
 
-function deliveryFromDraft(draftJson: unknown, email: string): string {
-  if (!draftJson || typeof draftJson !== "object") return `À confirmer — ${email}`;
-  const d = draftJson as Record<string, unknown>;
-  const parts = [
-    d.deliveryAddress,
-    d.adresseLivraison,
-    d.address,
-    d.street,
-    d.city,
-    d.ville,
-    d.province,
-    d.postalCode,
-    d.codePostal,
-  ].filter((v) => typeof v === "string" && v.trim()) as string[];
-  return parts.length > 0 ? parts.join(", ") : `À confirmer — ${email}`;
-}
+import { formatDeliveryAddress } from "@/lib/pharmacy/delivery-address";
 
 export async function GET() {
   return catchRouteError("pharmacie/dashboard/GET", async () => {
@@ -53,7 +38,7 @@ export async function GET() {
       take: 100,
       include: {
         user: { select: { prenom: true, name: true, email: true } },
-        questionnaire: { select: { draftJson: true } },
+        questionnaire: { select: { draftJson: true, medicalHistory: true } },
       },
     });
 
@@ -70,7 +55,11 @@ export async function GET() {
         createdAt: f.createdAt.toISOString(),
         patientPrenom: f.user.prenom,
         patientNom: f.user.name,
-        deliveryAddress: deliveryFromDraft(f.questionnaire.draftJson, f.user.email),
+        deliveryAddress: formatDeliveryAddress(
+          f.questionnaire.draftJson,
+          f.user.email,
+          f.questionnaire.medicalHistory,
+        ),
       })),
     });
   });

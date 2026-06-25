@@ -8,7 +8,6 @@ import {
   handlePaymentFailed,
   handleSubscriptionRenewal,
 } from "@/lib/stripe/fulfillment-after-payment";
-import { onboardingAfterPayment } from "@/lib/stripe/onboarding-payment";
 
 function subscriptionIdFrom(
   value: string | Stripe.Subscription | null | undefined,
@@ -62,7 +61,9 @@ export async function processStripeWebhook(req: Request): Promise<NextResponse> 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       if (session.metadata?.purpose === "onboarding") {
-        await onboardingAfterPayment(session);
+        console.warn(
+          "[stripe webhook] purpose=onboarding ignoré — flux obsolète. Utilisez fulfillment après approbation IPS.",
+        );
       } else {
         await fulfillmentAfterPayment(session);
       }
