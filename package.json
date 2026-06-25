@@ -21,6 +21,8 @@
     "server:start": "tsx server/index.ts",
     "test:interop": "tsx lib/interop/__tests__/gateway.test.ts",
     "test:mvp": "tsx scripts/test-mvp-flows.ts",
+    "test:prod-payment": "node scripts/test-prod-payment-e2e.mjs",
+    "test:webhook-prod": "node scripts/verify-prod-stripe-webhook.mjs",
     "typecheck": "tsc --noEmit",
     "favicons": "node scripts/generate-favicons.mjs",
     "cutout:pens": "python scripts/cutout-pen-images.py"
