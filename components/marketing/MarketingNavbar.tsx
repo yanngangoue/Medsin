@@ -82,57 +82,71 @@ export function MarketingNavbar() {
         </div>
       </header>
 
-      {menuOpen ? (
-        <div className="fixed inset-0 z-[60] md:hidden" role="dialog" aria-modal="true">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setMenuOpen(false)}
-            aria-label="Fermer le menu"
-          />
-          <div className="absolute right-0 top-0 flex h-full w-[min(100%,20rem)] flex-col bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <MarketingLogo />
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="text-2xl text-gray-500"
-                aria-label="Fermer"
-              >
-                ×
-              </button>
-            </div>
-            <nav className="mt-10 flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-lg font-medium text-[#1A1A2E]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-auto flex flex-col gap-3 pt-8">
+      <div
+        className={`fixed inset-x-0 top-0 z-[60] md:hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!menuOpen}
+      >
+        {/* Backdrop */}
+        <button
+          type="button"
+          className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setMenuOpen(false)}
+          aria-label="Fermer le menu"
+          tabIndex={menuOpen ? 0 : -1}
+        />
+        {/* Panneau slide-down */}
+        <div
+          className={`relative border-b border-gray-100 bg-white shadow-xl transition-transform duration-300 ease-in-out ${
+            menuOpen ? "translate-y-0" : "-translate-y-full"
+          }`}
+        >
+          <div className="flex items-center justify-between px-5 py-4">
+            <MarketingLogo />
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500"
+              aria-label="Fermer"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          </div>
+          <nav className="flex flex-col border-t border-gray-100 px-5 pb-2">
+            {NAV_LINKS.map((link) => (
               <Link
-                href="/auth/connexion"
+                key={link.href}
+                href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="text-center text-sm text-gray-600"
+                className="border-b border-gray-50 py-4 text-base font-medium text-[#1A1A2E] last:border-0"
               >
-                Connexion
+                {link.label}
               </Link>
-              <Link
-                href="/eligibilite"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-full bg-[#1D4D3A] px-6 py-3 text-center text-sm font-semibold text-white"
-              >
-                Commencer
-              </Link>
-            </div>
+            ))}
+          </nav>
+          <div className="flex flex-col gap-3 px-5 pb-6 pt-2">
+            <Link
+              href="/connexion"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-full border border-gray-200 px-6 py-3 text-center text-sm font-medium text-gray-700"
+            >
+              Connexion
+            </Link>
+            <Link
+              href="/eligibilite"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-full bg-[#1D4D3A] px-6 py-3 text-center text-sm font-semibold text-white"
+            >
+              Commencer
+            </Link>
           </div>
         </div>
-      ) : null}
+      </div>
     </>
   );
 }
