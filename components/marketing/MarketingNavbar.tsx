@@ -131,18 +131,18 @@ export function MarketingNavbar() {
           </nav>
           <div className="flex flex-col gap-3 px-5 pb-6 pt-2">
             <Link
-              href="/connexion"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-full border border-gray-200 px-6 py-3 text-center text-sm font-medium text-gray-700"
-            >
-              Connexion
-            </Link>
-            <Link
               href="/eligibilite"
               onClick={() => setMenuOpen(false)}
               className="rounded-full bg-[#1D4D3A] px-6 py-3 text-center text-sm font-semibold text-white"
             >
-              Commencer
+              Créer mon compte
+            </Link>
+            <Link
+              href="/auth/connexion"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-full border border-gray-200 px-6 py-3 text-center text-sm font-medium text-gray-700"
+            >
+              J&apos;ai déjà un compte — Connexion
             </Link>
           </div>
         </div>
