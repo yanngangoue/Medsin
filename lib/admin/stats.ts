@@ -18,6 +18,8 @@ export async function getAdminStats() {
     unreadMessages,
     activePatients,
     pendingFulfillments,
+    pendingIpsQueue,
+    pendingPayments,
     membershipsThisMonth,
     fulfillmentsPaidThisMonth,
   ] = await Promise.all([
@@ -34,6 +36,15 @@ export async function getAdminStats() {
     prisma.glp1Membership.count({ where: { status: "PAID" } }),
     prisma.medicationFulfillment.count({
       where: { status: { in: ["ISSUED", "SENT_TO_PHARMACY", "IN_PREPARATION", "SHIPPED"] } },
+    }),
+    prisma.medicalQuestionnaire.count({
+      where: { status: { in: ["SUBMITTED", "UNDER_REVIEW"] } },
+    }),
+    prisma.medicationFulfillment.count({
+      where: {
+        paymentStatus: "PENDING",
+        questionnaire: { status: "APPROVED" },
+      },
     }),
     prisma.glp1Membership.count({
       where: { status: "PAID", paidAt: { gte: monthStart } },
@@ -54,6 +65,8 @@ export async function getAdminStats() {
     unreadMessages,
     activePatients,
     pendingFulfillments,
+    pendingIpsQueue,
+    pendingPayments,
     stripeRevenueCentsThisMonth,
   };
 }
