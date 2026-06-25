@@ -5,7 +5,6 @@ import { activateGlp1Membership, GLP1_MONTHLY_PRICE_CENTS } from "@/lib/membersh
 import { createWeightProgram } from "@/lib/patient/weight-program";
 import {
   dispatchFulfillmentToPharmacy,
-  notifyPatientPreparationEmail,
   notifyPharmacyDispatched,
 } from "@/lib/pharmacy/fulfillment-notify";
 import {
@@ -115,16 +114,6 @@ export async function processFulfillmentPayment(
     await notifyAdminPharmacyPending(prescriptionId, fulfillment.medication);
   }
 
-  await prisma.medicationFulfillment.update({
-    where: { id: prescriptionId },
-    data: { status: "IN_PREPARATION" },
-  });
-
-  await prisma.fulfillmentStatusHistory.create({
-    data: { fulfillmentId: prescriptionId, status: "IN_PREPARATION" },
-  });
-  await notifyPatientPreparationEmail(prescriptionId, eta);
-
   await prisma.medicalQuestionnaire.update({
     where: { id: fulfillment.questionnaireId },
     data: { status: "PRESCRIPTION_ISSUED" },
@@ -207,10 +196,10 @@ export async function processFulfillmentPayment(
     userId: fulfillment.userId,
     html: `<p>Bonjour ${fulfillment.user.prenom},</p>
 <p><strong>Votre paiement est confirmé.</strong></p>
-<p>Votre ordonnance a été envoyée à la pharmacie. Votre médicament est en cours de préparation.</p>
+<p>Votre ordonnance a été transmise à la pharmacie partenaire. Vous recevrez un courriel dès le début de la préparation.</p>
 <p>Livraison estimée : <strong>${eta.toLocaleDateString("fr-CA", { dateStyle: "long" })}</strong></p>
-<p><a href="${appUrl()}/dashboard/patient/ordonnance">Suivre ma livraison</a> · <a href="${appUrl()}/dashboard/patient/coach-ia">Parler à Anne</a></p>`,
-    text: `Bonjour ${fulfillment.user.prenom}, paiement confirmé. Livraison estimée : ${eta.toLocaleDateString("fr-CA")}.`,
+<p><a href="${appUrl()}/dashboard/patient/ordonnance">Suivre ma livraison</a></p>`,
+    text: `Bonjour ${fulfillment.user.prenom}, paiement confirmé. Ordonnance transmise à la pharmacie. Livraison estimée : ${eta.toLocaleDateString("fr-CA")}.`,
   });
 
   await prisma.appNotification.create({
@@ -218,7 +207,7 @@ export async function processFulfillmentPayment(
       userId: fulfillment.userId,
       type: "PAYMENT_CONFIRMED",
       title: "Paiement confirmé",
-      body: "Votre ordonnance a été envoyée à la pharmacie 💊. Votre médicament est en cours de préparation.",
+      body: "Votre ordonnance a été transmise à la pharmacie 💊. Préparation dès réception par la pharmacie.",
       sentByEmail: true,
     },
   });

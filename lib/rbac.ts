@@ -6,7 +6,7 @@ export const ROLE_HOME: Record<Role, string> = {
   PHARMACIEN: "/dashboard/pharmacie",
   MEDECIN: "/medecin/file",
   NUTRITIONNISTE: "/nutritionniste",
-  ADMIN: "/dashboard/admin",
+  ADMIN: "/admin/dashboard",
 };
 
 /** Rôle requis pour accéder au préfixe de route (RBAC middleware). */
