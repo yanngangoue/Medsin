@@ -1,9 +1,22 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { canAccessPath, requiredRoleForPath } from "@/lib/rbac";
+import {
+  hasGlp1MembershipPaid,
+  isQuestionnairePath,
+} from "@/lib/membership/glp1-membership-middleware";
 
-export default auth((req) => {
+const CHANGE_PASSWORD_PATH = "/changer-mot-de-passe";
+
+export default auth(async (req) => {
   const pathname = req.nextUrl.pathname;
+
+  // Forcer le changement de mot de passe pour les comptes staff nouvellement créés
+  const mustChange = req.auth?.user?.mustChangePassword;
+  if (mustChange && pathname !== CHANGE_PASSWORD_PATH) {
+    return NextResponse.redirect(new URL(CHANGE_PASSWORD_PATH, req.url));
+  }
+
   const required = requiredRoleForPath(pathname);
   if (!required) return NextResponse.next();
 
@@ -16,6 +29,15 @@ export default auth((req) => {
 
   if (!canAccessPath(role, pathname)) {
     return NextResponse.redirect(new URL("/acces-refuse", req.url));
+  }
+
+  if (isQuestionnairePath(pathname) && role === "PATIENT") {
+    const paid = await hasGlp1MembershipPaid(req);
+    if (!paid) {
+      const payment = new URL("/paiement", req.url);
+      payment.searchParams.set("onboarding", "1");
+      return NextResponse.redirect(payment);
+    }
   }
 
   return NextResponse.next();
@@ -32,5 +54,6 @@ export const config = {
     "/questionnaire",
     "/paiement/:path*",
     "/paiement",
+    "/changer-mot-de-passe",
   ],
 };

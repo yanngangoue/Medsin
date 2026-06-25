@@ -128,7 +128,8 @@ model User {
   image         String?
   passwordHash  String? @map("password")
   role          Role      @default(PATIENT)
-  isActive      Boolean   @default(true)
+  isActive             Boolean   @default(true)
+  mustChangePassword   Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

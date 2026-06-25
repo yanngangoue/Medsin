@@ -71,10 +71,11 @@ export async function POST(
       const payload: Record<string, unknown> = {
         ok: true,
         emailSent: result.emailSent,
-        inviteUrl: result.inviteUrl,
         message: result.emailSent
-          ? "Invitation renvoyée."
-          : "Lien régénéré — partagez-le au membre ou configurez RESEND_API_KEY.",
+          ? "Nouveau mot de passe temporaire envoyé par courriel."
+          : result.tempPassword
+            ? `Email non envoyé (RESEND_API_KEY manquant). Mot de passe temporaire : ${result.tempPassword}`
+            : "Impossible de renvoyer l'invitation.",
       };
       return NextResponse.json(payload);
     } catch (e) {

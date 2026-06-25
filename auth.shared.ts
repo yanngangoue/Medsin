@@ -30,6 +30,7 @@ export default {
         token.role = user.role;
         token.prenom = user.prenom;
         token.email = user.email ?? undefined;
+        token.mustChangePassword = user.mustChangePassword ?? false;
       }
       return token;
     },
@@ -39,6 +40,7 @@ export default {
         session.user.role = token.role as Role;
         session.user.prenom = token.prenom as string;
         if (token.email) session.user.email = token.email;
+        session.user.mustChangePassword = token.mustChangePassword === true;
       }
       return session;
     },

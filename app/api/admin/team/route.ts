@@ -88,10 +88,9 @@ export async function POST(req: Request) {
       const payload: Record<string, unknown> = {
         member: result.member,
         emailSent: result.emailSent,
-        inviteUrl: result.inviteUrl ?? null,
         message: result.emailSent
-          ? "Membre créé — invitation envoyée par courriel."
-          : "Membre créé — partagez le lien d'activation ci-dessous (ou configurez RESEND_API_KEY).",
+          ? "Compte créé — identifiants envoyés par courriel. Le membre devra changer son mot de passe à la première connexion."
+          : "Compte créé. Configurez RESEND_API_KEY pour envoyer les identifiants automatiquement.",
       };
       return NextResponse.json(payload, { status: 201 });
     } catch (e) {

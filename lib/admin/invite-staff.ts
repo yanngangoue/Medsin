@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
 import { hashPasswordResetToken } from "@/lib/password-reset-token";
+import { hashPassword } from "@/lib/password";
 import { ensureUniqueStaffEmail, staffEmailDomain } from "@/lib/admin/staff-email";
 import {
   type AdminInvitableRole,
@@ -12,6 +13,15 @@ import {
   staffRoleLabel,
 } from "@/lib/admin/staff-roles";
 import type { CreateStaffMemberInput } from "@/lib/schemas/admin-team";
+
+/** Génère un mot de passe temporaire lisible (12 chars, sans ambiguïtés). */
+function generateTempPassword(): string {
+  const charset = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#%";
+  const bytes = randomBytes(12);
+  return Array.from(bytes)
+    .map((b) => charset[b % charset.length]!)
+    .join("");
+}
 
 export type StaffMemberStatus = "invited" | "active";
 
@@ -93,40 +103,40 @@ async function createInviteToken(userId: string): Promise<string> {
   return raw;
 }
 
-export async function sendStaffInviteEmail(opts: {
+export async function sendStaffWelcomeEmail(opts: {
   userId: string;
   email: string;
   prenom: string;
-  role: Role;
+  role: AdminInvitableRole;
+  tempPassword: string;
   baseUrl: string;
   invitedByAdminId: string;
   notificationEmail?: string | null;
-}): Promise<{ inviteUrl: string; emailSent: boolean }> {
-  if (!isAdminInvitableRole(opts.role)) {
-    throw new Error("Rôle non invitable");
-  }
-
-  const rawToken = await createInviteToken(opts.userId);
-  const inviteUrl = `${opts.baseUrl}/connexion/reinitialisation?token=${encodeURIComponent(rawToken)}`;
+}): Promise<{ emailSent: boolean }> {
   const roleLabel = staffRoleLabel(opts.role);
   const home = staffRoleHome(opts.role);
   const loginUrl = `${opts.baseUrl}/auth/connexion`;
+  const changeUrl = `${opts.baseUrl}/changer-mot-de-passe`;
   const deliverTo = opts.notificationEmail?.trim() || opts.email;
 
   const result = await sendEmail({
     to: deliverTo,
-    subject: "Votre accès Anne-sante — activez votre compte",
-    template: "staff_invite",
-    entityKey: `staff_invite:${opts.userId}:${Date.now()}`,
+    subject: "Votre accès Anne-sante — identifiants de connexion",
+    template: "staff_welcome",
+    entityKey: `staff_welcome:${opts.userId}:${Date.now()}`,
     userId: opts.userId,
     html: `<p>Bonjour ${opts.prenom},</p>
 <p>Un compte Anne-sante vous a été créé en tant que <strong>${roleLabel}</strong>.</p>
-<p><strong>Identifiant de connexion :</strong> ${opts.email}</p>
-<p><a href="${inviteUrl}">Créer mon mot de passe et activer mon compte</a></p>
-<p>Ce lien expire dans 7 jours.</p>
-<p>Après activation, connectez-vous avec votre identifiant (${opts.email}) sur <a href="${loginUrl}">${loginUrl}</a>, puis accédez à <a href="${opts.baseUrl}${home}">votre espace professionnel</a>.</p>
+<table style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;background:#f8fafc;margin:16px 0">
+  <tr><td style="padding:4px 12px 4px 0;color:#475569;font-size:14px"><strong>Courriel de connexion :</strong></td><td style="font-family:monospace;font-size:14px">${opts.email}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#475569;font-size:14px"><strong>Mot de passe temporaire :</strong></td><td style="font-family:monospace;font-size:14px">${opts.tempPassword}</td></tr>
+</table>
+<p style="color:#dc2626;font-size:13px">⚠️ Ce mot de passe est temporaire. Vous devrez le changer dès votre première connexion.</p>
+<p><a href="${loginUrl}" style="display:inline-block;background:#16a34a;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">Se connecter</a></p>
+<p style="font-size:12px;color:#94a3b8">Après connexion, vous serez automatiquement redirigé(e) vers <a href="${changeUrl}">${changeUrl}</a> pour choisir votre mot de passe définitif.</p>
+<p style="font-size:12px;color:#94a3b8">Votre espace professionnel : <a href="${opts.baseUrl}${home}">${opts.baseUrl}${home}</a></p>
 <p>— L'équipe Anne-sante</p>`,
-    text: `Bonjour ${opts.prenom}, identifiant: ${opts.email}. Activez votre compte: ${inviteUrl}`,
+    text: `Bonjour ${opts.prenom}, votre accès Anne-sante (${roleLabel}).\nCourriel: ${opts.email}\nMot de passe temporaire: ${opts.tempPassword}\nConnexion: ${loginUrl}\nVous devrez changer votre mot de passe à la première connexion.`,
   });
 
   await writeAuditLog({
@@ -136,8 +146,46 @@ export async function sendStaffInviteEmail(opts: {
   });
 
   if (process.env.NODE_ENV === "development") {
-    console.info("[Anne-sante] Invitation équipe (dev) :", inviteUrl);
+    console.info("[Anne-sante] Invitation équipe (dev) — mdp temporaire généré pour", opts.email);
   }
+
+  return { emailSent: result.ok && !result.skipped };
+}
+
+/** Renvoi d'invitation : génère un nouveau token de réinitialisation (pour comptes sans mot de passe). */
+async function sendStaffInviteTokenEmail(opts: {
+  userId: string;
+  email: string;
+  prenom: string;
+  role: AdminInvitableRole;
+  baseUrl: string;
+  invitedByAdminId: string;
+}): Promise<{ inviteUrl: string; emailSent: boolean }> {
+  const rawToken = await createInviteToken(opts.userId);
+  const inviteUrl = `${opts.baseUrl}/connexion/reinitialisation?token=${encodeURIComponent(rawToken)}`;
+  const roleLabel = staffRoleLabel(opts.role);
+  const loginUrl = `${opts.baseUrl}/auth/connexion`;
+
+  const result = await sendEmail({
+    to: opts.email,
+    subject: "Votre accès Anne-sante — nouveau lien d'activation",
+    template: "staff_invite",
+    entityKey: `staff_invite:${opts.userId}:${Date.now()}`,
+    userId: opts.userId,
+    html: `<p>Bonjour ${opts.prenom},</p>
+<p>Voici un nouveau lien pour activer votre compte <strong>${roleLabel}</strong> sur Anne-sante.</p>
+<p><strong>Identifiant :</strong> ${opts.email}</p>
+<p><a href="${inviteUrl}">Créer mon mot de passe</a></p>
+<p style="font-size:12px;color:#94a3b8">Ce lien expire dans 7 jours. Connexion ensuite sur <a href="${loginUrl}">${loginUrl}</a>.</p>
+<p>— L'équipe Anne-sante</p>`,
+    text: `Bonjour ${opts.prenom}, activez votre compte: ${inviteUrl}`,
+  });
+
+  await writeAuditLog({
+    userId: opts.invitedByAdminId,
+    action: "staff_invite_sent",
+    entity: opts.userId,
+  });
 
   return { inviteUrl, emailSent: result.ok && !result.skipped };
 }
@@ -170,6 +218,9 @@ export async function createStaffMember(
     pharmacyPartnerId = pharmacy.id;
   }
 
+  const tempPassword = generateTempPassword();
+  const passwordHash = await hashPassword(tempPassword);
+
   const user = await prisma.user.create({
     data: {
       prenom: input.prenom,
@@ -177,8 +228,9 @@ export async function createStaffMember(
       email,
       role: input.role,
       medecinLicenseNumber: input.licenseNumber?.trim() || null,
-      emailVerified: null,
-      passwordHash: null,
+      emailVerified: new Date(),
+      passwordHash,
+      mustChangePassword: true,
       pharmacyPartnerId: pharmacyPartnerId ?? null,
     },
     include: {
@@ -192,20 +244,19 @@ export async function createStaffMember(
     entity: `${user.role}:${user.id}`,
   });
 
-  let inviteUrl: string | undefined;
   let emailSent = false;
 
   if (input.sendInvite) {
-    const invite = await sendStaffInviteEmail({
+    const invite = await sendStaffWelcomeEmail({
       userId: user.id,
       email: user.email,
       prenom: user.prenom,
-      role: user.role,
+      role: input.role,
+      tempPassword,
       baseUrl,
       invitedByAdminId: adminId,
       notificationEmail: input.notificationEmail,
     });
-    inviteUrl = invite.inviteUrl;
     emailSent = invite.emailSent;
   }
 
@@ -223,7 +274,6 @@ export async function createStaffMember(
       pharmacyCity: user.pharmacyPartner?.city ?? null,
       createdAt: user.createdAt.toISOString(),
     },
-    inviteUrl,
     emailSent,
   };
 }
@@ -232,7 +282,7 @@ export async function resendStaffInvite(
   userId: string,
   adminId: string,
   baseUrl: string,
-): Promise<{ inviteUrl: string; emailSent: boolean }> {
+): Promise<{ inviteUrl?: string; emailSent: boolean; tempPassword?: string }> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -242,6 +292,7 @@ export async function resendStaffInvite(
       role: true,
       passwordHash: true,
       emailVerified: true,
+      mustChangePassword: true,
     },
   });
 
@@ -249,16 +300,30 @@ export async function resendStaffInvite(
     throw new Error("Membre introuvable");
   }
 
-  if (user.passwordHash && user.emailVerified) {
+  if (user.passwordHash && user.emailVerified && !user.mustChangePassword) {
     throw new Error("Ce compte est déjà activé");
   }
 
-  return sendStaffInviteEmail({
+  const invitableRole = user.role as AdminInvitableRole;
+
+  // Génère un nouveau mot de passe temporaire
+  const tempPassword = generateTempPassword();
+  const passwordHash = await hashPassword(tempPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash, emailVerified: new Date(), mustChangePassword: true },
+  });
+
+  const invite = await sendStaffWelcomeEmail({
     userId: user.id,
     email: user.email,
     prenom: user.prenom,
-    role: user.role,
+    role: invitableRole,
+    tempPassword,
     baseUrl,
     invitedByAdminId: adminId,
   });
+
+  return { emailSent: invite.emailSent, tempPassword };
 }
