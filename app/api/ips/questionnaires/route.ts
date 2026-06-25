@@ -23,7 +23,7 @@ export async function GET() {
     
       const questionnaires = await prisma.medicalQuestionnaire.findMany({
         where: {
-          status: { in: ["SUBMITTED", "UNDER_REVIEW", "PRESCRIPTION_ISSUED"] },
+          status: { in: ["SUBMITTED", "UNDER_REVIEW", "APPROVED", "PRESCRIPTION_ISSUED"] },
           ...accessFilter,
         },
         orderBy: { createdAt: "desc" },

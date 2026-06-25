@@ -103,18 +103,13 @@ export async function sendCoachMessage(input: {
 /** Message de bienvenue — première visite du coach. */
 export function buildCoachWelcomeMessage(prenom: string): string {
   const name = prenom.trim() || "cher patient";
-  return `Bonjour ${name} ! 👋
+  return `Bonjour ${name}, votre traitement GLP-1 est arrivé. Je suis Anne, votre coach IA. Commençons ensemble !
 
-Je suis Anne, votre coach santé IA chez Anne-sante.
+Comment vous sentez-vous aujourd'hui après la réception de votre médicament ?`;
+}
 
-Chaque semaine, je vais analyser vos données et vous écrire en premier — sans que vous ayez à demander. Voici ce que je peux faire pour vous :
-
-📊 Suivre votre poids et votre énergie
-⚠️ Détecter les effets secondaires tôt
-📋 Préparer des rapports pour votre IPS
-💬 Répondre à vos questions, jour et nuit
-
-Pour commencer — comment vous sentez-vous aujourd'hui ?`;
+export function buildCoachDeliveryMessage(prenom: string): string {
+  return buildCoachWelcomeMessage(prenom);
 }
 
 /** Message d'accueil si le programme poids n'est pas encore activé. */

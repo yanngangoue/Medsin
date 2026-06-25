@@ -85,32 +85,25 @@ export function PaiementCheckout() {
   const fulfillmentParam = searchParams.get("fulfillment");
   const cancelled = searchParams.get("cancelled") === "1";
   const paid = searchParams.get("paid") === "1";
-  const onboarding = searchParams.get("onboarding") === "1" || !fulfillmentParam;
+  const testMode = process.env.NEXT_PUBLIC_TEST_MODE === "true";
 
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(!onboarding);
+  const [simulating, setSimulating] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fulfillment, setFulfillment] = useState<FulfillmentSummary | null>(null);
   const [resolvedId, setResolvedId] = useState<string | null>(fulfillmentParam);
 
   const loadFulfillment = useCallback(async () => {
-    if (onboarding) {
-      setFetching(false);
-      return;
-    }
     setFetching(true);
     setError(null);
 
-    let id = fulfillmentParam;
+    const id = fulfillmentParam;
     if (!id) {
-      const listRes = await fetch("/api/patient/fulfillment");
-      if (listRes.ok) {
-        const list = (await listRes.json()) as { fulfillment?: { id: string; paymentStatus: string } | null };
-        if (list.fulfillment?.paymentStatus === "PENDING") id = list.fulfillment.id;
-      }
+      setFetching(false);
+      setError("Lien de paiement invalide. Consultez le courriel reçu après approbation IPS.");
+      return;
     }
-
-    if (!id) { setFetching(false); setError("Aucune ordonnance en attente. Vérifiez le lien reçu par courriel."); return; }
     setResolvedId(id);
 
     const res = await fetch(`/api/patient/fulfillment/${id}`);
@@ -119,7 +112,7 @@ export function PaiementCheckout() {
     const data = (await res.json()) as FulfillmentSummary;
     setFulfillment(data);
     setFetching(false);
-  }, [fulfillmentParam, onboarding]);
+  }, [fulfillmentParam]);
 
   useEffect(() => { void loadFulfillment(); }, [loadFulfillment]);
 
@@ -129,13 +122,7 @@ export function PaiementCheckout() {
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(
-        onboarding
-          ? { purpose: "onboarding" }
-          : resolvedId
-            ? { fulfillmentId: resolvedId, purpose: "fulfillment" }
-            : { purpose: "fulfillment" },
-      ),
+      body: JSON.stringify({ fulfillmentId: resolvedId, purpose: "fulfillment" }),
     });
     const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
     setLoading(false);
@@ -143,7 +130,25 @@ export function PaiementCheckout() {
     window.location.href = data.url;
   }
 
-  if (paid) return <SuccessPanel onboarding={onboarding} />;
+  async function simulerPaiement() {
+    if (!resolvedId) return;
+    setSimulating(true);
+    setError(null);
+    const res = await fetch("/api/payment/simulate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fulfillmentId: resolvedId }),
+    });
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
+    setSimulating(false);
+    if (!res.ok) {
+      setError(data.error ?? "Simulation impossible.");
+      return;
+    }
+    window.location.href = `/paiement?paid=1&fulfillment=${encodeURIComponent(resolvedId)}`;
+  }
+
+  if (paid) return <SuccessPanel onboarding={false} />;
 
   if (fetching) {
     return (
@@ -155,7 +160,7 @@ export function PaiementCheckout() {
     );
   }
 
-  const amountLabel = onboarding ? "149,99 $" : fulfillment ? formatAmount(fulfillment.amountCents) : "—";
+  const amountLabel = fulfillment ? formatAmount(fulfillment.amountCents) : "149,99 $";
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -163,12 +168,10 @@ export function PaiementCheckout() {
       <div className="mb-8">
         <p className="text-xs font-bold uppercase tracking-widest text-[#3EBD93]">Dernière étape</p>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-slate-900">
-          {onboarding ? "Activer mon abonnement GLP-1" : "Finaliser mon abonnement"}
+          Compléter mon abonnement GLP-1
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          {onboarding
-            ? "149,99 $/mois — accès au questionnaire médical, suivi IPS et coach Anne."
-            : "Votre traitement sera expédié dans les 24 h suivant le paiement."}
+          149,99 $/mois — votre IPS a approuvé votre dossier. Le médicament sera préparé dès confirmation.
         </p>
       </div>
 
@@ -188,19 +191,9 @@ export function PaiementCheckout() {
           {/* Ordonnance / programme */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
             <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">
-              {onboarding ? "Programme inclus" : "Votre ordonnance"}
+              Votre ordonnance
             </p>
-            {onboarding ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 rounded-xl bg-[#F0F7F4] px-4 py-3">
-                  <span className="text-2xl">🌿</span>
-                  <div>
-                    <p className="font-display text-lg font-bold text-[#1D4D3A]">Anne-sante GLP-1</p>
-                    <p className="text-sm text-slate-600">Questionnaire · IPS · Coach Anne · Livraison</p>
-                  </div>
-                </div>
-              </div>
-            ) : fulfillment ? (
+            {fulfillment ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 rounded-xl bg-[#F0F7F4] px-4 py-3">
                   <span className="text-2xl">💊</span>
@@ -271,7 +264,7 @@ export function PaiementCheckout() {
 
             <button
               type="button"
-              disabled={loading || (!onboarding && (!fulfillment || fulfillment.paymentStatus === "PAID"))}
+              disabled={loading || !fulfillment || fulfillment.paymentStatus === "PAID"}
               onClick={() => void payer()}
               className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] text-base font-bold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -296,6 +289,17 @@ export function PaiementCheckout() {
                 <p className="text-sm text-red-700">{error}</p>
               </div>
             )}
+
+            {testMode ? (
+              <button
+                type="button"
+                disabled={simulating || !fulfillment || fulfillment.paymentStatus === "PAID"}
+                onClick={() => void simulerPaiement()}
+                className="mt-3 flex h-11 w-full items-center justify-center rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 text-sm font-semibold text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+              >
+                {simulating ? "Simulation…" : "Simuler paiement (test)"}
+              </button>
+            ) : null}
 
             <div className="mt-5 flex items-center justify-center gap-2 text-xs text-slate-400">
               <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3"><rect x="1" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M1 7h14" stroke="currentColor" strokeWidth="1.5"/></svg>

@@ -21,15 +21,16 @@ function escapePdfText(value: string): string {
 export function generatePrescriptionPdf(input: PrescriptionPdfInput): Buffer {
   const dateStr = new Intl.DateTimeFormat("fr-CA", { dateStyle: "long" }).format(input.issuedAt);
   const body = [
-    "ORDONNANCE MEDSIM",
+    "ANNE SANTE — ORDONNANCE",
     `Patient : ${input.patientName}`,
     input.patientDob ? `Date de naissance : ${input.patientDob}` : null,
     `Médicament : ${input.medication}`,
-    `Dose : ${input.dosage}`,
+    `Dosage / posologie : ${input.dosage}`,
     `Durée : ${input.durationMonths} mois · Renouvellements : ${input.refills}`,
     `Instructions : ${input.instructions}`,
-    `Prescrit par : ${input.ipsName}${input.ipsLicense ? ` (${input.ipsLicense})` : ""}`,
+    `Prescrit par : ${input.ipsName}${input.ipsLicense ? ` — N° OIIQ ${input.ipsLicense}` : ""}`,
     `Date : ${dateStr}`,
+    "Anne Santé — Télésanté Québec",
   ]
     .filter(Boolean)
     .join("\n");

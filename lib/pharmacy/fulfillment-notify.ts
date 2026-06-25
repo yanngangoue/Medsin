@@ -265,12 +265,19 @@ export async function notifyFulfillmentStatusChange(
 
   const ordonnanceUrl = `${appUrl()}/dashboard/patient/ordonnance`;
 
+  const subject =
+    newStatus === "SHIPPED"
+      ? "Votre colis est en route"
+      : newStatus === "DELIVERED"
+        ? "Votre médicament est arrivé"
+        : "Mise à jour de votre livraison Anne-sante";
+
   await sendEmail({
     to: fulfillment.user.email,
     template: "fulfillment_status",
     entityKey: `fulfillment_status:${fulfillmentId}:${newStatus}`,
     userId: fulfillment.userId,
-    subject: "Mise à jour de votre livraison Anne-sante",
+    subject,
     html: `<p>Bonjour ${fulfillment.user.prenom},</p>
 <p><strong>Mise à jour de votre livraison Anne-sante</strong></p>
 <p>${details}</p>

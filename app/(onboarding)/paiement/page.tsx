@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { PaiementCheckout } from "@/components/onboarding/PaiementCheckout";
+import { prisma } from "@/lib/prisma";
 
 type SearchParams = Promise<{ fulfillment?: string; paid?: string; cancelled?: string }>;
 
@@ -24,6 +25,29 @@ export default async function PaiementPage({
   }
   if (session.user.role !== "PATIENT") {
     redirect("/acces-refuse");
+  }
+
+  if (!params.fulfillment && !params.paid) {
+    redirect("/dashboard/patient");
+  }
+
+  if (params.fulfillment && !params.paid) {
+    const fulfillment = await prisma.medicationFulfillment.findFirst({
+      where: { id: params.fulfillment, userId: session.user.id },
+      include: { questionnaire: { select: { status: true } } },
+    });
+
+    if (!fulfillment) {
+      redirect("/dashboard/patient");
+    }
+
+    const approved =
+      fulfillment.questionnaire.status === "APPROVED" ||
+      fulfillment.questionnaire.status === "PRESCRIPTION_ISSUED";
+
+    if (!approved) {
+      redirect("/dashboard/patient");
+    }
   }
 
   return (

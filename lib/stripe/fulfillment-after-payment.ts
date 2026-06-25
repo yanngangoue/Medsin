@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
-import { buildCoachWelcomeMessage } from "@/lib/patient/ai-coach";
+import { activateGlp1Membership, GLP1_MONTHLY_PRICE_CENTS } from "@/lib/membership/glp1-membership";
 import { createWeightProgram } from "@/lib/patient/weight-program";
 import {
   dispatchFulfillmentToPharmacy,
@@ -66,7 +66,7 @@ export async function fulfillmentAfterPayment(session: Stripe.Checkout.Session):
 }
 
 /** Paiement initial GLP-1 confirmé (MedicationFulfillment). */
-async function processFulfillmentPayment(
+export async function processFulfillmentPayment(
   prescriptionId: string,
   stripeSessionId: string,
   stripePaymentIntentId?: string | null,
@@ -75,7 +75,7 @@ async function processFulfillmentPayment(
   const fulfillment = await prisma.medicationFulfillment.findUnique({
     where: { id: prescriptionId },
     include: {
-      user: true,
+      user: { include: { glp1Membership: true } },
       questionnaire: true,
       pharmacy: true,
     },
@@ -125,12 +125,43 @@ async function processFulfillmentPayment(
   });
   await notifyPatientPreparationEmail(prescriptionId, eta);
 
+  await prisma.medicalQuestionnaire.update({
+    where: { id: fulfillment.questionnaireId },
+    data: { status: "PRESCRIPTION_ISSUED" },
+  });
+
   const q = fulfillment.questionnaire;
+  if (q && !fulfillment.user.glp1Membership) {
+    await activateGlp1Membership({
+      userId: fulfillment.userId,
+      stripeSessionId,
+      stripeSubscriptionId: stripeSubscriptionId ?? null,
+      amountCents: GLP1_MONTHLY_PRICE_CENTS,
+    });
+  } else if (fulfillment.user.glp1Membership?.status !== "PAID") {
+    await prisma.glp1Membership.upsert({
+      where: { userId: fulfillment.userId },
+      create: {
+        userId: fulfillment.userId,
+        status: "PAID",
+        stripeSessionId,
+        stripeSubscriptionId: stripeSubscriptionId ?? null,
+        paidAt: new Date(),
+        amountCents: GLP1_MONTHLY_PRICE_CENTS,
+      },
+      update: {
+        status: "PAID",
+        stripeSessionId,
+        stripeSubscriptionId: stripeSubscriptionId ?? null,
+        paidAt: new Date(),
+      },
+    });
+  }
+
   let program = await prisma.weightProgram.findUnique({
     where: { userId: fulfillment.userId },
   });
 
-  // Guard: questionnaire must exist before we can derive weight data
   if (!program && q) {
     const created = await createWeightProgram(fulfillment.userId, {
       startWeight: q.weight,
@@ -145,8 +176,6 @@ async function processFulfillmentPayment(
       where: { id: program.id },
       data: {
         ...(stripeSubscriptionId ? { stripeSubId: stripeSubscriptionId } : {}),
-        isActive: true,
-        status: "ACTIVE",
         medication: fulfillment.medication,
         currentDose: fulfillment.dosage,
       },
@@ -154,27 +183,17 @@ async function processFulfillmentPayment(
 
     const checkInDue = new Date();
     checkInDue.setDate(checkInDue.getDate() + 7);
-    await prisma.weightCheckIn.create({
-      data: {
-        programId: program.id,
-        userId: fulfillment.userId,
-        weight: q?.weight ?? 0,
-        status: "PENDING",
-        recordedAt: checkInDue,
-      },
+    const existingCheckIn = await prisma.weightCheckIn.findFirst({
+      where: { programId: program.id, status: "PENDING" },
     });
-
-    const existingAnne = await prisma.aiCoachMessage.findFirst({
-      where: { programId: program.id },
-    });
-    if (!existingAnne) {
-      await prisma.aiCoachMessage.create({
+    if (!existingCheckIn) {
+      await prisma.weightCheckIn.create({
         data: {
           programId: program.id,
           userId: fulfillment.userId,
-          role: "assistant",
-          content: buildCoachWelcomeMessage(fulfillment.user.prenom),
-          isProactive: true,
+          weight: q?.weight ?? 0,
+          status: "PENDING",
+          recordedAt: checkInDue,
         },
       });
     }
@@ -182,7 +201,7 @@ async function processFulfillmentPayment(
 
   await sendEmail({
     to: fulfillment.user.email,
-    subject: "Paiement confirmé — Anne-sante",
+    subject: "Paiement reçu — votre médicament est en préparation",
     template: "payment_confirmed",
     entityKey: `payment_confirmed:${prescriptionId}`,
     userId: fulfillment.userId,

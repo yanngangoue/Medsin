@@ -7,17 +7,22 @@ import { requireIpsSession } from "@/lib/ips/auth";
 import { ensureIpsQuestionnaireAccess } from "@/lib/ips/questionnaire-access";
 import { auditMedicalRecordAccess } from "@/lib/audit-medical";
 import { generateIpsAiSummary } from "@/lib/ips/generate-ai-summary";
-import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
 import { isDemoMode } from "@/lib/is-demo-mode";
 import { generatePrescriptionPdf } from "@/lib/pdf-generator";
-import { hasActiveGlp1Membership } from "@/lib/membership/glp1-membership";
-import {
-  dispatchFulfillmentToPharmacy,
-  notifyPharmacyDispatched,
-} from "@/lib/pharmacy/fulfillment-notify";
+import { GLP1_MONTHLY_PRICE_CENTS } from "@/lib/membership/glp1-membership";
 import { prisma } from "@/lib/prisma";
 
 type Params = { params: Promise<{ id: string }> };
+
+function formatPatientDob(draftJson: unknown): string | undefined {
+  if (!draftJson || typeof draftJson !== "object") return undefined;
+  const d = draftJson as Record<string, unknown>;
+  const month = d.birthMonth ?? d.birth_month;
+  const day = d.birthDay ?? d.birth_day;
+  const year = d.birthYear ?? d.birth_year;
+  if (month && day && year) return `${month} ${day}, ${year}`;
+  return undefined;
+}
 
 const approveSchema = z.object({
   action: z.enum(["approve", "reject", "refer", "save_notes", "regenerate_summary"]),
@@ -157,29 +162,38 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     
       if (action === "reject") {
-        const reason = rejectReason ?? ipsNotes ?? "Votre dossier ne répond pas aux critères cliniques pour le moment.";
+        if (!rejectReason?.trim()) {
+          return NextResponse.json(
+            { error: "Le motif de refus est obligatoire", code: "VALIDATION_ERROR" },
+            { status: 400 },
+          );
+        }
+        const reason = rejectReason.trim();
         await prisma.medicalQuestionnaire.update({
           where: { id },
           data: {
             status: "REJECTED",
+            rejectionReason: reason,
             ipsNotes: reason,
             ipsId: session.user.id,
             reviewedAt: new Date(),
+            rejectedAt: new Date(),
           },
         });
 
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
         await sendEmail({
           to: questionnaire.user.email,
-          subject: "Mise à jour de votre dossier Anne-sante",
+          subject: "Votre demande Anne-sante",
           template: "questionnaire_rejected",
           entityKey: `questionnaire_rejected:${id}`,
           userId: questionnaire.userId,
           html: `<p>Bonjour ${questionnaire.user.prenom},</p>
 <p>Après examen de votre dossier, votre IPS n'a pas pu approuver votre demande pour le moment.</p>
 <p><strong>Motif :</strong> ${reason}</p>
-<p>Si vous avez des questions, contactez-nous ou consultez votre espace : <a href="${baseUrl}/dashboard/patient">${baseUrl}/dashboard/patient</a></p>`,
-          text: `Bonjour ${questionnaire.user.prenom}, dossier refusé. Motif : ${reason}`,
+<p>Nous vous recommandons de consulter votre médecin de famille pour un suivi adapté.</p>
+<p><a href="${baseUrl}/dashboard/patient">Accéder à mon espace</a></p>`,
+          text: `Bonjour ${questionnaire.user.prenom}, dossier refusé. Motif : ${reason}. Consultez votre médecin.`,
         });
 
         await prisma.appNotification.create({
@@ -195,14 +209,30 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     
       if (action === "refer") {
+        const note = ipsNotes ?? "Référé au médecin superviseur pour avis complémentaire.";
         await prisma.medicalQuestionnaire.update({
           where: { id },
           data: {
             status: "UNDER_REVIEW",
-            ipsNotes: ipsNotes ?? "Référé au médecin superviseur",
+            ipsNotes: note,
             ipsId: session.user.id,
           },
         });
+
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
+        await sendEmail({
+          to: questionnaire.user.email,
+          subject: "Votre dossier Anne-sante — consultation médicale recommandée",
+          template: "questionnaire_referred",
+          entityKey: `questionnaire_referred:${id}`,
+          userId: questionnaire.userId,
+          html: `<p>Bonjour ${questionnaire.user.prenom},</p>
+<p>Votre IPS a examiné votre dossier et recommande une consultation avec un médecin avant de poursuivre.</p>
+<p><strong>Note clinique :</strong> ${note}</p>
+<p><a href="${baseUrl}/dashboard/patient">Accéder à mon espace</a></p>`,
+          text: `Bonjour ${questionnaire.user.prenom}, consultation médicale recommandée. ${note}`,
+        });
+
         return NextResponse.json({ ok: true, status: "UNDER_REVIEW" });
       }
     
@@ -231,6 +261,7 @@ export async function PATCH(req: Request, { params }: Params) {
     
         const pdfBuffer = generatePrescriptionPdf({
           patientName: questionnaire.user.prenom,
+          patientDob: formatPatientDob(questionnaire.draftJson),
           medication,
           dosage,
           durationMonths: duration,
@@ -241,8 +272,6 @@ export async function PATCH(req: Request, { params }: Params) {
           issuedAt: new Date(),
         });
         const pdfUrl = `data:application/pdf;base64,${pdfBuffer.toString("base64")}`;
-
-        const membershipPaid = await hasActiveGlp1Membership(questionnaire.userId);
 
         const fulfillment = await prisma.medicationFulfillment.create({
           data: {
@@ -255,10 +284,9 @@ export async function PATCH(req: Request, { params }: Params) {
             refills: refills ?? 2,
             instructions: instructions ?? "",
             pharmacyId: pharmacy?.id ?? null,
-            status: membershipPaid ? "SENT_TO_PHARMACY" : "ISSUED",
-            paymentStatus: membershipPaid ? "PAID" : "PENDING",
-            paidAt: membershipPaid ? new Date() : null,
-            amountCents: monthlyPriceCentsForMedication(medication),
+            status: "ISSUED",
+            paymentStatus: "PENDING",
+            amountCents: GLP1_MONTHLY_PRICE_CENTS,
             pdfUrl,
             pdfGeneratedAt: new Date(),
           },
@@ -267,60 +295,42 @@ export async function PATCH(req: Request, { params }: Params) {
         await prisma.fulfillmentStatusHistory.create({
           data: {
             fulfillmentId: fulfillment.id,
-            status: membershipPaid ? "SENT_TO_PHARMACY" : "ISSUED",
-            note: membershipPaid
-              ? "Ordonnance approuvée — abonnement actif, envoi pharmacie"
-              : "Ordonnance approuvée par IPS",
+            status: "ISSUED",
+            note: "Ordonnance approuvée par IPS — en attente de paiement patient",
           },
         });
     
         await prisma.medicalQuestionnaire.update({
           where: { id },
           data: {
-            status: "PRESCRIPTION_ISSUED",
+            status: "APPROVED",
             ipsId: session.user.id,
             ipsNotes: ipsNotes ?? null,
             reviewedAt: new Date(),
+            approvedAt: new Date(),
           },
         });
     
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
 
-        if (membershipPaid) {
-          await notifyPharmacyDispatched(fulfillment.id);
-          await dispatchFulfillmentToPharmacy(fulfillment.id);
-
-          await sendEmail({
-            to: questionnaire.user.email,
-            subject: "Votre ordonnance Anne-sante est approuvée",
-            template: "prescription_approved",
-            entityKey: `prescription_approved:${fulfillment.id}`,
-            userId: questionnaire.userId,
-            html: `<p>Bonjour ${questionnaire.user.prenom},</p>
-<p><strong>Votre IPS a approuvé votre dossier.</strong> Votre ordonnance a été transmise à la pharmacie partenaire.</p>
-<p><a href="${baseUrl}/dashboard/patient/ordonnance">Suivre ma livraison</a></p>`,
-            text: `Bonjour ${questionnaire.user.prenom}, ordonnance approuvée. Suivi : ${baseUrl}/dashboard/patient/ordonnance`,
-          });
-        } else {
-          await sendEmail({
-            to: questionnaire.user.email,
-            subject: "Votre ordonnance Anne-sante est prête",
-            template: "prescription_ready",
-            entityKey: `prescription_ready:${fulfillment.id}`,
-            userId: questionnaire.userId,
-            html: `<p>Bonjour ${questionnaire.user.prenom},</p><p>Votre IPS a approuvé votre dossier. Procédez au paiement pour lancer la livraison : <a href="${baseUrl}/paiement?fulfillment=${fulfillment.id}">Payer maintenant</a>.</p>`,
-            text: `Bonjour ${questionnaire.user.prenom}, votre ordonnance est prête. Paiement : ${baseUrl}/paiement?fulfillment=${fulfillment.id}`,
-          });
-        }
+        await sendEmail({
+          to: questionnaire.user.email,
+          subject: "Bonne nouvelle ! Complétez votre abonnement Anne-sante",
+          template: "prescription_ready",
+          entityKey: `prescription_ready:${fulfillment.id}`,
+          userId: questionnaire.userId,
+          html: `<p>Bonjour ${questionnaire.user.prenom},</p>
+<p><strong>Votre IPS a approuvé votre dossier.</strong> Pour lancer la préparation et la livraison de votre médicament, activez votre abonnement à <strong>149,99 $/mois</strong>.</p>
+<p><a href="${baseUrl}/paiement?fulfillment=${fulfillment.id}" style="display:inline-block;background:#1D4D3A;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Compléter mon abonnement</a></p>`,
+          text: `Bonjour ${questionnaire.user.prenom}, dossier approuvé. Abonnement : ${baseUrl}/paiement?fulfillment=${fulfillment.id}`,
+        });
 
         await prisma.appNotification.create({
           data: {
             userId: questionnaire.userId,
-            type: membershipPaid ? "prescription_approved" : "prescription_ready",
-            title: membershipPaid ? "Ordonnance approuvée" : "Votre ordonnance est prête",
-            body: membershipPaid
-              ? "Votre ordonnance a été transmise à la pharmacie partenaire."
-              : "Procédez au paiement pour lancer la livraison de votre médicament.",
+            type: "prescription_ready",
+            title: "Dossier approuvé — abonnement requis",
+            body: "Votre IPS a approuvé votre dossier. Activez votre abonnement pour lancer la livraison.",
           },
         });
     
@@ -333,7 +343,7 @@ export async function PATCH(req: Request, { params }: Params) {
         return NextResponse.json({
           ok: true,
           fulfillmentId: fulfillment.id,
-          status: "PRESCRIPTION_ISSUED",
+          status: "APPROVED",
         });
       }
     

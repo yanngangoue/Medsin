@@ -2,10 +2,9 @@ import { catchRouteError } from "@/lib/api/catch-route-error";
 import { NextResponse } from "next/server";
 import { forbidden, unauthorized } from "@/lib/api-errors";
 import { isDemoMode } from "@/lib/is-demo-mode";
-import { monthlyPriceCentsForMedication } from "@/lib/pricing/glp1-monthly";
 import { getStripe, stripeErrorMessage } from "@/lib/stripe/client";
 import { getStripeIpePriceId } from "@/lib/stripe/env";
-import { GLP1_MONTHLY_PRICE_CENTS, hasActiveGlp1Membership } from "@/lib/membership/glp1-membership";
+import { GLP1_MONTHLY_PRICE_CENTS } from "@/lib/membership/glp1-membership";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { checkApiRateLimit, clientIp } from "@/lib/api-rate-limit";
@@ -41,53 +40,20 @@ export async function POST(req: Request) {
         }
     
         const body = (await req.json().catch(() => null)) as CheckoutBody | null;
-        const purpose = body?.purpose ?? (body?.fulfillmentId ? "fulfillment" : "onboarding");
+        const purpose = body?.purpose ?? "fulfillment";
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
         const priceId = getStripeIpePriceId();
         const stripe = getStripe();
 
         if (purpose === "onboarding") {
-          if (await hasActiveGlp1Membership(user.id)) {
-            return NextResponse.json({ error: "Abonnement déjà actif", code: "CONFLICT" }, { status: 409 });
-          }
-
-          const checkout = await stripe.checkout.sessions.create({
-            mode: "subscription",
-            success_url: `${baseUrl}/paiement?paid=1&onboarding=1`,
-            cancel_url: `${baseUrl}/paiement?cancelled=1&onboarding=1`,
-            client_reference_id: user.id,
-            ...(user.email ? { customer_email: user.email } : {}),
-            metadata: {
-              userId: user.id,
-              purpose: "onboarding",
-              product: "glp1-membership",
+          return NextResponse.json(
+            {
+              error:
+                "Complétez d'abord votre questionnaire médical. Le paiement intervient après approbation IPS.",
+              code: "INVALID_FLOW",
             },
-            subscription_data: {
-              metadata: { userId: user.id, purpose: "onboarding" },
-            },
-            line_items: priceId
-              ? [{ price: priceId, quantity: 1 }]
-              : [
-                  {
-                    price_data: {
-                      currency: "cad",
-                      product_data: {
-                        name: "Anne-sante — Programme GLP-1",
-                        description: "Suivi IPS + Coach Anne + Livraison mensuelle",
-                      },
-                      unit_amount: GLP1_MONTHLY_PRICE_CENTS,
-                      recurring: { interval: "month" },
-                    },
-                    quantity: 1,
-                  },
-                ],
-          });
-
-          if (!checkout.url) {
-            return NextResponse.json({ error: "Impossible de créer la session Stripe", code: "INTERNAL_ERROR" }, { status: 500 });
-          }
-
-          return NextResponse.json({ url: checkout.url });
+            { status: 400 },
+          );
         }
 
         const fulfillmentIdFromBody = body?.fulfillmentId?.trim();
@@ -95,10 +61,12 @@ export async function POST(req: Request) {
         const fulfillment = fulfillmentIdFromBody
           ? await prisma.medicationFulfillment.findFirst({
               where: { id: fulfillmentIdFromBody, userId: user.id },
+              include: { questionnaire: { select: { status: true } } },
             })
           : await prisma.medicationFulfillment.findFirst({
               where: { userId: user.id, paymentStatus: "PENDING" },
               orderBy: { createdAt: "desc" },
+              include: { questionnaire: { select: { status: true } } },
             });
     
         if (!fulfillment) {
@@ -107,15 +75,23 @@ export async function POST(req: Request) {
             { status: 404 },
           );
         }
+
+        const approved =
+          fulfillment.questionnaire.status === "APPROVED" ||
+          fulfillment.questionnaire.status === "PRESCRIPTION_ISSUED";
+        if (!approved) {
+          return NextResponse.json(
+            { error: "Votre dossier doit être approuvé par une IPS avant le paiement", code: "FORBIDDEN" },
+            { status: 403 },
+          );
+        }
     
         if (fulfillment.paymentStatus === "PAID") {
           return NextResponse.json({ error: "Cette ordonnance est déjà payée", code: "CONFLICT" }, { status: 409 });
         }
     
         const amountCents =
-          fulfillment.amountCents > 0
-            ? fulfillment.amountCents
-            : monthlyPriceCentsForMedication(fulfillment.medication);
+          fulfillment.amountCents > 0 ? fulfillment.amountCents : GLP1_MONTHLY_PRICE_CENTS;
 
         const checkout = await stripe.checkout.sessions.create({
           mode: "subscription",

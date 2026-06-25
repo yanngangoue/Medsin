@@ -460,7 +460,7 @@ model ClinicalDecision {
   @@index([createdAt])
 }
 
-/** Abonnement GLP-1 mensuel (paiement avant questionnaire). */
+/** Abonnement GLP-1 mensuel (activé après approbation IPS). */
 model Glp1Membership {
   id                   String        @id @default(uuid())
   userId               String        @unique
@@ -469,6 +469,7 @@ model Glp1Membership {
   stripeSubscriptionId String?
   stripeSessionId      String?
   paidAt               DateTime?
+  coachActivatedAt     DateTime?
   amountCents          Int           @default(14999)
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -602,7 +603,10 @@ model MedicalQuestionnaire {
   medecinId          String?
   ipsNotes           String?            @db.Text
   medecinNotes       String?            @db.Text
+  rejectionReason    String?            @db.Text
   reviewedAt         DateTime?
+  approvedAt         DateTime?
+  rejectedAt         DateTime?
   draftJson          Json?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt

@@ -123,10 +123,10 @@ export async function POST(req: Request) {
         entityKey: `patient_registration:${user.id}`,
         userId: user.id,
         html: `<p>Bonjour ${escHtml(user.prenom ?? "")},</p>
-<p>Votre compte Anne-sante a été créé avec succès.</p>
-<p>Prochaine étape : activer votre abonnement GLP-1 pour accéder au questionnaire médical.</p>
-<p><a href="${baseUrl}/paiement?onboarding=1">Activer mon abonnement</a></p>`,
-        text: `Bonjour ${user.prenom}, compte créé. Abonnement : ${baseUrl}/paiement?onboarding=1`,
+<p>Bienvenue chez Anne-sante ! Votre compte a été créé avec succès.</p>
+<p>Prochaine étape : complétez votre questionnaire médical gratuit (environ 5 minutes) pour qu'une IPS examine votre dossier.</p>
+<p><a href="${baseUrl}/questionnaire" style="display:inline-block;background:#1D4D3A;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Compléter mon questionnaire</a></p>`,
+        text: `Bonjour ${user.prenom}, bienvenue chez Anne-sante. Questionnaire : ${baseUrl}/questionnaire`,
       });
 
       resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);

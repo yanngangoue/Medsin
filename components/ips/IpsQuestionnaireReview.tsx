@@ -331,7 +331,7 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
             Enregistrer les notes
           </button>
 
-          {q.status !== "PRESCRIPTION_ISSUED" ? (
+          {q.status !== "PRESCRIPTION_ISSUED" && q.status !== "APPROVED" ? (
             <>
               <div className="border-t border-slate-100 pt-4">
                 <h3 className="text-sm font-semibold text-slate-900">Ordonnance</h3>
@@ -441,7 +441,7 @@ export function IpsQuestionnaireReview({ questionnaireId }: Props) {
                   />
                   <button
                     type="button"
-                    disabled={busy}
+                    disabled={busy || !rejectReason.trim()}
                     onClick={async () => {
                       const result = await patch({
                         action: "reject",

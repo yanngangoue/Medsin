@@ -143,6 +143,25 @@ export async function triggerCoachOnDelivery(fulfillmentId: string): Promise<voi
     },
   });
 
+  await prisma.glp1Membership.upsert({
+    where: { userId: fulfillment.userId },
+    create: { userId: fulfillment.userId, status: "PENDING", coachActivatedAt: new Date() },
+    update: { coachActivatedAt: new Date() },
+  });
+
+  const { sendEmail } = await import("@/lib/email/send-email");
+  await sendEmail({
+    to: fulfillment.user.email,
+    subject: "Votre médicament est arrivé — Anne vous accompagne",
+    template: "fulfillment_delivered_coach",
+    entityKey: `coach_delivery:${fulfillmentId}`,
+    userId: fulfillment.userId,
+    html: `<p>Bonjour ${fulfillment.user.prenom},</p>
+<p>Votre traitement GLP-1 est arrivé. Je suis Anne, votre coach IA — rendez-vous dans votre espace pour commencer ensemble.</p>
+<p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001"}/dashboard/patient/coach-ia">Parler à Anne</a></p>`,
+    text: `Bonjour ${fulfillment.user.prenom}, votre médicament est arrivé. Anne vous accompagne.`,
+  });
+
   await prisma.appNotification.create({
     data: {
       userId: fulfillment.userId,
