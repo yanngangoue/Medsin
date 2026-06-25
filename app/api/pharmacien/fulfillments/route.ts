@@ -18,10 +18,17 @@ export async function GET() {
       select: { pharmacyPartnerId: true },
     });
 
+    // SECURITY: refuse access if pharmacist is not linked to a pharmacy.
+    // Without this guard, findMany({}) would expose every patient record (IDOR).
+    if (!pharmacien?.pharmacyPartnerId) {
+      return NextResponse.json(
+        { error: "Compte pharmacien non associé à une pharmacie partenaire" },
+        { status: 403 },
+      );
+    }
+
     const fulfillments = await prisma.medicationFulfillment.findMany({
-      where: pharmacien?.pharmacyPartnerId
-        ? { pharmacyId: pharmacien.pharmacyPartnerId }
-        : {},
+      where: { pharmacyId: pharmacien.pharmacyPartnerId },
       orderBy: { createdAt: "desc" },
       take: 50,
       include: {

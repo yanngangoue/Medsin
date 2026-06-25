@@ -70,8 +70,7 @@ function deriveBanner(
   if (fulfillment?.paymentStatus === "PENDING") return "PENDING_PAYMENT";
   if (
     questionnaire &&
-    (questionnaire.status === "SUBMITTED" || questionnaire.status === "UNDER_REVIEW") &&
-    fulfillment?.paymentStatus !== "PAID"
+    (questionnaire.status === "SUBMITTED" || questionnaire.status === "UNDER_REVIEW")
   ) {
     return "IPS_REVIEW";
   }
@@ -316,9 +315,9 @@ function HeroBanner({
           <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white" />
         </div>
         <p className="relative text-sm font-semibold text-blue-100">{greeting}</p>
-        <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Dossier en cours d&apos;examen</p>
+        <p className="relative mt-1 font-display text-2xl font-bold tracking-tight">Votre dossier est en cours de révision</p>
         <p className="relative mt-1 text-sm text-blue-100">
-          Votre IPS analyse votre questionnaire — réponse sous 48 h ouvrables.
+          Une IPS examine votre questionnaire médical — réponse sous 48 h ouvrables.
         </p>
         <div className="relative mt-4 h-2 overflow-hidden rounded-full bg-blue-500/50">
           <div className="dash-progress-bar h-full w-2/3 rounded-full bg-white/80" />
@@ -389,6 +388,7 @@ type Props = { prenom: string };
 function PatientDashboardHomeInner({ prenom }: Props) {
   const searchParams = useSearchParams();
   const showOnboarding = searchParams.get("paid") === "1";
+  const showSubmittedMessage = searchParams.get("submitted") === "1";
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -533,6 +533,18 @@ function PatientDashboardHomeInner({ prenom }: Props) {
         <main className="mx-auto w-full max-w-5xl flex-1 space-y-5 px-4 py-6 sm:px-6 sm:py-8 [&_h2]:font-display [&_h2]:tracking-tight">
           {loadError ? (
             <FetchErrorAlert message={loadError} onRetry={() => void load()} />
+          ) : null}
+
+          {showSubmittedMessage && !loading ? (
+            <div
+              className="dash-enter rounded-2xl border border-[#3EBD93]/40 bg-[#F0F7F4] px-5 py-4 text-sm text-[#1D4D3A] shadow-sm"
+              role="status"
+            >
+              <p className="font-bold">Votre dossier est en cours de révision</p>
+              <p className="mt-1 text-slate-600">
+                Nous avons bien reçu votre questionnaire. Une IPS vous contactera sous 48 h ouvrables.
+              </p>
+            </div>
           ) : null}
 
           {showOnboarding && !loading && data ? (

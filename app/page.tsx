@@ -290,8 +290,16 @@ function CardHover({
 
 /* ─── Page ─── */
 
+const MOBILE_NAV_LINKS = [
+  ["#produits", "Médicaments"],
+  ["#comment-ca-marche", "Comment ça marche"],
+  ["#tarifs", "Tarifs"],
+  ["#faq", "FAQ"],
+] as const;
+
 export default function HomePage() {
   const [navScrolled, setNavScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -350,12 +358,7 @@ export default function HomePage() {
             Anne Santé
           </Link>
           <nav className="hidden items-center gap-8 md:flex">
-            {[
-              ["#produits", "Médicaments"],
-              ["#comment-ca-marche", "Comment ça marche"],
-              ["#tarifs", "Tarifs"],
-              ["#faq", "FAQ"],
-            ].map(([href, label]) => (
+            {MOBILE_NAV_LINKS.map(([href, label]) => (
               <a
                 key={href}
                 href={href}
@@ -371,15 +374,59 @@ export default function HomePage() {
               Connexion
             </Link>
           </nav>
-          <div className="md:hidden">
-            <Link
-              href="/connexion"
-              className="rounded-full border border-white/40 px-3 py-2 text-xs font-medium text-white"
-            >
-              Connexion
-            </Link>
-          </div>
+          <button
+            type="button"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-white transition hover:bg-white/10 md:hidden"
+            aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span className="sr-only">Menu</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6" aria-hidden>
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+              ) : (
+                <>
+                  <path strokeLinecap="round" d="M4 7h16" />
+                  <path strokeLinecap="round" d="M4 12h16" />
+                  <path strokeLinecap="round" d="M4 17h16" />
+                </>
+              )}
+            </svg>
+          </button>
         </div>
+        <AnimatePresence>
+          {mobileMenuOpen ? (
+            <motion.div
+              key="mobile-nav"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="overflow-hidden border-t border-white/10 bg-[#0B4D3B]/98 backdrop-blur-md md:hidden"
+            >
+              <nav className="flex flex-col gap-1 px-5 py-4">
+                {MOBILE_NAV_LINKS.map(([href, label]) => (
+                  <a
+                    key={href}
+                    href={href}
+                    className="rounded-lg px-3 py-3 text-sm font-medium text-white/90 transition hover:bg-white/10 hover:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {label}
+                  </a>
+                ))}
+                <Link
+                  href="/connexion"
+                  className="mt-2 rounded-full border border-white/40 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-white/10"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Connexion
+                </Link>
+              </nav>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </header>
 
       {/* ── 1. HERO ── */}

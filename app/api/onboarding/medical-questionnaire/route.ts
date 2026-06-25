@@ -17,6 +17,16 @@ import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
 import { hasActiveGlp1Membership } from "@/lib/membership/glp1-membership";
 
+async function requirePaidMembership(userId: string) {
+  if (!(await hasActiveGlp1Membership(userId))) {
+    return NextResponse.json(
+      { error: "Abonnement requis avant le questionnaire", code: "PAYMENT_REQUIRED" },
+      { status: 402 },
+    );
+  }
+  return null;
+}
+
 export async function GET() {
   return catchRouteError("onboarding/medical-questionnaire/GET", async () => {
     const session = await auth();
@@ -26,6 +36,9 @@ export async function GET() {
       if (session.user.role !== "PATIENT") {
         return NextResponse.json({ error: "Accès réservé aux patients", code: "FORBIDDEN" }, { status: 403 });
       }
+
+      const payGate = await requirePaidMembership(session.user.id);
+      if (payGate) return payGate;
     
       if (isDemoMode()) {
         return NextResponse.json({ questionnaire: null, draft: null });
@@ -52,6 +65,9 @@ export async function PATCH(req: Request) {
       if (session.user.role !== "PATIENT") {
         return NextResponse.json({ error: "Accès réservé aux patients", code: "FORBIDDEN" }, { status: 403 });
       }
+
+      const payGatePatch = await requirePaidMembership(session.user.id);
+      if (payGatePatch) return payGatePatch;
     
       const body: unknown = await req.json().catch(() => null);
       const parsed = medicalQuestionnaireDraftSchema.safeParse(body);
@@ -79,13 +95,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Accès réservé aux patients", code: "FORBIDDEN" }, { status: 403 });
       }
 
-      if (!(await hasActiveGlp1Membership(session.user.id))) {
-        return NextResponse.json(
-          { error: "Abonnement requis avant le questionnaire", code: "PAYMENT_REQUIRED" },
-          { status: 402 },
-        );
-      }
-    
+      const payGatePost = await requirePaidMembership(session.user.id);
+      if (payGatePost) return payGatePost;
+
       const body: unknown = await req.json().catch(() => null);
       const parsed = medicalQuestionnaireV2Schema.safeParse(body);
       if (!parsed.success) {

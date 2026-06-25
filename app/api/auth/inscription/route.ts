@@ -1,6 +1,7 @@
 import { catchRouteError } from "@/lib/api/catch-route-error";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { staffEmailDomain } from "@/lib/admin/staff-email";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -10,6 +11,16 @@ import { writeAuditLog } from "@/lib/audit";
 import { sendEmail } from "@/lib/email/send-email";
 import { resetLoginRateLimitForKey } from "@/lib/login-rate-limit";
 import { checkApiRateLimit } from "@/lib/api-rate-limit";
+
+/** Escape HTML special characters to prevent HTML injection in email bodies. */
+function escHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
 
 function clientIp(req: Request): string | null {
   const xf = req.headers.get("x-forwarded-for");
@@ -111,7 +122,7 @@ export async function POST(req: Request) {
         template: "patient_registration",
         entityKey: `patient_registration:${user.id}`,
         userId: user.id,
-        html: `<p>Bonjour ${user.prenom},</p>
+        html: `<p>Bonjour ${escHtml(user.prenom ?? "")},</p>
 <p>Votre compte Anne-sante a été créé avec succès.</p>
 <p>Prochaine étape : activer votre abonnement GLP-1 pour accéder au questionnaire médical.</p>
 <p><a href="${baseUrl}/paiement?onboarding=1">Activer mon abonnement</a></p>`,
@@ -121,9 +132,13 @@ export async function POST(req: Request) {
       resetLoginRateLimitForKey(`${clientIp(req) ?? "unknown"}:${email}`);
       return NextResponse.json({ id: user.id, prenom: user.prenom }, { status: 201 });
       } catch (e) {
+        // Handle race-condition duplicate (unique constraint violation)
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+          return NextResponse.json({ error: "Courriel déjà utilisé", code: "CONFLICT" }, { status: 409 });
+        }
         console.error("[inscription]", e);
         return NextResponse.json(
-          { error: "Impossible de créer le compte. Réessayez ou contactez le support." },
+          { error: "Impossible de créer le compte. Réessayez ou contactez le support.", code: "INTERNAL_ERROR" },
           { status: 500 },
         );
       }

@@ -31,12 +31,7 @@ export function resolvePatientPostAuthPath(options: {
 }): string {
   const { callbackUrl, serviceGestionPoids } = options;
 
-  if (
-    callbackUrl &&
-    callbackUrl.startsWith("/") &&
-    !callbackUrl.startsWith("//") &&
-    !callbackUrl.includes("\\")
-  ) {
+  if (callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//") && !callbackUrl.includes("\\")) {
     return callbackUrl;
   }
 

@@ -57,7 +57,7 @@ export function evaluateEligibility(draft: EligibilityDraft): EligibilityResult 
             ? "Le traitement GLP-1 est généralement recommandé pour un IMC ≥ 27. Nous pouvons quand même évaluer votre dossier avec notre équipe."
             : "Un professionnel examinera votre dossier pour confirmer la pertinence du traitement.",
       ctaLabel: "Commencer mon évaluation médicale →",
-      ctaHref: "/auth/inscription?service=gestion-poids&callbackUrl=%2Fquestionnaire",
+      ctaHref: "/auth/inscription?service=gestion-poids",
     };
   }
 
@@ -69,6 +69,6 @@ export function evaluateEligibility(draft: EligibilityDraft): EligibilityResult 
     message:
       "Vos réponses indiquent qu'un parcours GLP-1 pourrait vous convenir. Poursuivez avec le questionnaire médical complet (environ 5 minutes).",
     ctaLabel: "Commencer mon évaluation médicale →",
-    ctaHref: "/auth/inscription?service=gestion-poids&callbackUrl=%2Fquestionnaire",
+    ctaHref: "/auth/inscription?service=gestion-poids",
   };
 }

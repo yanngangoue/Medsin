@@ -130,7 +130,8 @@ async function processFulfillmentPayment(
     where: { userId: fulfillment.userId },
   });
 
-  if (!program) {
+  // Guard: questionnaire must exist before we can derive weight data
+  if (!program && q) {
     const created = await createWeightProgram(fulfillment.userId, {
       startWeight: q.weight,
       targetWeight: q.targetWeight,
@@ -157,7 +158,7 @@ async function processFulfillmentPayment(
       data: {
         programId: program.id,
         userId: fulfillment.userId,
-        weight: q.weight,
+        weight: q?.weight ?? 0,
         status: "PENDING",
         recordedAt: checkInDue,
       },

@@ -29,6 +29,7 @@ const WIZARD_MEDICAL_IDS = [
   "hypothyroid_untreated",
   "thyroid_cancer_history",
   "pancreatitis",
+  "kidney_disease",
 ] as const;
 
 const WIZARD_MEDICAL_ITEMS = GLP1_HEALTH_3.filter((item) =>
@@ -43,6 +44,7 @@ const WIZARD_MEDICAL_GROUPS: { title: string; ids: string[] }[] = [
   },
   { title: "Thyroïde", ids: ["hypothyroid_untreated", "thyroid_cancer_history"] },
   { title: "Pancréas", ids: ["pancreatitis"] },
+  { title: "Reins", ids: ["kidney_disease"] },
 ];
 
 /* ── Constantes ──────────────────────────────────────────────── */
@@ -50,7 +52,7 @@ const SECTIONS = [
   "Informations de base",
   "Antécédents médicaux",
   "Médicaments actuels",
-  "Objectifs",
+  "Habitudes de vie",
   "Adresse de livraison",
 ] as const;
 
@@ -140,15 +142,15 @@ function QuestionSlide({
 function getPromptIds(section: number, form: Partial<MedicalQuestionnaireV2>): string[] {
   switch (section) {
     case 0:
-      return ["gender", "birthDate", "height", "weight"];
+      return ["gender", "birthDate", "height", "weight", "targetWeight"];
     case 1:
       return ["medicalHistory"];
     case 2:
       return ["medications"];
     case 3:
-      return ["targetWeight", "targetTimeline", "medicationPreference"];
+      return ["lifestyle"];
     case 4:
-      return ["deliveryAddress", "consents"];
+      return ["deliveryAddress"];
     default:
       return [];
   }
@@ -182,10 +184,10 @@ function prepareSubmit(form: Partial<MedicalQuestionnaireV2>): MedicalQuestionna
     previousResults: form.previousResults,
     motivation: form.motivation?.trim() || "Améliorer ma santé et atteindre mon poids cible",
     medicationPreference: form.medicationPreference ?? "none",
-    activityDays: "1-2",
+    activityDays: form.activityDays ?? "1-2",
     dietNotes: form.dietNotes,
-    tobacco: "never",
-    alcohol: "none",
+    tobacco: form.tobacco ?? "never",
+    alcohol: form.alcohol ?? "none",
     sleepHours: 7,
     stressLevel: 3,
     consentMedical: true,
@@ -197,7 +199,7 @@ function prepareSubmit(form: Partial<MedicalQuestionnaireV2>): MedicalQuestionna
     deliveryProvince: form.deliveryProvince!,
     deliveryPostalCode: form.deliveryPostalCode!,
     deliveryPhone: form.deliveryPhone!,
-    targetTimelineMonths: form.targetTimelineMonths!,
+    targetTimelineMonths: form.targetTimelineMonths ?? "6",
   };
 }
 
@@ -217,7 +219,8 @@ function isPromptComplete(id: string, form: Partial<MedicalQuestionnaireV2>): bo
     case "targetWeight":    return typeof form.targetWeight === "number" && form.targetWeight >= 30 && form.targetWeight <= 400;
     case "medicalHistory":  return Array.isArray(form.health3) && form.health3.length > 0;
     case "medications":     return true;
-    case "targetTimeline":  return form.targetTimelineMonths === "3" || form.targetTimelineMonths === "6" || form.targetTimelineMonths === "12" || form.targetTimelineMonths === "18";
+    case "lifestyle":
+      return Boolean(form.activityDays && form.tobacco && form.alcohol);
     case "deliveryAddress":
       return Boolean(
         form.deliveryStreet?.trim() &&
@@ -227,12 +230,7 @@ function isPromptComplete(id: string, form: Partial<MedicalQuestionnaireV2>): bo
           (form.deliveryPhone?.trim()?.length ?? 0) >= 10,
       );
     case "consents":
-      return (
-        form.consentMedical === true &&
-        form.consentDataSharing === true &&
-        form.consentAiCoach === true &&
-        form.consentPrivacy === true
-      );
+      return true;
     case "health1":         return Array.isArray(form.health1) && form.health1.length > 0;
     case "health2":         return Array.isArray(form.health2) && form.health2.length > 0;
     case "health3":         return Array.isArray(form.health3) && form.health3.length > 0;
@@ -358,7 +356,7 @@ export function MedicalQuestionnaireWizard() {
       const body = await res.json().catch(() => null) as { error?: string } | null;
       setError(body?.error ?? "Soumission impossible."); setSaving(false); return;
     }
-    router.push("/examen-en-cours");
+    router.push("/dashboard/patient?submitted=1");
   }
 
   /* ── Rendu de chaque question ──────────────────────────────── */
@@ -429,7 +427,7 @@ export function MedicalQuestionnaireWizard() {
 
       case "medicalHistory":
         return (
-          <QuestionSlide stepLabel={stepLabel} label="Avez-vous l'un de ces antécédents médicaux ?" hint="Diabète, maladies cardiovasculaires, thyroïde ou pancréas. Cochez tout ce qui s'applique, ou « Aucune »." direction={direction}>
+          <QuestionSlide stepLabel={stepLabel} label="Avez-vous l'un de ces antécédents médicaux ?" hint="Diabète, maladies cardiovasculaires, thyroïde, pancréas ou reins. Cochez tout ce qui s'applique, ou « Aucune »." direction={direction}>
             <div className="space-y-4">
               {WIZARD_MEDICAL_GROUPS.map((group) => (
                 <div key={group.title}>
@@ -518,15 +516,80 @@ export function MedicalQuestionnaireWizard() {
           </QuestionSlide>
         );
 
-      case "targetTimeline":
+      case "lifestyle":
         return (
-          <QuestionSlide stepLabel={stepLabel} label="En combien de temps souhaitez-vous atteindre votre objectif ?" direction={direction}>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {([["3", "3 mois"], ["6", "6 mois"], ["12", "12 mois"], ["18", "18 mois"]] as const).map(([v, l]) => (
-                <button key={v} type="button" className={pillCls(form.targetTimelineMonths === v)} onClick={() => setForm(f => ({ ...f, targetTimelineMonths: v }))}>
-                  {l}
-                </button>
-              ))}
+          <QuestionSlide
+            stepLabel={stepLabel}
+            label="Parlez-nous de vos habitudes de vie"
+            hint="Activité physique, alimentation, tabac et alcool — ces informations aident l'IPS à personnaliser votre suivi."
+            direction={direction}
+          >
+            <div className="space-y-4">
+              <div>
+                <p className="mb-2 text-sm font-semibold text-slate-700">Activité physique (jours par semaine)</p>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {([["0", "Aucune"], ["1-2", "1–2"], ["3-4", "3–4"], ["5+", "5+"]] as const).map(([v, l]) => (
+                    <button
+                      key={v}
+                      type="button"
+                      className={pillCls(form.activityDays === v)}
+                      onClick={() => setForm((f) => ({ ...f, activityDays: v }))}
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-sm font-semibold text-slate-700">Alimentation</p>
+                <textarea
+                  rows={3}
+                  className={TEXTAREA_CLS}
+                  placeholder="Décrivez vos habitudes alimentaires (régime, fréquence des repas, grignotage…)"
+                  value={form.dietNotes ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, dietNotes: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-sm font-semibold text-slate-700">Tabac</p>
+                  <div className="space-y-2">
+                    {([["never", "Jamais"], ["former", "Ancien fumeur"], ["current", "Fumeur actuel"]] as const).map(([v, l]) => (
+                      <button
+                        key={v}
+                        type="button"
+                        className={`w-full rounded-2xl border-2 px-4 py-2.5 text-left text-sm font-semibold transition-all ${
+                          form.tobacco === v
+                            ? "border-transparent bg-[#1D4D3A] text-white shadow-md"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                        }`}
+                        onClick={() => setForm((f) => ({ ...f, tobacco: v }))}
+                      >
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-sm font-semibold text-slate-700">Alcool</p>
+                  <div className="space-y-2">
+                    {([["none", "Aucun"], ["occasional", "Occasionnel"], ["regular", "Régulier"]] as const).map(([v, l]) => (
+                      <button
+                        key={v}
+                        type="button"
+                        className={`w-full rounded-2xl border-2 px-4 py-2.5 text-left text-sm font-semibold transition-all ${
+                          form.alcohol === v
+                            ? "border-transparent bg-[#1D4D3A] text-white shadow-md"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                        }`}
+                        onClick={() => setForm((f) => ({ ...f, alcohol: v }))}
+                      >
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </QuestionSlide>
         );
@@ -544,61 +607,6 @@ export function MedicalQuestionnaireWizard() {
                 <input className={INPUT_CLS} placeholder="Code postal (H2X 1Y4)" value={form.deliveryPostalCode ?? ""} onChange={e => setForm(f => ({ ...f, deliveryPostalCode: e.target.value.toUpperCase() }))} />
                 <input className={INPUT_CLS} placeholder="Téléphone" type="tel" value={form.deliveryPhone ?? ""} onChange={e => setForm(f => ({ ...f, deliveryPhone: e.target.value }))} />
               </div>
-            </div>
-          </QuestionSlide>
-        );
-
-      case "consents": {
-        const allConsents =
-          form.consentMedical &&
-          form.consentDataSharing &&
-          form.consentAiCoach &&
-          form.consentPrivacy;
-        const CONSENT_ITEMS = [
-          { key: "consentMedical" as const, title: "Soins par IPS", desc: "Prise en charge par une IPS via télémédecine.", icon: "🩺" },
-          { key: "consentDataSharing" as const, title: "Partage de dossier", desc: "Partage avec les professionnels impliqués.", icon: "🔒" },
-          { key: "consentAiCoach" as const, title: "Coach Anne (IA)", desc: "Accompagnement personnalisé par Anne.", icon: "💬" },
-          { key: "consentPrivacy" as const, title: "Confidentialité Loi 25", desc: "Politique de confidentialité Anne-sante.", icon: "📋" },
-        ];
-        return (
-          <QuestionSlide stepLabel={stepLabel} label="Dernière étape — consentements requis" hint="Cochez les 4 cases pour soumettre votre dossier à l'IPS." direction={direction}>
-            <div className="space-y-3">
-              {CONSENT_ITEMS.map(({ key, title, desc, icon }) => {
-                const checked = form[key] === true;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, [key]: !checked }))}
-                    className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all ${checked ? "border-[#1D4D3A] bg-[#F0F7F4]" : "border-slate-200 bg-white hover:border-slate-300"}`}
-                  >
-                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl ${checked ? "bg-[#1D4D3A] text-white" : "bg-slate-100"}`}>
-                      {checked ? "✓" : icon}
-                    </span>
-                    <div>
-                      <p className={`text-sm font-semibold ${checked ? "text-[#1D4D3A]" : "text-slate-800"}`}>{title}</p>
-                      <p className="text-xs text-slate-500">{desc}</p>
-                    </div>
-                  </button>
-                );
-              })}
-              {allConsents ? (
-                <p className="text-center text-xs font-medium text-emerald-600">✓ Tous les consentements acceptés</p>
-              ) : null}
-            </div>
-          </QuestionSlide>
-        );
-      }
-
-      case "medicationPreference":
-        return (
-          <QuestionSlide stepLabel={stepLabel} label="Avez-vous une préférence de médicament GLP-1 ?" direction={direction}>
-            <div className="grid grid-cols-2 gap-3">
-              {([["none","Sans préférence"],["ozempic","Ozempic®"],["wegovy","Wegovy®"],["generic","Générique"]] as const).map(([v, l]) => (
-                <button key={v} type="button" className={pillCls((form.medicationPreference ?? "none") === v)} onClick={() => setForm(f => ({ ...f, medicationPreference: v }))}>
-                  {l}
-                </button>
-              ))}
             </div>
           </QuestionSlide>
         );
