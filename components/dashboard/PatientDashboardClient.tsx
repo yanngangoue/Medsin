@@ -91,17 +91,17 @@ export function PatientDashboardClient({
             </div>
             {hasGlp1Dossier ? (
               <Link
-                href="/onboarding/confirmation?service=gestion-poids"
+                href="/dashboard/patient"
                 className="mt-4 inline-flex text-sm font-medium text-[#16a34a] hover:underline"
               >
-                Voir le détail de mon dossier GLP-1 →
+                Voir mon parcours GLP-1 →
               </Link>
             ) : (
               <Link
-                href="/onboarding/gestion-poids/evaluation"
+                href="/questionnaire"
                 className="mt-4 inline-flex text-sm font-medium text-[#16a34a] hover:underline"
               >
-                Compléter l&apos;évaluation GLP-1 →
+                Compléter le questionnaire médical →
               </Link>
             )}
           </div>

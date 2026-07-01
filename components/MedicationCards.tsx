@@ -41,7 +41,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/eligibilite"
               aria-label="Commencer avec Sémaglutide injection"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] border border-neutral-300 bg-white text-[14px] font-semibold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50"
             >
@@ -75,7 +75,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/eligibilite"
               aria-label="Commencer avec Sémaglutide comprimé"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] bg-[var(--teal-400)] text-[14px] font-semibold text-white shadow-sm transition hover:opacity-95"
             >
@@ -101,7 +101,7 @@ export function MedicationCards() {
               </li>
             </ul>
             <Link
-              href="/onboarding/inscription"
+              href="/eligibilite"
               aria-label="Vérifier mon éligibilité au Tirzépatide"
               className="mt-8 inline-flex h-11 items-center justify-center rounded-[8px] border border-neutral-300 bg-white text-[14px] font-semibold text-[var(--gray-900)] shadow-sm transition hover:bg-neutral-50"
             >

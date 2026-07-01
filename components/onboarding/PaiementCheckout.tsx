@@ -19,10 +19,9 @@ function formatAmount(cents: number): string {
 }
 
 /* ── Succès paiement ─────────────────────────────────────────── */
-function SuccessPanel({ onboarding }: { onboarding?: boolean }) {
+function SuccessPanel() {
   return (
     <div className="q-enter-forward mx-auto max-w-md py-4">
-      {/* Carte succès */}
       <div className="overflow-hidden rounded-3xl border border-[#3EBD93]/30 bg-white shadow-xl">
         <div className="bg-gradient-to-br from-[#1D4D3A] to-[#0f2919] px-8 py-8 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
@@ -32,28 +31,17 @@ function SuccessPanel({ onboarding }: { onboarding?: boolean }) {
             </svg>
           </div>
           <h1 className="mt-4 font-display text-2xl font-bold text-white">Paiement confirmé !</h1>
-          <p className="mt-1 text-sm text-white/70">
-            {onboarding
-              ? "Votre abonnement Anne-sante GLP-1 est actif"
-              : "Bienvenue dans le programme Anne-sante GLP-1"}
-          </p>
+          <p className="mt-1 text-sm text-white/70">Votre abonnement Anne-sante GLP-1 est actif</p>
         </div>
 
         <div className="px-8 py-7">
           <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Ce qui se passe maintenant</p>
           <div className="space-y-3">
-            {(onboarding
-              ? [
-                  { icon: "📋", title: "Questionnaire médical", body: "Complétez votre dossier en 5 minutes" },
-                  { icon: "👩‍⚕️", title: "Examen IPS", body: "Réponse sous 48 h ouvrables" },
-                  { icon: "🤖", title: "Coach Anne", body: "Suivi personnalisé dès la livraison" },
-                ]
-              : [
-                  { icon: "💊", title: "Pharmacie notifiée", body: "Votre médicament est en cours de préparation" },
-                  { icon: "📦", title: "Livraison sous 1–3 jours", body: "Suivi de colis disponible dans votre espace patient" },
-                  { icon: "🤖", title: "Anne vous contacte", body: "Votre coach IA démarre votre suivi hebdomadaire" },
-                ]
-            ).map((step) => (
+            {[
+              { icon: "💊", title: "Pharmacie notifiée", body: "Votre ordonnance a été transmise à la pharmacie" },
+              { icon: "📦", title: "Livraison sous 1–3 jours", body: "Suivi de colis dans votre espace patient" },
+              { icon: "🤖", title: "Anne vous contacte", body: "Votre coach IA démarre à la livraison" },
+            ].map((step) => (
               <div key={step.title} className="flex items-start gap-3 rounded-2xl bg-slate-50 px-4 py-3">
                 <span className="text-lg">{step.icon}</span>
                 <div>
@@ -65,10 +53,10 @@ function SuccessPanel({ onboarding }: { onboarding?: boolean }) {
           </div>
 
           <Link
-            href={onboarding ? "/questionnaire" : "/dashboard/patient"}
+            href="/dashboard/patient"
             className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4D3A] to-[#163d2e] py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-xl"
           >
-            {onboarding ? "Commencer le questionnaire" : "Accéder à mon espace patient"}
+            Accéder à mon espace patient
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
               <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
             </svg>
@@ -148,7 +136,7 @@ export function PaiementCheckout() {
     window.location.href = `/paiement?paid=1&fulfillment=${encodeURIComponent(resolvedId)}`;
   }
 
-  if (paid) return <SuccessPanel onboarding={false} />;
+  if (paid) return <SuccessPanel />;
 
   if (fetching) {
     return (

@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { ELIGIBILITY_RESULT_KEY } from "@/lib/onboarding/eligibility-session";
 
-const INSCRIPTION_GLP1 = "/auth/inscription?service=gestion-poids";
+const INSCRIPTION_GLP1 =
+  "/auth/inscription?service=gestion-poids&callbackUrl=%2Fquestionnaire";
 
 type EligibilityDisplayStatus = "ELIGIBLE" | "NOT_ELIGIBLE" | "BORDERLINE";
 

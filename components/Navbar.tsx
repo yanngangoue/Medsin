@@ -32,7 +32,7 @@ export function Navbar() {
             Connexion
           </Link>
           <Link
-            href="/onboarding/inscription"
+            href="/eligibilite"
             aria-label="Commencer — 179 dollars par mois"
             className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-[10px] bg-[var(--teal)] px-3 text-[12px] font-bold text-white shadow-sm transition hover:opacity-95 hover:[transform:scale(1.02)] active:scale-[0.99] sm:px-4 sm:text-[14px]"
           >

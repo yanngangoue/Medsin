@@ -56,6 +56,8 @@ const nextConfig: NextConfig = {
       { source: "/onboarding/repas-sante", destination: "/eligibilite", permanent: true },
       { source: "/onboarding/repas-sante/:path*", destination: "/eligibilite", permanent: true },
       { source: "/nutrition", destination: "/eligibilite", permanent: true },
+      { source: "/onboarding/confirmation", destination: "/dashboard/patient", permanent: true },
+      { source: "/onboarding/confirmation/:path*", destination: "/dashboard/patient", permanent: true },
       { source: "/dashboard/admin", destination: "/admin/dashboard", permanent: true },
       { source: "/dashboard/admin/:path*", destination: "/admin/dashboard", permanent: true },
       { source: "/politique-confidentialite", destination: "/confidentialite", permanent: true },
