@@ -43,6 +43,8 @@ export const config = {
     "/paiement",
     "/examen-en-cours",
     "/examen-en-cours/:path*",
+    "/nutritionniste",
+    "/nutritionniste/:path*",
     "/changer-mot-de-passe",
   ],
 };

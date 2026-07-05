@@ -12,43 +12,42 @@ export default async function NutritionnisteDashboardPage() {
 
   const prenom = session.user.prenom ?? session.user.name ?? "—";
 
-  const patients = await prisma.user.findMany({
-    where: { role: "PATIENT" },
-    orderBy: { createdAt: "desc" },
-    take: 30,
+  // Patients avec programme de poids actif — seuls patients pertinents pour le suivi nutritionnel
+  const programs = await prisma.weightProgram.findMany({
+    where: { isActive: true },
+    orderBy: { updatedAt: "desc" },
+    take: 60,
     select: {
       id: true,
-      prenom: true,
-      name: true,
-      createdAt: true,
-      profile: {
+      status: true,
+      startWeight: true,
+      currentWeight: true,
+      targetWeight: true,
+      medication: true,
+      startDate: true,
+      userId: true,
+      user: {
         select: {
-          weightKg: true,
-          bmi: true,
-          eligibility: true,
+          id: true,
+          prenom: true,
+          name: true,
+          profile: { select: { bmi: true, eligibility: true } },
         },
       },
-      metabolicIntakes: {
-        orderBy: { createdAt: "desc" },
+      checkIns: {
+        orderBy: { recordedAt: "desc" },
         take: 1,
-        select: { createdAt: true, category: true },
+        select: { recordedAt: true, weight: true, isEscalation: true },
       },
     },
   });
 
-  const activePatients = patients.filter(
-    (p) => p.profile?.eligibility === "ELIGIBLE",
+  const escalations = programs.filter((p) => p.checkIns[0]?.isEscalation);
+  const totalLoss = programs.reduce(
+    (s, p) => s + (p.startWeight && p.currentWeight ? p.startWeight - p.currentWeight : 0),
+    0,
   );
-  const pendingPatients = patients.filter(
-    (p) => !p.profile || p.profile.eligibility === "PENDING",
-  );
-
-  const ELIGIBILITY_LABEL: Record<string, string> = {
-    ELIGIBLE: "Suivi actif",
-    PENDING: "En attente",
-    NOT_ELIGIBLE: "Non éligible",
-    MEDICAL_REVIEW_REQUIRED: "Révision médicale",
-  };
+  const avgLoss = programs.length > 0 ? Math.round((totalLoss / programs.length) * 10) / 10 : 0;
 
   const ELIGIBILITY_COLOR: Record<string, string> = {
     ELIGIBLE: "bg-emerald-50 text-emerald-700",
@@ -73,16 +72,16 @@ export default async function NutritionnisteDashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Bonjour, {prenom}</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Suivi comportement alimentaire et métabolique · {patients.length} patients
+            Suivi comportemental et métabolique · {programs.length} patient{programs.length !== 1 ? "s" : ""} actif{programs.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         {/* Statistiques */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Patients actifs", value: activePatients.length, color: "text-emerald-600" },
-            { label: "En attente", value: pendingPatients.length, color: "text-amber-600" },
-            { label: "Total", value: patients.length, color: "text-slate-700" },
+            { label: "Patients actifs", value: programs.length, color: "text-emerald-600" },
+            { label: "Alertes escalade", value: escalations.length, color: escalations.length > 0 ? "text-red-600" : "text-slate-400" },
+            { label: "Perte moy. (kg)", value: avgLoss, color: "text-slate-700" },
           ].map(({ label, value, color }) => (
             <div key={label} className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
               <p className="text-xs font-medium text-slate-500">{label}</p>
@@ -91,14 +90,58 @@ export default async function NutritionnisteDashboardPage() {
           ))}
         </div>
 
-        {/* Patients actifs */}
+        {/* Alertes escalade */}
+        {escalations.length > 0 && (
+          <section>
+            <h2 className="mb-3 text-sm font-semibold text-red-600">
+              Alertes — Effets secondaires signalés ({escalations.length})
+            </h2>
+            <div className="overflow-hidden rounded-xl border border-red-100 bg-white shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="border-b border-red-50 bg-red-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-red-600">Patient</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-red-600">Médicament</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-red-600">Dernier check-in</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-red-600">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-red-50">
+                  {escalations.map((p) => (
+                    <tr key={p.id} className="hover:bg-red-50/40">
+                      <td className="px-4 py-3 font-medium text-slate-800">
+                        {p.user.prenom ?? p.user.name ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">{p.medication ?? "—"}</td>
+                      <td className="px-4 py-3 text-xs text-slate-500">
+                        {p.checkIns[0]
+                          ? new Date(p.checkIns[0].recordedAt).toLocaleDateString("fr-CA")
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/nutritionniste/patients/${p.user.id}`}
+                          className="rounded-lg bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+                        >
+                          Voir dossier
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* Tous les patients actifs */}
         <section>
           <h2 className="mb-3 text-sm font-semibold text-slate-700">
-            Patients en suivi actif ({activePatients.length})
+            Patients en suivi ({programs.length})
           </h2>
-          {activePatients.length === 0 ? (
+          {programs.length === 0 ? (
             <div className="rounded-xl border border-slate-200/80 bg-white px-5 py-10 text-center text-sm text-slate-500">
-              Aucun patient en suivi actif pour le moment.
+              Aucun patient avec programme actif pour le moment.
             </div>
           ) : (
             <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
@@ -107,35 +150,54 @@ export default async function NutritionnisteDashboardPage() {
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Patient</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">IMC</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Poids</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Dernière activité</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Perte (kg)</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Médicament</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Dernier check-in</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Statut</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {activePatients.map((p) => {
-                    const lastIntake = p.metabolicIntakes[0];
-                    const eligibility = p.profile?.eligibility ?? "PENDING";
+                  {programs.map((p) => {
+                    const lastCheckIn = p.checkIns[0];
+                    const eligibility = p.user.profile?.eligibility ?? "PENDING";
+                    const weightLoss =
+                      p.startWeight && p.currentWeight
+                        ? Math.round((p.startWeight - p.currentWeight) * 10) / 10
+                        : null;
                     return (
                       <tr key={p.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-medium text-slate-800">
-                          {p.prenom ?? p.name ?? "—"}
+                          {p.user.prenom ?? p.user.name ?? "—"}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {p.profile?.bmi ? p.profile.bmi.toFixed(1) : "—"}
+                          {p.user.profile?.bmi ? p.user.profile.bmi.toFixed(1) : "—"}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {p.profile?.weightKg ? `${p.profile.weightKg} kg` : "—"}
+                          {weightLoss !== null ? (
+                            <span className={weightLoss > 0 ? "text-emerald-600" : "text-slate-400"}>
+                              {weightLoss > 0 ? "-" : ""}{Math.abs(weightLoss)} kg
+                            </span>
+                          ) : "—"}
                         </td>
+                        <td className="px-4 py-3 text-slate-600">{p.medication ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-slate-500">
-                          {lastIntake
-                            ? new Date(lastIntake.createdAt).toLocaleDateString("fr-CA")
-                            : "Aucune donnée"}
+                          {lastCheckIn
+                            ? new Date(lastCheckIn.recordedAt).toLocaleDateString("fr-CA")
+                            : "Aucun"}
                         </td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${ELIGIBILITY_COLOR[eligibility] ?? "bg-slate-100 text-slate-700"}`}>
-                            {ELIGIBILITY_LABEL[eligibility] ?? eligibility}
+                            {eligibility === "ELIGIBLE" ? "Suivi actif" : eligibility}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Link
+                            href={`/nutritionniste/patients/${p.user.id}`}
+                            className="rounded-lg bg-[#1D4D3A] px-3 py-1 text-xs font-medium text-white hover:bg-[#163d2e]"
+                          >
+                            Dossier
+                          </Link>
                         </td>
                       </tr>
                     );
@@ -146,9 +208,10 @@ export default async function NutritionnisteDashboardPage() {
           )}
         </section>
 
-        {/* Note sur les données métaboliques */}
         <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          <strong>Données métaboliques détaillées :</strong> les journaux alimentaires, sommeil, activité et compléments de chaque patient sont disponibles via l&apos;API{" "}
+          <strong>Données métaboliques détaillées :</strong> disponibles via l&apos;API{" "}
+          <code className="rounded bg-blue-100 px-1 text-xs">/api/nutritionniste/patients/[id]</code>{" "}
+          et le tableau de bord interop{" "}
           <code className="rounded bg-blue-100 px-1 text-xs">/api/interop/v1/metabolic/dashboard/nutritionist/[patientId]</code>.
         </div>
       </main>

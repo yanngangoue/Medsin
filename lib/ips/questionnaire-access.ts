@@ -86,27 +86,50 @@ export function canAccessQuestionnaire(
   return false;
 }
 
-/** Réassigne le dossier à l'IPS si elle peut le prendre en charge (non assigné ou assigné à un non-IPS). */
+/**
+ * Réassigne le dossier à l'IPS de manière atomique.
+ * Utilise updateMany avec conditions WHERE pour éviter la race condition
+ * où deux IPS cliquent simultanément sur le même dossier non assigné.
+ */
 export async function claimQuestionnaireForIps(
   questionnaireId: string,
   ipsUserId: string,
 ): Promise<boolean> {
-  const questionnaire = await prisma.medicalQuestionnaire.findUnique({
+  // Tentative atomique : ne réussit que si ipsId est encore null
+  const claimNull = await prisma.medicalQuestionnaire.updateMany({
+    where: {
+      id: questionnaireId,
+      ipsId: null,
+      status: { in: IPS_CLAIMABLE_STATUSES },
+    },
+    data: { ipsId: ipsUserId },
+  });
+  if (claimNull.count > 0) return true;
+
+  // Lire l'état actuel pour les cas restants
+  const q = await prisma.medicalQuestionnaire.findUnique({
     where: { id: questionnaireId },
     select: { ipsId: true, status: true },
   });
-  if (!questionnaire) return false;
+  if (!q) return false;
+  // Déjà assigné à cette IPS
+  if (q.ipsId === ipsUserId) return true;
+  // Non réclamable (assigné à une IPS, mauvais statut, etc.)
+  if (!q.ipsId) return false;
 
-  const assigneeRole = await resolveQuestionnaireAssigneeRole(questionnaire.ipsId);
-  if (!isQuestionnaireClaimableByIps(questionnaire, ipsUserId, assigneeRole)) {
-    return questionnaire.ipsId === ipsUserId;
-  }
+  // Cas : assigné à un non-IPS (médecin) — réassignation atomique
+  const assigneeRole = await resolveQuestionnaireAssigneeRole(q.ipsId);
+  if (assigneeRole === null || assigneeRole === "IPS") return false;
 
-  await prisma.medicalQuestionnaire.update({
-    where: { id: questionnaireId },
+  const reassign = await prisma.medicalQuestionnaire.updateMany({
+    where: {
+      id: questionnaireId,
+      ipsId: q.ipsId, // Vérifie que l'assigné n'a pas changé entre-temps
+      status: { in: IPS_CLAIMABLE_STATUSES },
+    },
     data: { ipsId: ipsUserId },
   });
-  return true;
+  return reassign.count > 0;
 }
 
 export async function ensureIpsQuestionnaireAccess(
