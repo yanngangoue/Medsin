@@ -10,12 +10,16 @@ import { ONBOARDING_SERVICES, serviceConnexionPath } from "@/lib/onboarding/serv
 import type { MedicalQuestionnaireV2 } from "@/lib/schemas/medical-questionnaire-v2";
 import {
   BirthDateFields,
+  BloodPressureSelect,
+  GLP1_HEALTH_1,
+  GLP1_HEALTH_2,
   GLP1_HEALTH_3,
   GLP1_HEALTH_NONE_IDS,
+  HeartRateSelect,
   toggleHealthList,
 } from "@/components/onboarding/MedicalQuestionnaireClinicalFields";
 
-/** Antécédents ciblés — étape 2 du wizard (5 étapes). */
+/** Antécédents ciblés — étape 2 du wizard (section antécédents). */
 const WIZARD_MEDICAL_IDS = [
   "t2_non_insulin",
   "t2_insulin",
@@ -51,9 +55,10 @@ const WIZARD_MEDICAL_GROUPS: { title: string; ids: string[] }[] = [
 const SECTIONS = [
   "Informations de base",
   "Antécédents médicaux",
-  "Médicaments actuels",
+  "Médicaments",
   "Habitudes de vie",
   "Adresse de livraison",
+  "Consentements",
 ] as const;
 
 /* ── Styles partagés ─────────────────────────────────────────── */
@@ -139,26 +144,25 @@ function QuestionSlide({
 }
 
 /* ── Données questionnaire ───────────────────────────────────── */
-function getPromptIds(section: number, form: Partial<MedicalQuestionnaireV2>): string[] {
+function getPromptIds(section: number, _form: Partial<MedicalQuestionnaireV2>): string[] {
   switch (section) {
-    case 0:
-      return ["gender", "birthDate", "height", "weight", "targetWeight"];
-    case 1:
-      return ["medicalHistory"];
-    case 2:
-      return ["medications"];
-    case 3:
-      return ["lifestyle"];
-    case 4:
-      return ["deliveryAddress"];
-    default:
-      return [];
+    case 0: return ["gender", "birthDate", "height", "weight", "targetWeight"];
+    case 1: return ["medicalHistory", "health1", "health2"];
+    case 2: return ["medications", "opioids3Months", "bariatricSurgery"];
+    case 3: return ["lifestyle", "bloodPressure", "restingHeartRate"];
+    case 4: return ["deliveryAddress"];
+    case 5: return ["consents"];
+    default: return [];
   }
 }
 
 function prepareSubmit(form: Partial<MedicalQuestionnaireV2>): MedicalQuestionnaireV2 {
   const health3 =
     form.health3 && form.health3.length > 0 ? form.health3 : [GLP1_HEALTH_NONE_IDS.health3];
+  const health1 =
+    form.health1 && form.health1.length > 0 ? form.health1 : [GLP1_HEALTH_NONE_IDS.health1];
+  const health2 =
+    form.health2 && form.health2.length > 0 ? form.health2 : [GLP1_HEALTH_NONE_IDS.health2];
   return {
     sessionId: form.sessionId,
     gender: form.gender!,
@@ -169,14 +173,14 @@ function prepareSubmit(form: Partial<MedicalQuestionnaireV2>): MedicalQuestionna
     weight: form.weight!,
     targetWeight: form.targetWeight!,
     waistCm: form.waistCm,
-    health1: [GLP1_HEALTH_NONE_IDS.health1],
-    health2: [GLP1_HEALTH_NONE_IDS.health2],
+    health1,
+    health2,
     health3,
-    opioids3Months: "non",
-    bariatricSurgery: "non",
+    opioids3Months: form.opioids3Months ?? "non",
+    bariatricSurgery: form.bariatricSurgery ?? "non",
     prescriptionMeds: (form.medications?.length ?? 0) > 0 ? "oui" : "non",
-    bloodPressure: "normal",
-    restingHeartRate: "normal",
+    bloodPressure: form.bloodPressure ?? "normal",
+    restingHeartRate: form.restingHeartRate ?? "normal",
     medications: (form.medications ?? []).filter((m) => m.name.trim()),
     allergies: form.allergies,
     supplements: form.supplements,
@@ -230,7 +234,12 @@ function isPromptComplete(id: string, form: Partial<MedicalQuestionnaireV2>): bo
           (form.deliveryPhone?.trim()?.length ?? 0) >= 10,
       );
     case "consents":
-      return true;
+      return (
+        form.consentMedical === true &&
+        form.consentDataSharing === true &&
+        form.consentAiCoach === true &&
+        form.consentPrivacy === true
+      );
     case "health1":         return Array.isArray(form.health1) && form.health1.length > 0;
     case "health2":         return Array.isArray(form.health2) && form.health2.length > 0;
     case "health3":         return Array.isArray(form.health3) && form.health3.length > 0;
@@ -356,7 +365,7 @@ export function MedicalQuestionnaireWizard() {
       const body = await res.json().catch(() => null) as { error?: string } | null;
       setError(body?.error ?? "Soumission impossible."); setSaving(false); return;
     }
-    router.push("/dashboard/patient?submitted=1");
+    router.push("/examen-en-cours");
   }
 
   /* ── Rendu de chaque question ──────────────────────────────── */
@@ -476,6 +485,52 @@ export function MedicalQuestionnaireWizard() {
           </QuestionSlide>
         );
 
+      case "health1":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Y a-t-il des conditions médicales graves qui vous concernent ?" hint="Ces situations peuvent affecter votre éligibilité au traitement GLP-1. Cochez tout ce qui s'applique." direction={direction}>
+            <div className="space-y-1.5">
+              {GLP1_HEALTH_1.map((item) => {
+                const checked = (form.health1 ?? []).includes(item.id);
+                return (
+                  <label key={item.id} className={`flex cursor-pointer gap-2 rounded-xl border-2 px-3 py-2.5 text-sm transition ${checked ? "border-[#1D4D3A] bg-[#F0F7F4]" : "border-slate-200 bg-white hover:border-slate-300"}`}>
+                    <input type="checkbox" className="mt-1 h-4 w-4 shrink-0 accent-[#1D4D3A]" checked={checked}
+                      onChange={() => setForm(f => ({ ...f, health1: toggleHealthList(f.health1 ?? [], item.id, GLP1_HEALTH_NONE_IDS.health1) }))} />
+                    <span className="leading-snug">{item.label}</span>
+                  </label>
+                );
+              })}
+              <label className={`flex cursor-pointer gap-2 rounded-xl border-2 px-3 py-2.5 text-sm font-medium ${(form.health1 ?? []).includes(GLP1_HEALTH_NONE_IDS.health1) ? "border-emerald-400 bg-emerald-50 text-emerald-900" : "border-slate-200 bg-white"}`}>
+                <input type="checkbox" className="mt-1 h-4 w-4 accent-emerald-600" checked={(form.health1 ?? []).includes(GLP1_HEALTH_NONE_IDS.health1)}
+                  onChange={() => setForm(f => ({ ...f, health1: toggleHealthList(f.health1 ?? [], GLP1_HEALTH_NONE_IDS.health1, GLP1_HEALTH_NONE_IDS.health1) }))} />
+                <span>Aucune de ces situations</span>
+              </label>
+            </div>
+          </QuestionSlide>
+        );
+
+      case "health2":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Avez-vous l'une de ces conditions à signaler ?" hint="Certaines nécessitent une surveillance particulière pendant le traitement GLP-1." direction={direction}>
+            <div className="space-y-1.5">
+              {GLP1_HEALTH_2.map((item) => {
+                const checked = (form.health2 ?? []).includes(item.id);
+                return (
+                  <label key={item.id} className={`flex cursor-pointer gap-2 rounded-xl border-2 px-3 py-2.5 text-sm transition ${checked ? "border-[#1D4D3A] bg-[#F0F7F4]" : "border-slate-200 bg-white hover:border-slate-300"}`}>
+                    <input type="checkbox" className="mt-1 h-4 w-4 shrink-0 accent-[#1D4D3A]" checked={checked}
+                      onChange={() => setForm(f => ({ ...f, health2: toggleHealthList(f.health2 ?? [], item.id, GLP1_HEALTH_NONE_IDS.health2) }))} />
+                    <span className="leading-snug">{item.label}</span>
+                  </label>
+                );
+              })}
+              <label className={`flex cursor-pointer gap-2 rounded-xl border-2 px-3 py-2.5 text-sm font-medium ${(form.health2 ?? []).includes(GLP1_HEALTH_NONE_IDS.health2) ? "border-emerald-400 bg-emerald-50 text-emerald-900" : "border-slate-200 bg-white"}`}>
+                <input type="checkbox" className="mt-1 h-4 w-4 accent-emerald-600" checked={(form.health2 ?? []).includes(GLP1_HEALTH_NONE_IDS.health2)}
+                  onChange={() => setForm(f => ({ ...f, health2: toggleHealthList(f.health2 ?? [], GLP1_HEALTH_NONE_IDS.health2, GLP1_HEALTH_NONE_IDS.health2) }))} />
+                <span>Aucune de ces situations</span>
+              </label>
+            </div>
+          </QuestionSlide>
+        );
+
       case "medications":
         return (
           <QuestionSlide stepLabel={stepLabel} label="Quels médicaments prenez-vous actuellement ?" hint="Nom et dosage pour chaque médicament. Laissez vide si aucun." direction={direction}>
@@ -512,6 +567,32 @@ export function MedicalQuestionnaireWizard() {
                 + Ajouter un médicament
               </button>
               <input className={INPUT_CLS} placeholder="Allergies médicamenteuses (optionnel)" value={form.allergies ?? ""} onChange={e => setForm(f => ({ ...f, allergies: e.target.value }))} />
+            </div>
+          </QuestionSlide>
+        );
+
+      case "opioids3Months":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Avez-vous pris des opioïdes au cours des 3 derniers mois ?" hint="Codéine, tramadol, oxycodone, hydromorphone, morphine ou tout autre opioïde prescrit ou non." direction={direction}>
+            <div className="flex gap-3">
+              {([["oui", "Oui"], ["non", "Non"]] as const).map(([v, l]) => (
+                <button key={v} type="button" className={pillCls(form.opioids3Months === v)} onClick={() => setForm(f => ({ ...f, opioids3Months: v }))}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </QuestionSlide>
+        );
+
+      case "bariatricSurgery":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Avez-vous déjà subi une chirurgie bariatrique ?" hint="Bypass gastrique, sleeve gastrectomie, anneau gastrique ou autre chirurgie de perte de poids." direction={direction}>
+            <div className="flex gap-3">
+              {([["oui", "Oui"], ["non", "Non"]] as const).map(([v, l]) => (
+                <button key={v} type="button" className={pillCls(form.bariatricSurgery === v)} onClick={() => setForm(f => ({ ...f, bariatricSurgery: v }))}>
+                  {l}
+                </button>
+              ))}
             </div>
           </QuestionSlide>
         );
@@ -594,6 +675,26 @@ export function MedicalQuestionnaireWizard() {
           </QuestionSlide>
         );
 
+      case "bloodPressure":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Quelle est votre pression artérielle habituelle ?" hint="Choisissez la plage qui correspond à vos mesures habituelles. En cas de doute, sélectionnez « Normale »." direction={direction}>
+            <BloodPressureSelect
+              value={form.bloodPressure}
+              onChange={(v) => setForm(f => ({ ...f, bloodPressure: v }))}
+            />
+          </QuestionSlide>
+        );
+
+      case "restingHeartRate":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Quelle est votre fréquence cardiaque au repos ?" hint="Au réveil, au calme, ou mesurée par un appareil (montre, tensiomètre)." direction={direction}>
+            <HeartRateSelect
+              value={form.restingHeartRate}
+              onChange={(v) => setForm(f => ({ ...f, restingHeartRate: v }))}
+            />
+          </QuestionSlide>
+        );
+
       case "deliveryAddress":
         return (
           <QuestionSlide stepLabel={stepLabel} label="Où souhaitez-vous recevoir votre médicament ?" hint="Livraison discrète à domicile partout au Québec." direction={direction}>
@@ -607,6 +708,49 @@ export function MedicalQuestionnaireWizard() {
                 <input className={INPUT_CLS} placeholder="Code postal (H2X 1Y4)" value={form.deliveryPostalCode ?? ""} onChange={e => setForm(f => ({ ...f, deliveryPostalCode: e.target.value.toUpperCase() }))} />
                 <input className={INPUT_CLS} placeholder="Téléphone" type="tel" value={form.deliveryPhone ?? ""} onChange={e => setForm(f => ({ ...f, deliveryPhone: e.target.value }))} />
               </div>
+            </div>
+          </QuestionSlide>
+        );
+
+      case "consents":
+        return (
+          <QuestionSlide stepLabel={stepLabel} label="Consentements requis" hint="Veuillez lire et cocher chaque case pour soumettre votre dossier à l'IPS." direction={direction}>
+            <div className="space-y-3">
+              {([
+                {
+                  key: "consentMedical" as const,
+                  label: "Je consens à la consultation médicale en ligne et à recevoir des prescriptions médicales par voie électronique par une IPS agréée au Québec.",
+                },
+                {
+                  key: "consentDataSharing" as const,
+                  label: "J'accepte que mes données de santé soient partagées avec l'IPS responsable de mon dossier et la pharmacie partenaire aux fins de traitement.",
+                },
+                {
+                  key: "consentAiCoach" as const,
+                  label: "J'accepte d'interagir avec le coach IA Anne, qui utilise mes informations de santé pour personnaliser mes conseils (aucun diagnostic médical fourni par l'IA).",
+                },
+                {
+                  key: "consentPrivacy" as const,
+                  label: "J'ai lu et j'accepte la politique de confidentialité d'Anne-sante ainsi que les conditions d'utilisation du service.",
+                },
+              ] satisfies { key: keyof MedicalQuestionnaireV2; label: string }[]).map(({ key, label }) => (
+                <label
+                  key={key}
+                  className={`flex cursor-pointer gap-3 rounded-xl border-2 p-4 text-sm transition ${
+                    form[key]
+                      ? "border-[#1D4D3A] bg-[#F0F7F4]"
+                      : "border-slate-200 bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-5 w-5 shrink-0 accent-[#1D4D3A]"
+                    checked={form[key] === true}
+                    onChange={(e) => setForm(f => ({ ...f, [key]: e.target.checked }))}
+                  />
+                  <span className="leading-relaxed text-slate-700">{label}</span>
+                </label>
+              ))}
             </div>
           </QuestionSlide>
         );

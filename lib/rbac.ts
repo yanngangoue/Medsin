@@ -34,6 +34,7 @@ export function requiredRoleForPath(pathname: string): Role | null {
   // Patient-only pages that require authentication
   if (pathname === "/questionnaire" || pathname.startsWith("/questionnaire/")) return "PATIENT";
   if (pathname === "/paiement" || pathname.startsWith("/paiement/")) return "PATIENT";
+  if (pathname === "/examen-en-cours" || pathname.startsWith("/examen-en-cours/")) return "PATIENT";
   return null;
 }
 

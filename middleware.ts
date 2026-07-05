@@ -41,6 +41,8 @@ export const config = {
     "/questionnaire",
     "/paiement/:path*",
     "/paiement",
+    "/examen-en-cours",
+    "/examen-en-cours/:path*",
     "/changer-mot-de-passe",
   ],
 };
