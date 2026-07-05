@@ -36,9 +36,25 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     
       const { id } = await ctx.params;
     
-      /** ABAC MVP : un patient ne lit que son propre dossier par id utilisateur. */
+      /** ABAC : patient → son propre dossier ; médecin/IPS/nutritionniste → patients qui leur sont assignés */
       if (principal.roles.includes("PATIENT") && principal.userId !== id) {
         return interopError(403, "patient-scope", "Accès limité à votre propre dossier");
+      }
+      const isAdmin = principal.roles.includes("ADMIN");
+      if (!isAdmin && !principal.roles.includes("PATIENT")) {
+        const [dossierAccess, questionnaireAccess] = await Promise.all([
+          prisma.dossierGlp1.findFirst({
+            where: { patientId: id, medecinId: principal.userId },
+            select: { id: true },
+          }),
+          prisma.medicalQuestionnaire.findFirst({
+            where: { userId: id, ipsId: principal.userId },
+            select: { id: true },
+          }),
+        ]);
+        if (!dossierAccess && !questionnaireAccess) {
+          return interopError(403, "not-assigned", "Accès refusé : patient non assigné à ce praticien");
+        }
       }
     
       const bundle: Bundle = { resourceType: "Bundle", type: "collection", entry: [] };

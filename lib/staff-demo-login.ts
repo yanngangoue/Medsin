@@ -11,11 +11,13 @@ export type StaffDemoAccount = {
   home: string;
 };
 
-/** Accès équipe 1-clic : dev par défaut, ou `MEDSIM_ENABLE_STAFF_DEMO_LOGIN=true` (staging). */
+/** Accès équipe 1-clic : dev par défaut, ou `MEDSIM_ENABLE_STAFF_DEMO_LOGIN=true` (staging). Jamais en production. */
 export function isStaffDemoLoginEnabled(): boolean {
+  // Blocage absolu en production, même si l'env var est mal positionnée
+  if (process.env.NODE_ENV === "production") return false;
   const flag = process.env.MEDSIM_ENABLE_STAFF_DEMO_LOGIN?.trim();
-  if (flag === "true") return true;
   if (flag === "false") return false;
+  if (flag === "true") return true;
   return process.env.NODE_ENV === "development";
 }
 

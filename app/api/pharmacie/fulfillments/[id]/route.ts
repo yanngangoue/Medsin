@@ -29,14 +29,13 @@ export async function PATCH(req: Request, { params }: Params) {
       select: { pharmacyPartnerId: true },
     });
 
+    if (!pharmacien?.pharmacyPartnerId) {
+      return NextResponse.json({ error: "Pharmacie non assignée à ce compte", code: "FORBIDDEN" }, { status: 403 });
+    }
+
     const { id } = await params;
     const fulfillment = await prisma.medicationFulfillment.findFirst({
-      where: {
-        id,
-        ...(pharmacien?.pharmacyPartnerId
-          ? { pharmacyId: pharmacien.pharmacyPartnerId }
-          : {}),
-      },
+      where: { id, pharmacyId: pharmacien.pharmacyPartnerId },
     });
 
     if (!fulfillment) {

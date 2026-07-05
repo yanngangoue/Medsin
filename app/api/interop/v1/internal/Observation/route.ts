@@ -6,6 +6,27 @@ import type { FhirObservation } from "@/lib/interop/fhir/observation";
 import { interopError, interopJson } from "@/lib/interop/http";
 import { parseTenantFromHeaders } from "@/lib/interop/tenancy";
 import type { NextRequest } from "next/server";
+import { z } from "zod";
+
+const ObservationSchema = z.object({
+  resourceType: z.literal("Observation"),
+  id: z.string().optional(),
+  status: z.enum(["registered", "preliminary", "final", "amended", "corrected", "cancelled", "entered-in-error", "unknown"]),
+  code: z.object({
+    text: z.string().optional(),
+    coding: z.array(z.object({
+      system: z.string().optional(),
+      code: z.string().optional(),
+      display: z.string().optional(),
+    })).optional(),
+  }),
+  subject: z.object({ reference: z.string() }).optional(),
+  effectiveDateTime: z.string().optional(),
+  valueQuantity: z.object({ value: z.number(), unit: z.string().optional() }).optional(),
+  valueString: z.string().optional(),
+  meta: z.record(z.unknown()).optional(),
+  category: z.array(z.unknown()).optional(),
+});
 
 /**
  * POST /api/interop/v1/internal/Observation — écriture FHIR réservée au moteur IA / batch (pas de cookie session).
@@ -24,16 +45,17 @@ export async function POST(req: NextRequest) {
         return interopError(400, "tenant-required", "En-tête x-medisim-tenant requis (QC|ON|BC|AB)");
       }
     
-      let body: unknown;
+      let raw: unknown;
       try {
-        body = await req.json();
+        raw = await req.json();
       } catch {
         return interopError(400, "invalid-json", "Corps JSON invalide");
       }
-      const obs = body as FhirObservation;
-      if (obs?.resourceType !== "Observation") {
-        return interopError(400, "invalid-resource", "resourceType doit être Observation");
+      const parsed = ObservationSchema.safeParse(raw);
+      if (!parsed.success) {
+        return interopError(400, "invalid-resource", parsed.error.issues.map((i) => i.message).join("; "));
       }
+      const obs = parsed.data as FhirObservation;
     
       const id = obs.id ?? randomUUID();
       const saved: FhirObservation = {
