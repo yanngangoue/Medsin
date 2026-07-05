@@ -70,8 +70,7 @@ function ForgotPasswordForm() {
           <Card>
             <h1 className="text-xl font-semibold text-slate-900">Demande enregistrée</h1>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              Si un compte existe pour ce courriel, suivez les instructions reçues. En production, un e-mail serait
-              envoyé depuis votre fournisseur (SendGrid, Resend, etc.).
+              Si un compte existe pour ce courriel, un lien de réinitialisation vous a été envoyé. Vérifiez votre boîte de réception (et vos courriels indésirables).
             </p>
             {devUrl ? (
               <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">

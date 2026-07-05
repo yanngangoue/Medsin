@@ -85,3 +85,16 @@ export function appointmentReminderEmail(
   const text = `Rappel visio ${windowLabel} — ${formattedDate}\n${joinUrl}`;
   return { subject, html, text };
 }
+
+export function passwordResetEmail(prenom: string, resetUrl: string) {
+  const subject = "Réinitialisation de votre mot de passe — Anne-sante";
+  const html = layout(`
+    <h1 style="font-size:20px">Bonjour ${prenom},</h1>
+    <p>Nous avons reçu une demande de réinitialisation de mot de passe pour votre compte Anne-sante.</p>
+    <p><a href="${resetUrl}" style="display:inline-block;background:#1D9E75;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600">Réinitialiser mon mot de passe</a></p>
+    <p style="font-size:13px;color:#64748b">Ce lien est valide pendant <strong>1 heure</strong>. Si vous n&apos;avez pas effectué cette demande, ignorez cet e-mail — votre mot de passe ne sera pas modifié.</p>
+    <p style="font-size:12px;color:#94a3b8">Ou copiez ce lien dans votre navigateur :<br/>${resetUrl}</p>
+  `);
+  const text = `Bonjour ${prenom},\n\nRéinitialisez votre mot de passe :\n${resetUrl}\n\nCe lien expire dans 1 heure.`;
+  return { subject, html, text };
+}

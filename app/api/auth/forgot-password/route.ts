@@ -9,6 +9,8 @@ import { checkForgotPasswordRateLimit } from "@/lib/forgot-password-rate-limit";
 import { writeAuditLog } from "@/lib/audit";
 import { catchRouteError } from "@/lib/api/catch-route-error";
 import { forgotPasswordRequestSchema } from "@/lib/schemas/forgot-password";
+import { sendEmail } from "@/lib/email/send-email";
+import { passwordResetEmail } from "@/lib/email/templates";
 
 function clientIp(req: Request): string | null {
   const xf = req.headers.get("x-forwarded-for");
@@ -81,6 +83,25 @@ export async function POST(req: Request) {
     if (process.env.NODE_ENV === "development") {
       console.info("[Anne-sante] Lien réinitialisation mot de passe (dev) :", url);
     }
+
+    // Send reset email via Resend (best-effort, does not block the response)
+    const dbUser = isDemoMode()
+      ? null
+      : await prisma.user.findFirst({
+          where: { email: { equals: email, mode: "insensitive" } },
+          select: { id: true, prenom: true },
+        });
+    const prenom = dbUser?.prenom ?? email.split("@")[0] ?? "là";
+    const emailTemplate = passwordResetEmail(prenom, url);
+    await sendEmail({
+      to: email,
+      subject: emailTemplate.subject,
+      html: emailTemplate.html,
+      text: emailTemplate.text,
+      template: "password_reset",
+      userId: dbUser?.id ?? null,
+      entityKey: `password_reset:${email}:${rawToken.slice(0, 8)}`,
+    }).catch((err) => console.error("[Anne-sante] forgot-password email failed", err));
   }
 
   const payload: { ok: true; message: string; devResetUrl?: string } = {
