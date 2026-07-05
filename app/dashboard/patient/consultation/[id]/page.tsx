@@ -7,7 +7,7 @@ type Props = { params: Promise<{ id: string }> };
 export default async function PatientVideoConsultationPage({ params }: Props) {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/auth/connexion?callbackUrl=/dashboard/patient");
+    redirect("/connexion?callbackUrl=/dashboard/patient");
   }
   if (session.user.role !== "PATIENT") {
     redirect("/acces-refuse");

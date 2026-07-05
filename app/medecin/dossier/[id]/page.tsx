@@ -6,7 +6,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function MedecinDossierPage({ params }: Props) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/medecin/file");
+  if (!session?.user?.id) redirect("/connexion?callbackUrl=/medecin/file");
 
   const { id } = await params;
 

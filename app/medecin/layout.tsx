@@ -7,7 +7,7 @@ import { PortalSectionBoundary } from "@/components/layout/PortalSectionBoundary
 
 export default async function MedecinLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/medecin/file");
+  if (!session?.user?.id) redirect("/connexion?callbackUrl=/medecin/file");
   if (session.user.role !== "MEDECIN" && session.user.role !== "ADMIN") {
     redirect("/acces-refuse");
   }

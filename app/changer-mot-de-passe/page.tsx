@@ -43,7 +43,7 @@ export default function ChangerMotDePassePage() {
         return;
       }
       setDone(true);
-      setTimeout(() => void signOut({ callbackUrl: "/auth/connexion?changed=1" }), 1500);
+      setTimeout(() => void signOut({ callbackUrl: "/connexion?reset=ok" }), 1500);
     } finally {
       setBusy(false);
     }

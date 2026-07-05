@@ -7,7 +7,7 @@ import { AdminTeleconsultSchedule } from "@/components/admin/AdminTeleconsultSch
 
 export default async function AdminTeleconsultationsPage() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/admin/teleconsultations");
+  if (!session?.user?.id) redirect("/connexion?callbackUrl=/admin/teleconsultations");
   if (!isStaffRole(session.user.role)) redirect("/acces-refuse");
 
   const upcomingCount = await prisma.appointment.count({

@@ -19,7 +19,7 @@ function Glp1ConfirmationContent() {
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated") {
-      router.replace("/auth/connexion?callbackUrl=/onboarding/confirmation?service=gestion-poids");
+      router.replace("/connexion?callbackUrl=/onboarding/confirmation?service=gestion-poids");
     }
   }, [status, router]);
 

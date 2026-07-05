@@ -5,7 +5,7 @@ import { AnneCoachChat } from "@/components/dashboard/patient-space/AnneCoachCha
 export default async function CoachIaPage() {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/auth/connexion?callbackUrl=/dashboard/patient/coach-ia");
+    redirect("/connexion?callbackUrl=/dashboard/patient/coach-ia");
   }
   if (session.user.role !== "PATIENT") {
     redirect("/acces-refuse");

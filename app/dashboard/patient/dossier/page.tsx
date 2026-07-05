@@ -14,7 +14,7 @@ import { glp1QuestionnaireResumeUrl } from "@/lib/patient/glp1-wizard-progress";
 export default async function PatientDossierPage() {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/auth/connexion?callbackUrl=/dashboard/patient/dossier");
+    redirect("/connexion?callbackUrl=/dashboard/patient/dossier");
   }
   if (session.user.role !== "PATIENT") redirect("/acces-refuse");
 

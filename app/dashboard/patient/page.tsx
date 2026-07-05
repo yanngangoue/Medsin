@@ -5,7 +5,7 @@ import { PatientDashboardHome } from "@/components/dashboard/patient-space/Patie
 export default async function PatientDashboardPage() {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/auth/connexion?callbackUrl=/dashboard/patient");
+    redirect("/connexion?callbackUrl=/dashboard/patient");
   }
   if (session.user.role !== "PATIENT") {
     redirect("/acces-refuse");

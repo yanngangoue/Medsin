@@ -7,7 +7,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function AdminVideoConsultationPage({ params }: Props) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/admin/teleconsultations");
+  if (!session?.user?.id) redirect("/connexion?callbackUrl=/admin/teleconsultations");
   if (!isStaffRole(session.user.role)) redirect("/acces-refuse");
 
   const { id } = await params;

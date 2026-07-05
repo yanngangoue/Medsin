@@ -7,7 +7,7 @@ import { PortalSectionBoundary } from "@/components/layout/PortalSectionBoundary
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/connexion?callbackUrl=/admin/dashboard");
+  if (!session?.user?.id) redirect("/connexion?callbackUrl=/admin/dashboard");
   if (!isStaffRole(session.user.role)) redirect("/acces-refuse");
 
   const prenom = session.user.prenom ?? session.user.name ?? "Équipe";

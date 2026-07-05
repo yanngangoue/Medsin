@@ -18,7 +18,7 @@ export default auth(async (req) => {
 
   const role = req.auth?.user?.role;
   if (!role) {
-    const login = new URL("/auth/connexion", req.url);
+    const login = new URL("/connexion", req.url);
     login.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(login);
   }

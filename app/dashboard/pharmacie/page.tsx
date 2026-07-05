@@ -4,7 +4,7 @@ import { PharmacieDashboardClient } from "@/components/pharmacie/PharmacieDashbo
 
 export default async function PharmacieDashboardPage() {
   const session = await auth();
-  if (!session?.user) redirect("/auth/connexion?callbackUrl=/dashboard/pharmacie");
+  if (!session?.user) redirect("/connexion?callbackUrl=/dashboard/pharmacie");
   if (session.user.role !== "PHARMACIEN") redirect("/acces-refuse");
 
   return <PharmacieDashboardClient />;

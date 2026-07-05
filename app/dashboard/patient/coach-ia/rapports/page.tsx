@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 export default async function PatientAnneReportsPage() {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/auth/connexion?callbackUrl=/dashboard/patient/coach-ia/rapports");
+    redirect("/connexion?callbackUrl=/dashboard/patient/coach-ia/rapports");
   }
   if (session.user.role !== "PATIENT") {
     redirect("/acces-refuse");
