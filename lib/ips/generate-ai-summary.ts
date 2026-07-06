@@ -39,7 +39,7 @@ export async function generateIpsAiSummary(q: Input): Promise<string> {
   try {
     const client = new Anthropic({ apiKey });
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-5",
       max_tokens: 400,
       system:
         "Tu rédiges un résumé clinique concis pour une IPS québécoise (GLP-1). 3-4 phrases, français canadien, factuel, sans diagnostic définitif. Mentionne admissibilité probable et points de vigilance.",

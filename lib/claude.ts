@@ -34,7 +34,7 @@ export async function generateText(
   }
 
   const model =
-    process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-20250514";
+    process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-5";
   const maxTokensRaw = process.env.ANTHROPIC_MAX_TOKENS;
   const envMax = maxTokensRaw ? Number(maxTokensRaw) : 4096;
   const fromEnv =
@@ -96,7 +96,7 @@ export async function generateChatReply(
   }
 
   const model =
-    process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-20250514";
+    process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-5";
   const maxTokensRaw = process.env.ANTHROPIC_MAX_TOKENS;
   const envMax = maxTokensRaw ? Number(maxTokensRaw) : 4096;
   const fromEnv =

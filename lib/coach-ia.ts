@@ -3,7 +3,7 @@ import { COACH_NAME } from "@/lib/coach-brand";
 import type { WeightCheckInPublic, WeightProgramPublic } from "@/lib/patient/weight-program";
 import { tendancePoids } from "@/lib/coach-weight-trends";
 
-export const COACH_MODEL = "claude-sonnet-4-20250514";
+export const COACH_MODEL = "claude-sonnet-5";
 
 /** Gabarit obligatoire des rapports hebdomadaires IPS (vendredi 8 h). */
 export const ANNE_RAPPORT_IPS_GABARIT = `═══════════════════════════════
